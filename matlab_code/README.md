@@ -13,7 +13,7 @@ mrivis_checkerboard(image1, image2, patch_size_in_voxels)
 mrivis_checkerboard(path_image1, image2, [ width, height ]) # rectangular patch
 ```
 
-A sample output:
+A sample output (when the two scans are mismatched):
 
 ![checkerboard](../docs/zoomed_in/vis_all3.png)
 
@@ -35,6 +35,9 @@ Let's use a **rectangular** patch (10 voxels high and 30 voxels wide):
 ![checkerboard](../docs/zoomed_in/vis_all3_mismatch__rect_ps10_30_sagittal.png)
 ![checkerboard](../docs/zoomed_in/vis_all3_mismatch__rect_ps10_30_axial.png)
 
+If they were identical (no mismatch at all), you won't see any edges or borders:
+
+![checkerboard](../docs/zoomed_in/vis_all3_identical.png)
 
 Full layout with 6x6 pangels can be seen in [this folder](../docs/comprehensive).
 
