@@ -37,7 +37,7 @@ Let's use a **rectangular** patch (10 voxels high and 30 voxels wide):
 
 If they were identical (no mismatch at all), you won't see any edges or borders:
 
-![checkerboard](../docs/zoomed_in/vis_all3_identical.png)
+![identical](../docs/zoomed_in/vis_all3_identical.png)
 
 Full layout with 6x6 pangels can be seen in [this folder](../docs/comprehensive).
 
