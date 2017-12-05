@@ -21,7 +21,7 @@ mrivis
 Tools for comparison of registration and sptial similarity of 3d MRI scans (T1, T2 etc) using checkerboard plots.
 
 
-The python package is yet to be built: please use the [matlab code](matlab_code) for now and refer to its [README](matlab_code/README.md).
+The python package is yet to be built: please use the matlab code `matlab_code`_ for now and refer to its  README `matlab_code/README.md`_.
 
 
 Features
