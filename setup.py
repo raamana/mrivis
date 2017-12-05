@@ -4,6 +4,7 @@
 """The setup script."""
 
 from setuptools import setup, find_packages
+import versioneer
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -28,7 +29,8 @@ test_requirements = [
 
 setup(
     name='mrivis',
-    version='0.1.0',
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     description="Tools and scripts for visualization and comparison of 3d MRI scans (T1, T2 etc)",
     long_description=readme + '\n\n' + history,
     author="Pradeep Reddy Raamana",

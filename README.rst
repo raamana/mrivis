@@ -18,7 +18,7 @@ mrivis
      :alt: Updates
 
 
-Tools and scripts for visualization and comparison of 3d MRI scans (T1, T2 etc)
+Tools for comparison of registration and sptial similarity of 3d MRI scans (T1, T2 etc) using checkerboard plots.
 
 
 * Free software: MIT license
@@ -28,7 +28,7 @@ Tools and scripts for visualization and comparison of 3d MRI scans (T1, T2 etc)
 Features
 --------
 
-* TODO
+* python package to produce checkerboard images
 
 Credits
 ---------
@@ -37,4 +37,3 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
-
