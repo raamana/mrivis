@@ -1,9 +1,10 @@
 function mrivis_checkerboard( img_spec1, img_spec2, patch_size,...
     fig_handle, rescale_intensity_range, varargin)
-% mrivis_collage( img1, fig_handle)
-%   img_spec1  = MR image to be visualized
-%   img_spec2  = second MR image to be compared
-%   patch_size = size of patch in checkerboard (default 10 voxels)
+% mrivis_collage( img_spec1, img_spec2, fig_handle)
+%   img_spec1  = MR image (or path to one) to be visualized
+%   img_spec2  = second MR image/path to be compared
+%   patch_size = size of patch in checkerboard (default 10 voxels square)
+%       This could be rectangular also e.g. [10, 30] specifying width and height of patch.
 %   fig_handle = figure handle to display the images
 %   scale_intensity_flag - whether to rescale image intensities or not
 %       can be a flag ([true]/false)
@@ -50,7 +51,6 @@ slices = {
     };
 
 
-
 RescaleImages = true; % by default
 
 % estimating intensity ranges
@@ -68,25 +68,25 @@ set(fig_handle,'Color','k');
 for dim_index =  1 : 3
     slices_this_dim = slices{dim_index}(num_cs_to_skip+1:end-num_cs_to_skip);
     for range_index =  1 : length(slices_this_dim)
-        
+
         % making the axis
         subplot('Position', get_subplot_pos( dim_index, range_index) );
-        
+
         % getting slice data
         slice1 = getdim(img1, dim_index, slices_this_dim(range_index) );
         slice2 = getdim(img2, dim_index, slices_this_dim(range_index) );
-        
+
         % making a mask for checkers
         checkers = get_checkers(size(slice1), patch_size);
         mixed = mix_slices(slice1, slice2, checkers);
-        
+
         % visualizing it
         if RescaleImages
             imagesc(mixed, img_intensity_range );
         else
             imshow(mixed);
         end
-        
+
         % adjustments for proper presentation
         colormap gray;
         axis off;
@@ -184,8 +184,8 @@ end
 
 function cropped_img = crop_3dimage(img,beg_coords,end_coords)
 
-cropped_img = img(... 
-    beg_coords(1):end_coords(1), ... 
+cropped_img = img(...
+    beg_coords(1):end_coords(1), ...
     beg_coords(2):end_coords(2), ...
     beg_coords(3):end_coords(3) );
 
@@ -204,7 +204,7 @@ end
 base = designated_base(dim_index, :);
 
 % bounding box (BB) params for a sequential 6x1 grid
-wBB = 0.16; 
+wBB = 0.16;
 hBB = 0.155;
 
 %-% Pattern: [ 1 2 3 4 5 6]
