@@ -7,7 +7,7 @@ Tools for comparison of registration and spatial similarity of 3d MRI scans (T1,
 ![https://img.shields.io/pypi/v/mrivis.svg](https://pypi.python.org/pypi/mrivis)
 
 
-## Installation 
+## Installation
 
 ```bash
 pip install -U mrivis
@@ -16,18 +16,27 @@ pip install -U mrivis
 ## Usage:
 
 ```python
-from mrivis import checkerboard
+from mrivis import checkerboard, voxelwise_diff, red_green
 
 path1 = '/Users/Reddy/Desktop/image.nii'
 path2 = '/Users/Reddy/Desktop/another.nii'
 
-checkerboard(path1, path2, patch_size=10, # square patches
-             num_rows=1, # 1 row per dimension
-             num_cols=3)
-             
+checkerboard(path1, path2, patch_size=5) # square patches
+
+checkerboard(path1, path2, rescale_intensity_range=(0, 256) )
+
+checkerboard(path1, path2, patch_size=10,
+             num_rows=1, num_cols=3) # 1 row per dimension, with 3 columns
+
 checkerboard(path1, path2, patch_size=[10, 20], # rectangular patches
              num_rows=2, # 2 rows per dimension (6 rows in total)
              num_cols=5) # 5 panels per row
+
+voxelwise_diff(path1, path2)
+voxelwise_diff(path1, path2, abs_value=False)
+
+red_green(path1, path2, alpha_channels=(1, 1))
+red_green(path1, path2, alpha_channels=(0.7, 1))
 
 ```
 
@@ -37,8 +46,8 @@ When the two scans are mismatched:
 
 ![vis_all3](docs/zoomed_in/vis_all3.png)
 
-When the mismatch is low (here a smoothed image is comapred to its original), 
-you can see the differences in intensity (due to smoothing), 
+When the mismatch is low (here a smoothed image is comapred to its original),
+you can see the differences in intensity (due to smoothing),
 but you can also see that they are both spatially aligned accurately:
 
 ![flyer2_low_mismatch](docs/flyer2_low_mismatch.png)
