@@ -12,9 +12,10 @@ def checkerboard(img_spec1=None,
                  patch_size=10,
                  num_rows = 2,
                  num_cols = 6,
+                 rgb_mix=False,
                  rescale_intensity_range=None,
                  annot=None,
-                 padding=5):
+                 padding=5,
     """
     Produces checkerboard comparison plot of two 3D images.
 
@@ -76,6 +77,8 @@ def checkerboard(img_spec1=None,
 
     plt.style.use('dark_background')
 
+    alpha_channels = [1, 1]
+
     num_axes = 3
     fig, ax = plt.subplots(num_axes*num_rows, num_cols, figsize=[15, 15])
 
@@ -96,18 +99,24 @@ def checkerboard(img_spec1=None,
             slice1 = get_axis(img1, dim_index, slice_num)
             slice2 = get_axis(img2, dim_index, slice_num)
 
-            checkers = get_checkers(slice1.shape, patch_size)
-            mixed = mix_slices(slice1, slice2, checkers)
+            if rgb_mix:
+                mixed = mix_color(slice1, slice2, alpha_channels)
+                cmap = 'gray'
+            else:
+                checkers = get_checkers(slice1.shape, patch_size)
+                mixed = mix_slices(slice1, slice2, checkers)
+                cmap = 'gray'
 
             if RescaleImages:
-                plt.imshow(mixed.T, imlim=img_intensity_range,
+                plt.imshow(mixed, imlim=img_intensity_range,
+                           interpolation = 'none', cmap=cmap,
                            aspect='equal', origin='lower')
             else:
-                plt.imshow(mixed.T,
+                plt.imshow(mixed,
+                           interpolation = 'none', cmap=cmap,
                            aspect='equal', origin='lower')
 
             # adjustments for proper presentation
-            plt.set_cmap('gray')
             plt.axis('off')
 
 
@@ -208,6 +217,38 @@ def get_checkers(slice_shape, patch_size):
             checkers = np.delete(checkers, np.s_[slice_shape[1]:], axis=1)
 
     return checkers
+
+
+def scale_0to1(slice1, slice2):
+    ""
+
+    min_value = max(slice1.min(), slice2.min())
+    max_value = max(slice1.max(), slice2.max())
+
+    slice1 = (slice1 - min_value) / max_value
+    slice2 = (slice2 - min_value) / max_value
+
+    return slice1, slice2
+
+
+def mix_color(slice1, slice2, alpha_channels):
+    "Mixing them as red and green channels"
+
+    if slice1.shape != slice2.shape:
+        raise ValueError('size mismatch between cropped slices and checkers!!!')
+
+    alpha_channels = np.array(alpha_channels)
+    if len(alpha_channels) != 2:
+        raise ValueError('Alphas must be two value tuples.')
+
+    slice1, slice2 = scale_0to1(slice1, slice2)
+
+    mixed = np.zeros((slice1.shape[0], slice1.shape[1], 3))
+    mixed[:, :, 0] = alpha_channels[0]*slice1
+    mixed[:, :, 1] = alpha_channels[1]*slice2
+    mixed[:, :, 2] = 0.0 # leaving blue as zero
+
+    return mixed
 
 
 def mix_slices(slice1, slice2, checkers):
