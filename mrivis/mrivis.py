@@ -16,6 +16,7 @@ def checkerboard(img_spec1=None,
                  annot=None,
                  padding=5):
     """
+    Produces checkerboard comparison plot of two 3D images.
 
     Parameters
     ----------
@@ -73,9 +74,6 @@ def checkerboard(img_spec1=None,
     if len(np.unique(img_intensity_range)) == 1:
         RescaleImages = False
 
-    #
-    plt.rcParams['axes.facecolor'] = 'black'
-    plt.rcParams['savefig.facecolor'] = 'black'
     plt.style.use('dark_background')
 
     num_axes = 3
@@ -96,10 +94,10 @@ def checkerboard(img_spec1=None,
             mixed = mix_slices(slice1, slice2, checkers)
 
             if RescaleImages:
-                plt.imshow(mixed, imlim=img_intensity_range,
+                plt.imshow(mixed.T, imlim=img_intensity_range,
                            aspect='equal', origin='lower')
             else:
-                plt.imshow(mixed,
+                plt.imshow(mixed.T,
                            aspect='equal', origin='lower')
 
             # adjustments for proper presentation
@@ -175,8 +173,19 @@ def read_image(img_spec):
         raise ValueError('Invalid input specified! '
                          'Input either a path to image data, or provide 3d Matrix directly.')
 
-    if len(img.shape) != 3:
-        raise ValueError('Input volume is not 3D!')
+    if len(img.shape) < 3:
+        raise ValueError('Input volume must be atleast 3D!')
+    elif len(img.shape) == 3:
+        for dim_size in img.shape:
+            if dim_size < 1:
+                raise ValueError('Atleast one slice must exist in each dimension')
+    elif len(img.shape) == 4:
+        if img.shape[3] != 1:
+            raise ValueError('Input volume is 4D with more than one volume!')
+        else:
+            img = np.squeeze(img, axis=3)
+    elif len(img.shape) > 4:
+        raise ValueError('Invalid shape of image : {}'.format(img.shape))
 
     return img
 
