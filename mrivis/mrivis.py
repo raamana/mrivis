@@ -137,8 +137,9 @@ def get_axis(array, axis, slice_num):
 
     slice_list = [slice(None)] * array.ndim
     slice_list[axis] = slice_num
+    slice_data = array[slice_list].T # transpose for proper orientation
 
-    return array[slice_list]
+    return slice_data
 
 
 def check_int(num, num_descr):
@@ -201,6 +202,10 @@ def read_image(img_spec):
             img = np.squeeze(img, axis=3)
     elif len(img.shape) > 4:
         raise ValueError('Invalid shape of image : {}'.format(img.shape))
+
+    # setting small stray values to zero
+    stray_value = np.percentile(img.flatten(), 5)
+    img[img<stray_value] = 0.0
 
     return img
 
