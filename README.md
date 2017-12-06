@@ -40,6 +40,11 @@ red_green(path1, path2, alpha_channels=(0.7, 1))
 
 ```
 
+## Various options available
+
+![flyer](docs/flyer_option_matrix.png)
+
+
 ## Sample outputs
 
 When the two scans are mismatched:
@@ -79,6 +84,12 @@ If they were identical (no mismatch at all), you won't see any edges or borders:
 ![identical](docs/zoomed_in/vis_all3_identical.png)
 
 Full layout with 6x6 pangels can be seen in [this folder](docs/comprehensive).
+
+## More example outputs
+
+Many more example outputs, for different combinations of parameters, can be seen in this [example outputs folder in docs](docs/example_outputs).
+
+
 
 
 
