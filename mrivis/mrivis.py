@@ -17,101 +17,8 @@ def checkerboard(img_spec1=None,
                  padding=5,
                  output_path=None,
                  figsize=None,):
-    "Checkerboard mixer"
-
-    mixer_params = dict(patch_size=patch_size)
-
-    fig = _compare(img_spec1,
-                   img_spec2,
-                   num_rows=num_rows,
-                   num_cols=num_cols,
-                   mixer='checker_board',
-                   rescale_intensity_range=rescale_intensity_range,
-                   annot=annot,
-                   padding=padding,
-                   output_path=output_path,
-                   figsize=None,
-                   **mixer_params)
-
-    return fig
-
-
-def red_green(img_spec1=None,
-              img_spec2=None,
-              alpha_channels=None,
-              num_rows=2,
-              num_cols=6,
-              rescale_intensity_range=None,
-              annot=None,
-              padding=5,
-              output_path=None,
-              figsize=None,):
-    "Red-green mixer, where the images become the red and green channels for the image."
-
-    if alpha_channels is None:
-        alpha_channels = [1, 1]
-
-    if not len(alpha_channels) == 2:
-        # not sure if we should make them sum to 1:  or not np.isclose(sum(alpha_channels), 1.0)
-        raise ValueError('Alpha must be two elements')
-
-    mixer_params = dict(alpha_channels=alpha_channels)
-    fig = _compare(img_spec1,
-                   img_spec2,
-                   num_rows=num_rows,
-                   num_cols=num_cols,
-                   mixer='red_green',
-                   annot=annot,
-                   padding=padding,
-                   output_path=output_path,
-                   figsize=None,
-                   **mixer_params)
-
-    return fig
-
-def voxelwise_diff(img_spec1=None,
-              img_spec2=None,
-              abs_value=True,
-              num_rows=2,
-              num_cols=6,
-              rescale_intensity_range=None,
-              annot=None,
-              padding=5,
-              output_path=None,
-                   figsize=None):
-    "Voxel-wise difference map."
-
-    if not isinstance(abs_value, bool):
-        abs_value = bool(abs_value)
-
-    mixer_params = dict(abs_value=abs_value)
-    fig = _compare(img_spec1,
-                   img_spec2,
-                   num_rows=num_rows,
-                   num_cols=num_cols,
-                   mixer='voxelwise_diff',
-                   annot=annot,
-                   padding=padding,
-                   output_path=output_path,
-                   figsize=None,
-                   **mixer_params)
-
-    return fig
-
-
-def _compare(img_spec1,
-             img_spec2,
-             num_rows=2,
-             num_cols=6,
-             mixer='checker_board',
-             rescale_intensity_range=None,
-             annot=None,
-             padding=5,
-             output_path=None,
-             figsize=None,
-             **kwargs):
     """
-    Produces checkerboard comparison plot of two 3D images.
+    Checkerboard mixer.
 
     Parameters
     ----------
@@ -143,6 +50,253 @@ def _compare(img_spec1,
     padding : int
         number of voxels to pad around each panel.
 
+    output_path : str
+        path to save the generate collage to.
+
+    figsize : list
+        Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
+
+    kwargs : dict
+        Additional arguments specific to the particular mixer
+        e.g. alpha_channels = [1, 1] for the red_green mixer
+
+
+    Returns
+    -------
+    fig : figure handle
+        handle to the collage figure generated.
+
+    """
+
+    mixer_params = dict(patch_size=patch_size)
+
+    fig = _compare(img_spec1,
+                   img_spec2,
+                   num_rows=num_rows,
+                   num_cols=num_cols,
+                   mixer='checker_board',
+                   rescale_intensity_range=rescale_intensity_range,
+                   annot=annot,
+                   padding=padding,
+                   output_path=output_path,
+                   figsize=figsize,
+                   **mixer_params)
+
+    return fig
+
+
+def red_green(img_spec1=None,
+              img_spec2=None,
+              alpha_channels=None,
+              num_rows=2,
+              num_cols=6,
+              rescale_intensity_range=None,
+              annot=None,
+              padding=5,
+              output_path=None,
+              figsize=None,):
+    """
+    Red-green mixer, where the images become the red and green channels for the image.
+
+    Parameters
+    ----------
+    img_spec1 : str or nibabel image-like object
+        MR image (or path to one) to be visualized
+
+    img_spec2 : str or nibabel image-like object
+        MR image (or path to one) to be visualized
+
+    alpha_channels : (float, float)
+        weights for red and green channels in the composite image.
+        Default: [1, 1]
+
+    num_rows : int
+        number of rows (top to bottom) per each of 3 dimensions
+
+    num_cols : int
+        number of panels (left to right) per row of each dimension.
+
+    mixer : str
+        type of mixer to produce the comparison figure.
+        Options: checker_board, red_green, diff_abs,
+
+    rescale_intensity_range : bool or list
+        range to rescale the intensity values to
+
+    annot : str
+        Text to display to annotate the visualization
+
+    padding : int
+        number of voxels to pad around each panel.
+
+    output_path : str
+        path to save the generate collage to.
+
+    figsize : list
+        Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
+
+    kwargs : dict
+        Additional arguments specific to the particular mixer
+        e.g. alpha_channels = [1, 1] for the red_green mixer
+
+
+    Returns
+    -------
+    fig : figure handle
+        handle to the collage figure generated.
+
+    """
+
+    if alpha_channels is None:
+        alpha_channels = [1, 1]
+
+    if not len(alpha_channels) == 2:
+        # not sure if we should make them sum to 1:  or not np.isclose(sum(alpha_channels), 1.0)
+        raise ValueError('Alpha must be two elements')
+
+    mixer_params = dict(alpha_channels=alpha_channels)
+    fig = _compare(img_spec1,
+                   img_spec2,
+                   num_rows=num_rows,
+                   num_cols=num_cols,
+                   mixer='red_green',
+                   annot=annot,
+                   padding=padding,
+                   output_path=output_path,
+                   figsize=figsize,
+                   **mixer_params)
+
+    return fig
+
+
+def voxelwise_diff(img_spec1=None,
+                   img_spec2=None,
+                   abs_value=True,
+                   num_rows=2,
+                   num_cols=6,
+                   rescale_intensity_range=None,
+                   annot=None,
+                   padding=5,
+                   output_path=None,
+                   figsize=None):
+    """
+    Voxel-wise difference map.
+
+    Parameters
+    ----------
+    img_spec1 : str or nibabel image-like object
+        MR image (or path to one) to be visualized
+
+    img_spec2 : str or nibabel image-like object
+        MR image (or path to one) to be visualized
+
+    abs_value : bool
+        Flag indicating whether to take the absolute value of the diffenence or not.
+        Default: True, display absolute differences only (so order of images does not matter)
+
+    num_rows : int
+        number of rows (top to bottom) per each of 3 dimensions
+
+    num_cols : int
+        number of panels (left to right) per row of each dimension.
+
+    mixer : str
+        type of mixer to produce the comparison figure.
+        Options: checker_board, red_green, diff_abs,
+
+    rescale_intensity_range : bool or list
+        range to rescale the intensity values to
+
+    annot : str
+        Text to display to annotate the visualization
+
+    padding : int
+        number of voxels to pad around each panel.
+
+    output_path : str
+        path to save the generate collage to.
+
+    figsize : list
+        Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
+
+    kwargs : dict
+        Additional arguments specific to the particular mixer
+        e.g. alpha_channels = [1, 1] for the red_green mixer
+
+
+    Returns
+    -------
+    fig : figure handle
+        handle to the collage figure generated.
+
+
+    """
+
+    if not isinstance(abs_value, bool):
+        abs_value = bool(abs_value)
+
+    mixer_params = dict(abs_value=abs_value)
+    fig = _compare(img_spec1,
+                   img_spec2,
+                   num_rows=num_rows,
+                   num_cols=num_cols,
+                   mixer='voxelwise_diff',
+                   annot=annot,
+                   padding=padding,
+                   output_path=output_path,
+                   figsize=figsize,
+                   **mixer_params)
+
+    return fig
+
+
+def _compare(img_spec1,
+             img_spec2,
+             num_rows=2,
+             num_cols=6,
+             mixer='checker_board',
+             rescale_intensity_range=None,
+             annot=None,
+             padding=5,
+             output_path=None,
+             figsize=None,
+             **kwargs):
+    """
+    Produces checkerboard comparison plot of two 3D images.
+
+    Parameters
+    ----------
+    img_spec1 : str or nibabel image-like object
+        MR image (or path to one) to be visualized
+
+    img_spec2 : str or nibabel image-like object
+        MR image (or path to one) to be visualized
+
+    num_rows : int
+        number of rows (top to bottom) per each of 3 dimensions
+
+    num_cols : int
+        number of panels (left to right) per row of each dimension.
+
+    mixer : str
+        type of mixer to produce the comparison figure.
+        Options: checker_board, red_green, diff_abs,
+
+    rescale_intensity_range : bool or list
+        range to rescale the intensity values to
+
+    annot : str
+        Text to display to annotate the visualization
+
+    padding : int
+        number of voxels to pad around each panel.
+
+    output_path : str
+        path to save the generate collage to.
+
+    figsize : list
+        Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
+
     kwargs : dict
         Additional arguments specific to the particular mixer
         e.g. alpha_channels = [1, 1] for the red_green mixer
@@ -153,29 +307,13 @@ def _compare(img_spec1,
     """
 
     num_rows, num_cols, padding = check_params(num_rows, num_cols, padding)
+
     img1, img2 = check_images(img_spec1, img_spec2)
     img1, img2 = crop_to_extents(img1, img2, padding)
 
-    num_panels = num_rows * num_cols * 3
-    # skipping few at first and last
-    skip_count = num_rows * num_cols
+    slices = pick_slices(img1.shape, num_rows, num_cols)
 
-    slices = list()
-    for dim_size in img1.shape:
-        slices_in_dim = np.around(np.linspace(0, dim_size, num_panels)).astype('int64')
-        slices.append(slices_in_dim)
-
-    RescaleImages = True
-    # estimating intensity ranges
-    if rescale_intensity_range is None:
-        img_intensity_range = [img1.min(), img1.max()]
-    elif len(rescale_intensity_range) == 2:
-        img_intensity_range = rescale_intensity_range
-    else:
-        RescaleImages = False
-
-    if len(np.unique(img_intensity_range)) == 1:
-        RescaleImages = False
+    RescaleImages, img_intensity_range = check_rescaling(img1, rescale_intensity_range)
 
     plt.style.use('dark_background')
 
@@ -194,9 +332,7 @@ def _compare(img_spec1,
     ax = ax.flatten()
     ax_counter = 0
     for dim_index in range(3):
-        slices_this_dim = slices[dim_index][skip_count: -skip_count]
-
-        for slice_num in slices_this_dim:
+        for slice_num in slices[dim_index]:
             plt.sca(ax[ax_counter])
             ax_counter = ax_counter + 1
 
@@ -297,6 +433,41 @@ def check_params(num_rows, num_cols, padding):
     return num_rows, num_cols, padding
 
 
+def pick_slices(img_shape, num_rows, num_cols):
+    "Picks the slices to display in each dimension"
+
+    num_panels = num_rows * num_cols * 3
+    skip_count = num_rows * num_cols
+
+    slices = list()
+    for dim_size in img_shape:
+        slices_in_dim = np.around(np.linspace(0, dim_size, num_panels)).astype('int64')
+        # skipping not-so-important slices at boundaries
+        slices_in_dim = slices_in_dim[skip_count: -skip_count]
+        slices.append(slices_in_dim)
+
+    return slices
+
+
+def check_rescaling(img1, rescale_intensity_range):
+    "Estimates the intensity range to clip the visualizations to"
+
+    RescaleImages = True
+    # estimating intensity ranges
+    if rescale_intensity_range is None:
+        img_intensity_range = [img1.min(), img1.max()]
+    elif len(rescale_intensity_range) == 2:
+        img_intensity_range = rescale_intensity_range
+    else:
+        RescaleImages = False
+        img_intensity_range = None
+
+    if len(np.unique(img_intensity_range)) == 1:
+        RescaleImages = False
+
+    return RescaleImages, img_intensity_range
+
+
 def check_images(img_spec1, img_spec2):
     img1 = read_image(img_spec1)
     img2 = read_image(img_spec2)
@@ -308,7 +479,7 @@ def check_images(img_spec1, img_spec2):
 
 
 def read_image(img_spec):
-    # reading in data
+    "Image reader"
 
     if isinstance(img_spec, str):
         if pexists(realpath(img_spec)):
