@@ -1,4 +1,9 @@
 # Byte-compiled / optimized / DLL files
+
+cmd2pkg
+docs/flyers.key
+mrivis/tests/
+
 __pycache__/
 *.py[cod]
 *$py.class
