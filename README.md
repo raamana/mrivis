@@ -7,6 +7,12 @@ Tools for comparison of registration and spatial similarity of 3d MRI scans (T1,
 ![https://img.shields.io/pypi/v/mrivis.svg](https://pypi.python.org/pypi/mrivis)
 
 
+## Installation 
+
+```bash
+pip install -U mrivis
+```
+
 ## Usage:
 
 ```python
