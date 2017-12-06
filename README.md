@@ -31,6 +31,16 @@ When the two scans are mismatched:
 
 ![vis_all3](docs/zoomed_in/vis_all3.png)
 
+When the mismatch is low (here a smoothed image is comapred to its original), 
+you can see the differences in intensity (due to smoothing), 
+but you can also see that they are both spatially aligned accurately:
+
+![flyer2_low_mismatch](docs/flyer2_low_mismatch.png)
+
+With really low patch-sizes (e.g. 1, which is voxel-wise alternation), you can see the alignment even better:
+
+![vis_voxelwise_axial](docs/zoomed_in/vis_voxelwise_axial.png)
+
 When there is mismatch, you can clearly see it (patch size 15 voxels square):
 
 ![vis_all3_mismatch_ps15](docs/zoomed_in/vis_all3_mismatch_ps15.png)
