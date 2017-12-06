@@ -86,6 +86,7 @@ def checkerboard(img_spec1=None,
 
         for slice_num in slices_this_dim:
             plt.sca(ax[ax_counter])
+            ax_counter = ax_counter + 1
 
             slice1 = get_axis(img1, dim_index, slice_num)
             slice2 = get_axis(img2, dim_index, slice_num)
@@ -104,8 +105,6 @@ def checkerboard(img_spec1=None,
             plt.set_cmap('gray')
             plt.axis('off')
 
-            ax[ax_counter].set_title(ax_counter)
-            ax_counter = ax_counter + 1
 
     # displaying some annotation text if provided
     # good choice would be the location of the input image (for future refwhen image is shared or misplaced!)
@@ -213,6 +212,9 @@ def get_checkers(slice_shape, patch_size):
 
 def mix_slices(slice1, slice2, checkers):
     "Mixes the two slices in alternating areas specified by checkers"
+
+    if slice1.shape != slice2.shape or slice2.shape != checkers.shape:
+        raise ValueError('size mismatch between cropped slices and checkers!!!')
 
     mixed = slice1.copy()
     mixed[checkers > 0] = slice2[checkers > 0]
