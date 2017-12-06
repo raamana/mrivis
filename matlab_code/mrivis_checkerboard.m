@@ -62,6 +62,10 @@ else
     RescaleImages = false;
 end
 
+if numel(unique(img_intensity_range))==1
+    RescaleImages = false;
+end
+
 set(0, 'CurrentFigure', fig_handle);
 set(fig_handle,'Color','k');
 
@@ -176,8 +180,13 @@ end
 function [beg_coords, end_coords] = crop_coords(img, padding)
 
 [ coords(:,1), coords(:,2), coords(:,3) ] =  ind2sub( size(img), find(img > 0 ) );
-beg_coords = max(1         , min(coords)-padding);
-end_coords = min(size(img), max(coords)+padding);
+if isempty(coords)
+    end_coords = size(img);
+    beg_coords = ones(1, length(size(img)));
+else
+    beg_coords = max(1        , min(coords)-padding);
+    end_coords = min(size(img), max(coords)+padding);
+end
 
 end
 
