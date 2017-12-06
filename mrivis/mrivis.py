@@ -1,3 +1,10 @@
+"""
+mrivis: Tools to comapre the similarity of two 3d images (structural, functional or parametric maps)
+
+Options include checker board, red green mixer and voxel-wise difference maps.
+
+"""
+
 __all__ = ['checkerboard', 'red_green', 'voxelwise_diff']
 
 import numpy as np
@@ -313,7 +320,7 @@ def _compare(img_spec1,
 
     slices = pick_slices(img1.shape, num_rows, num_cols)
 
-    RescaleImages, img_intensity_range = check_rescaling(img1, rescale_intensity_range)
+    rescale_images, img_intensity_range = check_rescaling(img1, rescale_intensity_range)
 
     plt.style.use('dark_background')
 
@@ -323,7 +330,7 @@ def _compare(img_spec1,
     fig, ax = plt.subplots(num_axes * num_rows, num_cols, figsize=figsize)
 
     # displaying some annotation text if provided
-    # good choice would be the location of the input image (for future refwhen image is shared or misplaced!)
+    # good choice would be the location of the input images (for future refwhen image is shared or misplaced!)
     if annot is not None:
         fig.suptitle(annot, backgroundcolor='black', color='g')
 
@@ -342,7 +349,7 @@ def _compare(img_spec1,
             mixed, mixer_spec_params = _generic_mixer(slice1, slice2, mixer, **kwargs)
             display_params.update(mixer_spec_params)
 
-            if RescaleImages:
+            if rescale_images:
                 plt.imshow(mixed, imlim=img_intensity_range, **display_params)
             else:
                 plt.imshow(mixed, **display_params)
