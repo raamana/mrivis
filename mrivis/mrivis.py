@@ -16,6 +16,7 @@ def checkerboard(img_spec1=None,
                  rescale_intensity_range=None,
                  annot=None,
                  padding=5,
+                 output_path=None):
     """
     Produces checkerboard comparison plot of two 3D images.
 
@@ -122,7 +123,13 @@ def checkerboard(img_spec1=None,
 
     fig.tight_layout()
 
-    return
+    if output_path is not None:
+        output_path = output_path.replace(' ', '_')
+        fig.savefig(output_path + '.png', bbox_inches='tight')
+
+    # plt.close()
+
+    return fig
 
 
 def get_axis(array, axis, slice_num):
