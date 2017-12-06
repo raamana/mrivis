@@ -7,18 +7,27 @@ Tools for comparison of registration and spatial similarity of 3d MRI scans (T1,
 ![https://img.shields.io/pypi/v/mrivis.svg](https://pypi.python.org/pypi/mrivis)
 
 
-## to compare two T1 MRI scans (checkerboard plots)
+## Usage:
 
-Usage:
+```python
+from mrivis import checkerboard
 
-```bash
-mrivis --checkerboard path_image1 path_image2 --patch_size 10 # square patch
+path1 = '/Users/Reddy/Desktop/image.nii'
+path2 = '/Users/Reddy/Desktop/another.nii'
 
-mrivis --checkerboard path_image1 path_image2 --patch_size 10 30 # rectangular patch
+checkerboard(path1, path2, patch_size=10, # square patches
+             num_rows=1, # 1 row per dimension
+             num_cols=3)
+             
+checkerboard(path1, path2, patch_size=[10, 20], # rectangular patches
+             num_rows=2, # 2 rows per dimension (6 rows in total)
+             num_cols=5) # 5 panels per row
 
 ```
 
-A sample output (when the two scans are mismatched):
+## Sample outputs
+
+When the two scans are mismatched:
 
 ![vis_all3](docs/zoomed_in/vis_all3.png)
 
@@ -46,13 +55,6 @@ If they were identical (no mismatch at all), you won't see any edges or borders:
 
 Full layout with 6x6 pangels can be seen in [this folder](docs/comprehensive).
 
-## to visualize plans MRI scans (by themselves) using a collage
 
-```bash
-mrivis --collage path_image1 [path_image2]
-
-```
-
-![collage](docs/comprehensive/vis_collage.png)
 
 

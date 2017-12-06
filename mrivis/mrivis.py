@@ -26,7 +26,7 @@ def checkerboard(img_spec1=None,
     img_spec2 : str or nibabel image-like object
         MR image (or path to one) to be visualized
 
-    patch_size : int, or (int, int)
+    patch_size : int, or list, (int, int)
         size of checker patch (either square or rectangular)
 
     num_rows : int
