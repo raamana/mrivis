@@ -78,8 +78,13 @@ def checkerboard(img_spec1=None,
 
     num_axes = 3
     fig, ax = plt.subplots(num_axes*num_rows, num_cols, figsize=[15, 15])
-    ax = ax.flatten()
 
+    # displaying some annotation text if provided
+    # good choice would be the location of the input image (for future refwhen image is shared or misplaced!)
+    if annot is not None:
+        fig.suptitle(annot, backgroundcolor='black', color='g')
+
+    ax = ax.flatten()
     ax_counter = 0
     for dim_index in range(3):
         slices_this_dim = slices[dim_index][skip_count : -skip_count]
@@ -105,11 +110,6 @@ def checkerboard(img_spec1=None,
             plt.set_cmap('gray')
             plt.axis('off')
 
-
-    # displaying some annotation text if provided
-    # good choice would be the location of the input image (for future refwhen image is shared or misplaced!)
-    if annot is not None:
-        plt.text(0.05, 0.5, annot, backgroundcolor='black', color='g')
 
     fig.tight_layout()
 
