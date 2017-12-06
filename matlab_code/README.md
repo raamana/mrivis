@@ -1,6 +1,8 @@
 
 # Matlab scripts to compare quality of registration or spatial similarity (checkerboard plots)
 
+*Note*: this is no longer maintained! The [python version](../README.md) has more options and is recommended.
+
 Requires: Freesurfer's Matlab readers (MRIread) available at https://github.com/freesurfer/freesurfer/tree/dev/matlab
 
 ## to compare two T1 MRI scans (checkerboard plots)
