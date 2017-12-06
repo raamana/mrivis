@@ -362,7 +362,7 @@ def _compare(img_spec1,
 
 
 def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
-    "Generic mixer to process two slices with appropriate mixer and return the composite to be displayed."
+    """Generic mixer to process two slices with appropriate mixer and return the composite to be displayed."""
 
     mixer_name = mixer_name.lower()
     if mixer_name in ['red_green', 'rgb']:
@@ -384,7 +384,7 @@ def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
 
 
 def _diff_image(slice1, slice2, abs_value=True):
-    "Computes the difference image"
+    """Computes the difference image"""
 
     diff = slice1-slice2
 
@@ -395,7 +395,7 @@ def _diff_image(slice1, slice2, abs_value=True):
 
 
 def get_axis(array, axis, slice_num):
-    "Returns a fixed axis"
+    """Returns a fixed axis"""
 
     slice_list = [slice(None)] * array.ndim
     slice_list[axis] = slice_num
@@ -405,7 +405,7 @@ def get_axis(array, axis, slice_num):
 
 
 def check_int(num, num_descr):
-    "Validation and typecasting."
+    """Validation and typecasting."""
 
     if not np.isfinite(num) or num < 1:
         raise ValueError('{} is not finite or is not > 0'.format(num_descr))
@@ -414,7 +414,7 @@ def check_int(num, num_descr):
 
 
 def check_patch_size(patch_size):
-    "Validation and typcasting"
+    """Validation and typcasting"""
 
     patch_size = np.array(patch_size)
     if patch_size.size == 1:
@@ -424,7 +424,7 @@ def check_patch_size(patch_size):
 
 
 def check_params(num_rows, num_cols, padding):
-    "Validation and typcasting"
+    """Validation and typcasting"""
 
     num_rows = check_int(num_rows, 'num_rows')
     num_cols = check_int(num_cols, 'num_cols')
@@ -434,7 +434,7 @@ def check_params(num_rows, num_cols, padding):
 
 
 def pick_slices(img_shape, num_rows, num_cols):
-    "Picks the slices to display in each dimension"
+    """Picks the slices to display in each dimension"""
 
     num_panels = num_rows * num_cols * 3
     skip_count = num_rows * num_cols
@@ -450,7 +450,7 @@ def pick_slices(img_shape, num_rows, num_cols):
 
 
 def check_rescaling(img1, rescale_intensity_range):
-    "Estimates the intensity range to clip the visualizations to"
+    """Estimates the intensity range to clip the visualizations to"""
 
     RescaleImages = True
     # estimating intensity ranges
@@ -469,6 +469,8 @@ def check_rescaling(img1, rescale_intensity_range):
 
 
 def check_images(img_spec1, img_spec2):
+    """Reads the two images and assers identical shape."""
+
     img1 = read_image(img_spec1)
     img2 = read_image(img_spec2)
 
@@ -479,7 +481,7 @@ def check_images(img_spec1, img_spec2):
 
 
 def read_image(img_spec):
-    "Image reader"
+    """Image reader. Removes stray values close to zero (smaller than 5 %ile)."""
 
     if isinstance(img_spec, str):
         if pexists(realpath(img_spec)):
@@ -514,7 +516,7 @@ def read_image(img_spec):
 
 
 def _get_checkers(slice_shape, patch_size):
-    " Creates checkerboard of a given tile size, filling a given slice."
+    """Creates checkerboard of a given tile size, filling a given slice."""
 
     patch_size = check_patch_size(patch_size)
 
@@ -537,7 +539,7 @@ def _get_checkers(slice_shape, patch_size):
 
 
 def scale_0to1(slice1, slice2):
-    ""
+    """Scale the two images to [0, 1] based on min/max from both."""
 
     min_value = max(slice1.min(), slice2.min())
     max_value = max(slice1.max(), slice2.max())
@@ -549,7 +551,7 @@ def scale_0to1(slice1, slice2):
 
 
 def _mix_color(slice1, slice2, alpha_channels):
-    "Mixing them as red and green channels"
+    """Mixing them as red and green channels"""
 
     if slice1.shape != slice2.shape:
         raise ValueError('size mismatch between cropped slices and checkers!!!')
@@ -569,7 +571,7 @@ def _mix_color(slice1, slice2, alpha_channels):
 
 
 def _mix_slices_in_checkers(slice1, slice2, checkers):
-    "Mixes the two slices in alternating areas specified by checkers"
+    """Mixes the two slices in alternating areas specified by checkers"""
 
     if slice1.shape != slice2.shape or slice2.shape != checkers.shape:
         raise ValueError('size mismatch between cropped slices and checkers!!!')
@@ -581,7 +583,7 @@ def _mix_slices_in_checkers(slice1, slice2, checkers):
 
 
 def crop_to_extents(img1, img2, padding):
-    "Crop the images to ensure both fit within the bounding box"
+    """Crop the images to ensure both fit within the bounding box"""
 
     beg_coords1, end_coords1 = crop_coords(img1, padding)
     beg_coords2, end_coords2 = crop_coords(img2, padding)
@@ -613,6 +615,8 @@ def crop_coords(img, padding):
 
 
 def crop_3dimage(img, beg_coords, end_coords):
+    """Crops a 3d image to the bounding box specified."""
+
     cropped_img = img[
                   beg_coords[0]:end_coords[0],
                   beg_coords[1]:end_coords[1],
