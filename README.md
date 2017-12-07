@@ -42,10 +42,16 @@ red_green(path1, path2, alpha_channels=(0.7, 1))
 
 ## Various options available
 
+Download this image to get a better look at the differences:
+
 ![flyer](docs/flyer_option_matrix.png)
 
 
-## Sample outputs
+## Comparing two BOLD images
+
+![flyer_haxby_mean_BOLD_subj_1_2](docs/flyer_haxby_mean_BOLD_subj_1_2.png)
+
+## Sample outputs for checkerboard plots
 
 When the two scans are mismatched:
 
