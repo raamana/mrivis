@@ -5,11 +5,11 @@
 __author__ = """Pradeep Reddy Raamana"""
 __email__ = 'raamana@gmail.com'
 
-__all__ = ['checkerboard', 'red_green', 'voxelwise_diff']
+__all__ = ['checkerboard', 'color_mix', 'voxelwise_diff']
 
 from sys import version_info
 if version_info.major > 2:
-    from mrivis.mrivis import checkerboard, red_green, voxelwise_diff
+    from mrivis.mrivis import checkerboard, color_mix, voxelwise_diff
 else:
     # from .mrivis import checkerboard
     raise NotImplementedError('mrivis requires Python 3+.')

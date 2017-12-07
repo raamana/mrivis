@@ -5,7 +5,7 @@ Options include checker board, red green mixer and voxel-wise difference maps.
 
 """
 
-__all__ = ['checkerboard', 'red_green', 'voxelwise_diff']
+__all__ = ['checkerboard', 'color_mix', 'voxelwise_diff']
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -44,10 +44,6 @@ def checkerboard(img_spec1=None,
     num_cols : int
         number of panels (left to right) per row of each dimension.
 
-    mixer : str
-        type of mixer to produce the comparison figure.
-        Options: checker_board, red_green, diff_abs,
-
     rescale_intensity_range : bool or list
         range to rescale the intensity values to
 
@@ -62,11 +58,6 @@ def checkerboard(img_spec1=None,
 
     figsize : list
         Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
-
-    kwargs : dict
-        Additional arguments specific to the particular mixer
-        e.g. alpha_channels = [1, 1] for the red_green mixer
-
 
     Returns
     -------
@@ -92,7 +83,7 @@ def checkerboard(img_spec1=None,
     return fig
 
 
-def red_green(img_spec1=None,
+def color_mix(img_spec1=None,
               img_spec2=None,
               alpha_channels=None,
               num_rows=2,
@@ -101,9 +92,9 @@ def red_green(img_spec1=None,
               annot=None,
               padding=5,
               output_path=None,
-              figsize=None,):
+              figsize=None, ):
     """
-    Red-green mixer, where the images become the red and green channels for the image.
+    Color mixer, where each image is represented with a different color (default: red and green) in color channels.
 
     Parameters
     ----------
@@ -123,10 +114,6 @@ def red_green(img_spec1=None,
     num_cols : int
         number of panels (left to right) per row of each dimension.
 
-    mixer : str
-        type of mixer to produce the comparison figure.
-        Options: checker_board, red_green, diff_abs,
-
     rescale_intensity_range : bool or list
         range to rescale the intensity values to
 
@@ -141,11 +128,6 @@ def red_green(img_spec1=None,
 
     figsize : list
         Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
-
-    kwargs : dict
-        Additional arguments specific to the particular mixer
-        e.g. alpha_channels = [1, 1] for the red_green mixer
-
 
     Returns
     -------
@@ -166,7 +148,7 @@ def red_green(img_spec1=None,
                    img_spec2,
                    num_rows=num_rows,
                    num_cols=num_cols,
-                   mixer='red_green',
+                   mixer='color_mix',
                    annot=annot,
                    padding=padding,
                    output_path=output_path,
@@ -207,10 +189,6 @@ def voxelwise_diff(img_spec1=None,
     num_cols : int
         number of panels (left to right) per row of each dimension.
 
-    mixer : str
-        type of mixer to produce the comparison figure.
-        Options: checker_board, red_green, diff_abs,
-
     rescale_intensity_range : bool or list
         range to rescale the intensity values to
 
@@ -225,11 +203,6 @@ def voxelwise_diff(img_spec1=None,
 
     figsize : list
         Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
-
-    kwargs : dict
-        Additional arguments specific to the particular mixer
-        e.g. alpha_channels = [1, 1] for the red_green mixer
-
 
     Returns
     -------
@@ -287,7 +260,7 @@ def _compare(img_spec1,
 
     mixer : str
         type of mixer to produce the comparison figure.
-        Options: checker_board, red_green, diff_abs,
+        Options: checker_board, color_mix, diff_abs,
 
     rescale_intensity_range : bool or list
         range to rescale the intensity values to
@@ -306,7 +279,7 @@ def _compare(img_spec1,
 
     kwargs : dict
         Additional arguments specific to the particular mixer
-        e.g. alpha_channels = [1, 1] for the red_green mixer
+        e.g. alpha_channels = [1, 1] for the color_mix mixer
 
     Returns
     -------
@@ -372,7 +345,7 @@ def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
     """Generic mixer to process two slices with appropriate mixer and return the composite to be displayed."""
 
     mixer_name = mixer_name.lower()
-    if mixer_name in ['red_green', 'rgb']:
+    if mixer_name in ['color_mix', 'rgb']:
         mixed = _mix_color(slice1, slice2, **kwargs)
         cmap = 'gray'
     elif mixer_name in ['checkerboard', 'checker', 'cb', 'checker_board']:

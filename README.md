@@ -35,7 +35,7 @@ checkerboard(path1, path2, patch_size=[10, 20], # rectangular patches
 voxelwise_diff(path1, path2)
 voxelwise_diff(path1, path2, abs_value=False)
 
-red_green(path1, path2, alpha_channels=(1, 1))
+color_mix(path1, path2, alpha_channels=(1, 1))
 red_green(path1, path2, alpha_channels=(0.7, 1))
 
 ```
