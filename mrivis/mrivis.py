@@ -618,6 +618,8 @@ def scale_0to1(image):
 
     return image
 
+
+def scale_images_0to1(slice1, slice2):
     """Scale the two images to [0, 1] based on min/max from both."""
 
     min_value = max(slice1.min(), slice2.min())
@@ -640,6 +642,7 @@ def _mix_color(slice1, slice2, alpha_channels, color_space):
         raise ValueError('Alphas must be two value tuples.')
 
     slice1, slice2 = scale_0to1(slice1, slice2)
+    slice1, slice2 = scale_images_0to1(slice1, slice2)
     if color_space.lower() in ['rgb']:
     elif color_space.lower() in ['hsv']:
 
