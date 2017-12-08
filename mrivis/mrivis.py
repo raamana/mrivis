@@ -12,15 +12,15 @@ from matplotlib import pyplot as plt
 import nibabel as nib
 from genericpath import exists as pexists
 from os.path import realpath
-
+import matplotlib as mpl
 
 def checkerboard(img_spec1=None,
                  img_spec2=None,
                  patch_size=10,
                  num_rows=2,
                  num_cols=6,
-                 rescale_intensity_range=None,
                  rescale_method='global',
+                 background_threshold=0.05,
                  annot=None,
                  padding=5,
                  output_path=None,
@@ -50,6 +50,11 @@ def checkerboard(img_spec1=None,
         Default: 'global', min and max values computed based on ranges from both images.
         If false or None, no rescaling is done (does not work yet).
 
+    background_threshold : float or str
+        A threshold value below which all the background voxels will be set to zero.
+        Default : 0.05. Other option is a string specifying a percentile: '5%', '10%'.
+        Specify None if you don't want any thresholding.
+
     annot : str
         Text to display to annotate the visualization
 
@@ -77,6 +82,7 @@ def checkerboard(img_spec1=None,
                    num_cols=num_cols,
                    mixer='checker_board',
                    rescale_method=rescale_method,
+                   bkground_thresh=background_threshold,
                    annot=annot,
                    padding=padding,
                    output_path=output_path,
@@ -93,6 +99,7 @@ def color_mix(img_spec1=None,
               num_rows=2,
               num_cols=6,
               rescale_method='global',
+              background_threshold=0.05,
               annot=None,
               padding=5,
               output_path=None,
@@ -122,6 +129,11 @@ def color_mix(img_spec1=None,
         Range to rescale the intensity values to
         Default: 'global', min and max values computed based on ranges from both images.
         If false or None, no rescaling is done (does not work yet).
+
+    background_threshold : float or str
+        A threshold value below which all the background voxels will be set to zero.
+        Default : 0.05. Other option is a string specifying a percentile: '5%', '10%'.
+        Specify None if you don't want any thresholding.
 
     annot : str
         Text to display to annotate the visualization
@@ -159,6 +171,7 @@ def color_mix(img_spec1=None,
                    annot=annot,
                    padding=padding,
                    rescale_method=rescale_method,
+                   bkground_thresh=background_threshold,
                    output_path=output_path,
                    figsize=figsize,
                    **mixer_params)
@@ -172,6 +185,7 @@ def voxelwise_diff(img_spec1=None,
                    num_rows=2,
                    num_cols=6,
                    rescale_method='global',
+                   background_threshold=0.05,
                    annot=None,
                    padding=5,
                    output_path=None,
@@ -202,6 +216,10 @@ def voxelwise_diff(img_spec1=None,
         Default: 'global', min and max values computed based on ranges from both images.
         If false or None, no rescaling is done (does not work yet).
 
+    background_threshold : float or str
+        A threshold value below which all the background voxels will be set to zero.
+        Default : 0.05. Other option is a string specifying a percentile: '5%', '10%'.
+        Specify None if you don't want any thresholding.
 
     annot : str
         Text to display to annotate the visualization
@@ -235,6 +253,7 @@ def voxelwise_diff(img_spec1=None,
                    annot=annot,
                    padding=padding,
                    rescale_method=rescale_method,
+                   bkground_thresh=background_threshold,
                    output_path=output_path,
                    figsize=figsize,
                    **mixer_params)
@@ -250,6 +269,7 @@ def _compare(img_spec1,
              rescale_method='global',
              annot=None,
              padding=5,
+             bkground_thresh=0.05,
              output_path=None,
              figsize=None,
              **kwargs):
@@ -306,7 +326,7 @@ def _compare(img_spec1,
 
     num_rows, num_cols, padding = check_params(num_rows, num_cols, padding)
 
-    img1, img2 = check_images(img_spec1, img_spec2)
+    img1, img2 = check_images(img_spec1, img_spec2, bkground_thresh=bkground_thresh)
     img1, img2 = crop_to_extents(img1, img2, padding)
 
     slices = pick_slices(img1.shape, num_rows, num_cols)
@@ -484,12 +504,11 @@ def check_rescaling(img1, img2, rescale_method):
     return rescale_images, img1, img2, min_value, max_value
 
 
-
-def check_images(img_spec1, img_spec2):
+def check_images(img_spec1, img_spec2, bkground_thresh=0.05):
     """Reads the two images and assers identical shape."""
 
-    img1 = read_image(img_spec1)
-    img2 = read_image(img_spec2)
+    img1 = read_image(img_spec1, bkground_thresh)
+    img2 = read_image(img_spec2, bkground_thresh)
 
     if img1.shape != img2.shape:
         raise ValueError('size mismatch! Two images to be compared must be of the same size in all dimensions.')
@@ -497,7 +516,7 @@ def check_images(img_spec1, img_spec2):
     return img1, img2
 
 
-def read_image(img_spec):
+def read_image(img_spec, bkground_thresh):
     """Image reader. Removes stray values close to zero (smaller than 5 %ile)."""
 
     if isinstance(img_spec, str):
@@ -525,9 +544,32 @@ def read_image(img_spec):
     elif len(img.shape) > 4:
         raise ValueError('Invalid shape of image : {}'.format(img.shape))
 
-    # setting small stray values to zero
-    stray_value = np.percentile(img.flatten(), 5)
-    img[img < stray_value] = 0.0
+    return img
+
+
+def threshold_image(img, bkground_thresh, bkground_value=0.0):
+    """
+    Thresholds a given image at a value or percentile.
+
+    Replacement value can be specified too.
+    """
+
+    if bkground_thresh is None:
+        return img
+
+    if isinstance(bkground_thresh, str):
+        try:
+            thresh_perc = float(bkground_thresh.replace('%', ''))
+        except:
+            raise ValueError('percentile specified could not be parsed correctly - must be a string of the form "5%", "10%" etc')
+        else:
+            thresh_value = np.percentile(img, thresh_perc)
+    elif isinstance(bkground_thresh, (float, int)):
+        thresh_value = bkground_thresh
+    else:
+        raise ValueError('Invalid specification for background threshold.')
+
+    img[img < thresh_value] = bkground_value
 
     return img
 
