@@ -20,6 +20,7 @@ def checkerboard(img_spec1=None,
                  num_rows=2,
                  num_cols=6,
                  rescale_intensity_range=None,
+                 rescale_method='global',
                  annot=None,
                  padding=5,
                  output_path=None,
@@ -44,8 +45,10 @@ def checkerboard(img_spec1=None,
     num_cols : int
         number of panels (left to right) per row of each dimension.
 
-    rescale_intensity_range : bool or list
-        range to rescale the intensity values to
+    rescale_method : bool or str or list or None
+        Range to rescale the intensity values to
+        Default: 'global', min and max values computed based on ranges from both images.
+        If false or None, no rescaling is done (does not work yet).
 
     annot : str
         Text to display to annotate the visualization
@@ -73,7 +76,7 @@ def checkerboard(img_spec1=None,
                    num_rows=num_rows,
                    num_cols=num_cols,
                    mixer='checker_board',
-                   rescale_intensity_range=rescale_intensity_range,
+                   rescale_method=rescale_method,
                    annot=annot,
                    padding=padding,
                    output_path=output_path,
@@ -88,7 +91,7 @@ def color_mix(img_spec1=None,
               alpha_channels=None,
               num_rows=2,
               num_cols=6,
-              rescale_intensity_range=None,
+              rescale_method='global',
               annot=None,
               padding=5,
               output_path=None,
@@ -114,8 +117,10 @@ def color_mix(img_spec1=None,
     num_cols : int
         number of panels (left to right) per row of each dimension.
 
-    rescale_intensity_range : bool or list
-        range to rescale the intensity values to
+    rescale_method : bool or str or list or None
+        Range to rescale the intensity values to
+        Default: 'global', min and max values computed based on ranges from both images.
+        If false or None, no rescaling is done (does not work yet).
 
     annot : str
         Text to display to annotate the visualization
@@ -151,6 +156,7 @@ def color_mix(img_spec1=None,
                    mixer='color_mix',
                    annot=annot,
                    padding=padding,
+                   rescale_method=rescale_method,
                    output_path=output_path,
                    figsize=figsize,
                    **mixer_params)
@@ -163,7 +169,7 @@ def voxelwise_diff(img_spec1=None,
                    abs_value=True,
                    num_rows=2,
                    num_cols=6,
-                   rescale_intensity_range=None,
+                   rescale_method='global',
                    annot=None,
                    padding=5,
                    output_path=None,
@@ -189,8 +195,11 @@ def voxelwise_diff(img_spec1=None,
     num_cols : int
         number of panels (left to right) per row of each dimension.
 
-    rescale_intensity_range : bool or list
-        range to rescale the intensity values to
+    rescale_method : bool or str or list or None
+        Range to rescale the intensity values to
+        Default: 'global', min and max values computed based on ranges from both images.
+        If false or None, no rescaling is done (does not work yet).
+
 
     annot : str
         Text to display to annotate the visualization
@@ -223,6 +232,7 @@ def voxelwise_diff(img_spec1=None,
                    mixer='voxelwise_diff',
                    annot=annot,
                    padding=padding,
+                   rescale_method=rescale_method,
                    output_path=output_path,
                    figsize=figsize,
                    **mixer_params)
@@ -235,7 +245,7 @@ def _compare(img_spec1,
              num_rows=2,
              num_cols=6,
              mixer='checker_board',
-             rescale_intensity_range=None,
+             rescale_method='global',
              annot=None,
              padding=5,
              output_path=None,
@@ -262,8 +272,14 @@ def _compare(img_spec1,
         type of mixer to produce the comparison figure.
         Options: checker_board, color_mix, diff_abs,
 
-    rescale_intensity_range : bool or list
-        range to rescale the intensity values to
+    rescale_method : bool or str or list or None
+        Method to rescale the intensity values to.
+        Choices : 'global', 'each', False or None.
+
+        Default: 'global', min and max values computed based on ranges from both images.
+        If 'each', rescales each image separately to [0, 1].
+            This option is useful when overlaying images with very different intensity ranges e.g. from different modalities altogether.
+        If False or None, no rescaling is done (does not work yet).
 
     annot : str
         Text to display to annotate the visualization
@@ -293,7 +309,7 @@ def _compare(img_spec1,
 
     slices = pick_slices(img1.shape, num_rows, num_cols)
 
-    rescale_images, img_intensity_range = check_rescaling(img1, rescale_intensity_range)
+    rescale_images, img1, img2, min_value, max_value = check_rescaling(img1, img2, rescale_method)
 
     plt.style.use('dark_background')
 
@@ -322,10 +338,7 @@ def _compare(img_spec1,
             mixed, mixer_spec_params = _generic_mixer(slice1, slice2, mixer, **kwargs)
             display_params.update(mixer_spec_params)
 
-            if rescale_images:
-                plt.imshow(mixed, imlim=img_intensity_range, **display_params)
-            else:
-                plt.imshow(mixed, **display_params)
+            plt.imshow(mixed, vmin=min_value, vmax=max_value, **display_params)
 
             # adjustments for proper presentation
             plt.axis('off')
@@ -429,23 +442,45 @@ def pick_slices(img_shape, num_rows, num_cols):
     return slices
 
 
-def check_rescaling(img1, rescale_intensity_range):
+def check_rescaling(img1, img2, rescale_method):
     """Estimates the intensity range to clip the visualizations to"""
 
-    RescaleImages = True
     # estimating intensity ranges
-    if rescale_intensity_range is None:
-        img_intensity_range = [img1.min(), img1.max()]
-    elif len(rescale_intensity_range) == 2:
-        img_intensity_range = rescale_intensity_range
+    if rescale_method is None:
+        # this section is to help user to avoid all intensity rescaling altogther!
+        # TODO bug does not work yet, as pyplot does not offer any easy way to control it
+        rescale_images = False
+        min_value = None
+        max_value = None
+        norm_image = None # mpl.colors.NoNorm doesn't work yet. data is getting linearly normalized to [0, 1]
+    elif isinstance(rescale_method, str):
+        if rescale_method.lower() in ['global']:
+            combined_distr = np.concatenate((img1.flatten(), img2.flatten()))
+            min_value = combined_distr.min()
+            max_value = combined_distr.max()
+        elif rescale_method.lower() in ['each']:
+            img1 = scale_0to1(img1)
+            img2 = scale_0to1(img2)
+            min_value = 0.0
+            max_value = 1.0
+        else:
+            raise ValueError('rescaling method can only be "global" or "each"')
+
+        rescale_images = True
+        norm_image = mpl.colors.Normalize
+    elif len(rescale_method) == 2:
+        min_value = min(rescale_method)
+        max_value = max(rescale_method)
+        rescale_images = True
+        norm_image = mpl.colors.Normalize
     else:
-        RescaleImages = False
-        img_intensity_range = None
+        raise ValueError('Invalid intensity range!. It must be either : '
+                         '1) a list/tuple of two distinct values or'
+                         '2) "global" indicating rescaling based on min/max values derived from both images or'
+                         '3) None, no rescaling or norming altogether. ')
 
-    if len(np.unique(img_intensity_range)) == 1:
-        RescaleImages = False
+    return rescale_images, img1, img2, min_value, max_value
 
-    return RescaleImages, img_intensity_range
 
 
 def check_images(img_spec1, img_spec2):
@@ -518,7 +553,15 @@ def _get_checkers(slice_shape, patch_size):
     return checkers
 
 
-def scale_0to1(slice1, slice2):
+def scale_0to1(image):
+    """Scale the two images to [0, 1] based on min/max from both."""
+
+    min_value = image.min()
+    max_value = image.max()
+    image = (image - min_value) / max_value
+
+    return image
+
     """Scale the two images to [0, 1] based on min/max from both."""
 
     min_value = max(slice1.min(), slice2.min())
