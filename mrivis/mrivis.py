@@ -382,7 +382,7 @@ def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
     mixer_name = mixer_name.lower()
     if mixer_name in ['color_mix', 'rgb']:
         mixed = _mix_color(slice1, slice2, **kwargs)
-        cmap = 'gray'
+        cmap = None # data is already RGB-ed
     elif mixer_name in ['checkerboard', 'checker', 'cb', 'checker_board']:
         checkers = _get_checkers(slice1.shape, **kwargs)
         mixed = _mix_slices_in_checkers(slice1, slice2, checkers)
@@ -511,7 +511,8 @@ def check_images(img_spec1, img_spec2, bkground_thresh=0.05):
     img2 = read_image(img_spec2, bkground_thresh)
 
     if img1.shape != img2.shape:
-        raise ValueError('size mismatch! Two images to be compared must be of the same size in all dimensions.')
+        raise ValueError('size mismatch! First image: {} Second image: {}\n'
+                         'Two images to be compared must be of the same size in all dimensions.'.format(img1.shape, img2.shape))
 
     return img1, img2
 
