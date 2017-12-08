@@ -531,6 +531,17 @@ def read_image(img_spec, bkground_thresh):
         raise ValueError('Invalid input specified! '
                          'Input either a path to image data, or provide 3d Matrix directly.')
 
+    img = check_image_is_3d(img)
+
+    if not np.issubdtype(img.dtype, np.float):
+        img = img.astype('float32')
+
+    return threshold_image(img, bkground_thresh)
+
+
+def check_image_is_3d(img):
+    """Ensures the image loaded is 3d and nothing else."""
+
     if len(img.shape) < 3:
         raise ValueError('Input volume must be atleast 3D!')
     elif len(img.shape) == 3:
