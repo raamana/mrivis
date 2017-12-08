@@ -89,6 +89,7 @@ def checkerboard(img_spec1=None,
 def color_mix(img_spec1=None,
               img_spec2=None,
               alpha_channels=None,
+              color_space='rgb',
               num_rows=2,
               num_cols=6,
               rescale_method='global',
@@ -148,7 +149,8 @@ def color_mix(img_spec1=None,
         # not sure if we should make them sum to 1:  or not np.isclose(sum(alpha_channels), 1.0)
         raise ValueError('Alpha must be two elements')
 
-    mixer_params = dict(alpha_channels=alpha_channels)
+    mixer_params = dict(alpha_channels=alpha_channels,
+                        color_space=color_space)
     fig = _compare(img_spec1,
                    img_spec2,
                    num_rows=num_rows,
@@ -573,7 +575,7 @@ def scale_0to1(image):
     return slice1, slice2
 
 
-def _mix_color(slice1, slice2, alpha_channels):
+def _mix_color(slice1, slice2, alpha_channels, color_space):
     """Mixing them as red and green channels"""
 
     if slice1.shape != slice2.shape:
@@ -584,6 +586,23 @@ def _mix_color(slice1, slice2, alpha_channels):
         raise ValueError('Alphas must be two value tuples.')
 
     slice1, slice2 = scale_0to1(slice1, slice2)
+    if color_space.lower() in ['rgb']:
+    elif color_space.lower() in ['hsv']:
+
+        raise NotImplementedError('This method (color_space="hsv") is yet to fully conceptualized and implemented.')
+
+        # TODO other ideas: hue/saturation/intensity value driven by difference in intensity?
+        hue = alpha_channels[0] * slice1
+        sat = alpha_channels[1] * slice2
+        val = np.ones_like(slice1)
+
+        hue[background] = 1.0
+        sat[background] = 0.0
+        val[background] = 0.0
+
+        mixed = np.stack((hue, sat, val), axis=2)
+        # converting to RGB
+        mixed = mpl.colors.hsv_to_rgb(mixed)
 
     mixed = np.zeros((slice1.shape[0], slice1.shape[1], 3))
     mixed[:, :, 0] = alpha_channels[0] * slice1
