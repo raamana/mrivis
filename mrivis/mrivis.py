@@ -641,9 +641,24 @@ def _mix_color(slice1, slice2, alpha_channels, color_space):
     if len(alpha_channels) != 2:
         raise ValueError('Alphas must be two value tuples.')
 
-    slice1, slice2 = scale_0to1(slice1, slice2)
     slice1, slice2 = scale_images_0to1(slice1, slice2)
+
+    # masking background
+    combined_distr = np.concatenate((slice1.flatten(), slice2.flatten()))
+    image_eps = np.percentile(combined_distr, 5)
+    background = np.logical_or(slice1 <= image_eps, slice2 <= image_eps)
+
     if color_space.lower() in ['rgb']:
+
+        red = alpha_channels[0] * slice1
+        grn = alpha_channels[1] * slice2
+        blu = np.zeros_like(slice1)
+
+        # foreground = np.logical_not(background)
+        # blu[foreground] = 1.0
+
+        mixed = np.stack((red, grn, blu), axis=2)
+
     elif color_space.lower() in ['hsv']:
 
         raise NotImplementedError('This method (color_space="hsv") is yet to fully conceptualized and implemented.')
