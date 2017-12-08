@@ -676,10 +676,9 @@ def _mix_color(slice1, slice2, alpha_channels, color_space):
         # converting to RGB
         mixed = mpl.colors.hsv_to_rgb(mixed)
 
-    mixed = np.zeros((slice1.shape[0], slice1.shape[1], 3))
-    mixed[:, :, 0] = alpha_channels[0] * slice1
-    mixed[:, :, 1] = alpha_channels[1] * slice2
-    mixed[:, :, 2] = 0.0  # leaving blue as zero
+    # ensuring all values are clipped to [0, 1]
+    mixed[mixed<=0.0] = 0.0
+    mixed[mixed>=1.0] = 1.0
 
     return mixed
 
