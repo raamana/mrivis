@@ -15,6 +15,10 @@ pip install -U mrivis
 
 ## Usage:
 
+Note: this package is in ACTIVE development. 
+Expect minor bugs, along frequent fixes/changes.
+
+
 ```python
 from mrivis import checkerboard, voxelwise_diff, red_green
 
