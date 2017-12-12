@@ -20,14 +20,14 @@ Expect minor bugs, along frequent fixes/changes.
 
 
 ```python
-from mrivis import checkerboard, voxelwise_diff, red_green
+from mrivis import checkerboard, voxelwise_diff, color_mix
 
 path1 = '/Users/Reddy/Desktop/image.nii'
 path2 = '/Users/Reddy/Desktop/another.nii'
 
 checkerboard(path1, path2, patch_size=5) # square patches
 
-checkerboard(path1, path2, rescale_intensity_range=(0, 256) )
+checkerboard(path1, path2, rescale_method=(0, 256) )
 
 checkerboard(path1, path2, patch_size=10,
              num_rows=1, num_cols=3) # 1 row per dimension, with 3 columns
@@ -40,7 +40,7 @@ voxelwise_diff(path1, path2)
 voxelwise_diff(path1, path2, abs_value=False)
 
 color_mix(path1, path2, alpha_channels=(1, 1))
-red_green(path1, path2, alpha_channels=(0.7, 1))
+color_mix(path1, path2, alpha_channels=(0.7, 1))
 
 ```
 
