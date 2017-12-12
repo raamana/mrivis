@@ -149,6 +149,21 @@ def crop_to_extents(img1, img2, padding):
     return img1, img2
 
 
+def crop_image(img, padding=5):
+    "Crops an image or slice to its extents"
+
+    beg_coords, end_coords = crop_coords(img, padding)
+
+    if len(img.shape)==3:
+        img = crop_3dimage(img, beg_coords, end_coords)
+    elif len(img.shape)==2:
+        img = crop_2dimage(img, beg_coords, end_coords)
+    else:
+        raise ValueError('Can only crop 2D or 3D images!')
+
+    return img
+
+
 def crop_coords(img, padding):
     """Find coordinates describing extent of non-zero portion of image, padded"""
 
@@ -173,6 +188,17 @@ def crop_3dimage(img, beg_coords, end_coords):
                   beg_coords[0]:end_coords[0],
                   beg_coords[1]:end_coords[1],
                   beg_coords[2]:end_coords[2]
+                  ]
+
+    return cropped_img
+
+
+def crop_2dimage(img, beg_coords, end_coords):
+    """Crops a 3d image to the bounding box specified."""
+
+    cropped_img = img[
+                  beg_coords[0]:end_coords[0],
+                  beg_coords[1]:end_coords[1],
                   ]
 
     return cropped_img

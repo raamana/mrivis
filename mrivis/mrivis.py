@@ -4,7 +4,8 @@ mrivis: Tools to comapre the similarity of two 3d images (structural, functional
 Options include checker board, red green mixer and voxel-wise difference maps.
 
 """
-from mrivis.utils import _diff_image, get_axis, check_patch_size, check_params, read_image, scale_0to1, crop_to_extents
+from mrivis.utils import read_image, _diff_image, get_axis, check_patch_size, check_params, \
+    scale_0to1, crop_to_extents, crop_coords, crop_3dimage, crop_image
 
 __all__ = ['checkerboard', 'color_mix', 'voxelwise_diff']
 
@@ -335,7 +336,7 @@ def _compare(img_spec1,
 
     num_axes = 3
     if figsize is None:
-        figsize = [15, 15]
+        figsize = [3*num_axes * num_rows, 3*num_cols]
     fig, ax = plt.subplots(num_axes * num_rows, num_cols, figsize=figsize)
 
     # displaying some annotation text if provided
@@ -361,6 +362,63 @@ def _compare(img_spec1,
             plt.imshow(mixed, vmin=min_value, vmax=max_value, **display_params)
 
             # adjustments for proper presentation
+            plt.axis('off')
+
+    fig.tight_layout()
+
+    if output_path is not None:
+        output_path = output_path.replace(' ', '_')
+        fig.savefig(output_path + '.png', bbox_inches='tight')
+
+    # plt.close()
+
+    return fig
+
+
+def collage(img_spec,
+            num_rows=2,
+            num_cols=6,
+            rescale_method='global',
+            cmap='gray',
+            annot=None,
+            padding=5,
+            bkground_thresh=0.05,
+            output_path=None,
+            figsize=None,
+            **kwargs):
+    "Produces a collage of various slices from different orientations in the given 3D image"
+
+    num_rows, num_cols, padding = check_params(num_rows, num_cols, padding)
+
+    img = read_image(img_spec, bkground_thresh=bkground_thresh)
+    img = crop_image(img, padding)
+
+    img, rescale_method = check_rescaling_collage(img, rescale_method)
+    slices = pick_slices(img.shape, num_rows, num_cols)
+
+    plt.style.use('dark_background')
+
+    num_axes = 3
+    if figsize is None:
+        figsize = [3*num_axes * num_rows, 3*num_cols]
+    fig, ax = plt.subplots(num_axes * num_rows, num_cols, figsize=figsize)
+
+    # displaying some annotation text if provided
+    if annot is not None:
+        fig.suptitle(annot, backgroundcolor='black', color='g')
+
+    display_params = dict(interpolation='none', aspect='equal', origin='lower',
+                          cmap=cmap)
+
+    ax = ax.flatten()
+    ax_counter = 0
+    for dim_index in range(3):
+        for slice_num in slices[dim_index]:
+            plt.sca(ax[ax_counter])
+            ax_counter = ax_counter + 1
+            slice1 = get_axis(img, dim_index, slice_num)
+            slice1 = crop_image(slice1, padding)
+            plt.imshow(slice1, **display_params)
             plt.axis('off')
 
     fig.tight_layout()
@@ -410,6 +468,22 @@ def pick_slices(img_shape, num_rows, num_cols):
         slices.append(slices_in_dim)
 
     return slices
+
+
+def check_rescaling_collage(img, rescale_method=None):
+    ""
+
+    if not (isinstance(rescale_method, str) or rescale_method is None):
+        raise ValueError('rescale_method method be "global", "slice" or None')
+
+    if rescale_method is None:
+        return img, rescale_method
+
+    rescale_method = rescale_method.lower()
+    if rescale_method in ['global']:
+        img = scale_0to1(img)
+
+    return img, rescale_method
 
 
 def check_rescaling(img1, img2, rescale_method):
