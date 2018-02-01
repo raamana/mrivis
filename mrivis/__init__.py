@@ -5,7 +5,7 @@
 __author__ = """Pradeep Reddy Raamana"""
 __email__ = 'raamana@gmail.com'
 
-__all__ = ['checkerboard', 'color_mix', 'voxelwise_diff']
+__all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage']
 
 from sys import version_info
 if version_info.major > 2:

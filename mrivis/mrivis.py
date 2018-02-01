@@ -7,7 +7,7 @@ Options include checker board, red green mixer and voxel-wise difference maps.
 from mrivis.utils import read_image, _diff_image, get_axis, check_patch_size, check_params, \
     scale_0to1, crop_to_extents, crop_coords, crop_3dimage, crop_image
 
-__all__ = ['checkerboard', 'color_mix', 'voxelwise_diff']
+__all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage']
 
 import numpy as np
 from matplotlib import pyplot as plt
