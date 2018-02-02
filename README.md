@@ -15,7 +15,7 @@ pip install -U mrivis
 
 ## Usage:
 
-Note: this package is in ACTIVE development. 
+Note: this package is in ACTIVE development.
 Expect minor bugs, along frequent fixes/changes.
 
 

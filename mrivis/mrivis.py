@@ -5,12 +5,13 @@ Options include checker board, red green mixer and voxel-wise difference maps.
 
 """
 from mrivis.utils import read_image, _diff_image, get_axis, check_patch_size, check_params, \
-    scale_0to1, crop_to_extents, crop_coords, crop_3dimage, crop_image, diff_colormap
+    scale_0to1, crop_to_extents, crop_coords, crop_3dimage, crop_image
+from mrivis.color_maps import get_freesurfer_cmap
 
-__all__ = ['checkerboard', 'color_mix', 'voxelwise_diff']
+__all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage']
 
 import numpy as np
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, colors, cm
 import matplotlib as mpl
 
 def checkerboard(img_spec1=None,
@@ -181,9 +182,6 @@ def color_mix(img_spec1=None,
 def voxelwise_diff(img_spec1=None,
                    img_spec2=None,
                    abs_value=True,
-                   cmap='gray',
-                   overlay_image=False,
-                   overlay_alpha=0.8,
                    num_rows=2,
                    num_cols=6,
                    rescale_method='global',
@@ -206,15 +204,6 @@ def voxelwise_diff(img_spec1=None,
     abs_value : bool
         Flag indicating whether to take the absolute value of the diffenence or not.
         Default: True, display absolute differences only (so order of images does not matter)
-
-    cmap : str or matplotlib.cm.cmap
-        Colormap to show the difference values.
-
-    overlay_image : bool
-        Flag to specify whether to overlay the first image under the difference map.
-
-    overlay_alpha : float
-        Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).
 
     num_rows : int
         number of rows (top to bottom) per each of 3 dimensions
@@ -255,10 +244,7 @@ def voxelwise_diff(img_spec1=None,
     if not isinstance(abs_value, bool):
         abs_value = bool(abs_value)
 
-    mixer_params = dict(abs_value=abs_value,
-                        cmap=cmap,
-                        overlay_image=overlay_image,
-                        overlay_alpha=overlay_alpha)
+    mixer_params = dict(abs_value=abs_value)
     fig = _compare(img_spec1,
                    img_spec2,
                    num_rows=num_rows,
@@ -371,9 +357,10 @@ def _compare(img_spec1,
             slice1 = get_axis(img1, dim_index, slice_num)
             slice2 = get_axis(img2, dim_index, slice_num)
 
-            _generic_mixer(slice1, slice2, mixer,
-                           min_value, max_value,
-                           display_params, **kwargs)
+            mixed, mixer_spec_params = _generic_mixer(slice1, slice2, mixer, **kwargs)
+            display_params.update(mixer_spec_params)
+
+            plt.imshow(mixed, vmin=min_value, vmax=max_value, **display_params)
 
             # adjustments for proper presentation
             plt.axis('off')
@@ -446,47 +433,97 @@ def collage(img_spec,
     return fig
 
 
-def _generic_mixer(slice1, slice2,
-                   mixer_name,
-                   min_value=None, max_value=None,
-                   display_params={},
-                   **kwargs):
+def aseg_on_mri(mri_spec,
+                aseg_spec,
+            num_rows=2,
+            num_cols=6,
+            rescale_method='global',
+            aseg_cmap='freesurfer',
+                sub_cortical=False,
+            annot=None,
+            padding=5,
+            bkground_thresh=0.05,
+            output_path=None,
+            figsize=None,
+            **kwargs):
+    "Produces a collage of various slices from different orientations in the given 3D image"
+
+    num_rows, num_cols, padding = check_params(num_rows, num_cols, padding)
+
+    mri = read_image(mri_spec, bkground_thresh=bkground_thresh)
+    seg = read_image(aseg_spec, bkground_thresh=0)
+    img1, img2 = crop_to_extents(mri, seg, padding)
+
+    slices = pick_slices(mri.shape, num_rows, num_cols)
+
+    plt.style.use('dark_background')
+
+    num_axes = 3
+    if figsize is None:
+        figsize = [3*num_axes * num_rows, 3*num_cols]
+    fig, ax = plt.subplots(num_axes * num_rows, num_cols, figsize=figsize)
+
+    # displaying some annotation text if provided
+    if annot is not None:
+        fig.suptitle(annot, backgroundcolor='black', color='g')
+
+    display_params_mri = dict(interpolation='none', aspect='equal', origin='lower',
+                              cmap='gray')
+    display_params_seg = dict(interpolation='none', aspect='equal', origin='lower',
+                              alpha=0.9)
+
+    normalize_labels = colors.Normalize(vmin=seg.min(), vmax=seg.max(), clip=True)
+    fs_cmap = get_freesurfer_cmap(sub_cortical)
+    label_mapper = cm.ScalarMappable(norm=normalize_labels, cmap=fs_cmap)
+
+    ax = ax.flatten()
+    ax_counter = 0
+    for dim_index in range(3):
+        for slice_num in slices[dim_index]:
+            plt.sca(ax[ax_counter])
+            ax_counter = ax_counter + 1
+
+            slice_mri = get_axis(mri, dim_index, slice_num)
+
+            slice_seg = get_axis(seg, dim_index, slice_num)
+            slice_rgb = label_mapper.to_rgba(slice_seg)
+
+            plt.imshow(slice_mri, **display_params_mri)
+            plt.imshow(slice_rgb, **display_params_seg)
+            plt.axis('off')
+            print('blah blah')
+
+    fig.tight_layout()
+
+    if output_path is not None:
+        output_path = output_path.replace(' ', '_')
+        fig.savefig(output_path + '.png', bbox_inches='tight')
+
+    # plt.close()
+
+    return fig
+
+
+def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
     """Generic mixer to process two slices with appropriate mixer and return the composite to be displayed."""
 
     mixer_name = mixer_name.lower()
     if mixer_name in ['color_mix', 'rgb']:
-
         mixed = _mix_color(slice1, slice2, **kwargs)
-        plt.imshow(mixed, vmin=min_value, vmax=max_value, **display_params)
-
+        cmap = None # data is already RGB-ed
     elif mixer_name in ['checkerboard', 'checker', 'cb', 'checker_board']:
-
         checkers = _get_checkers(slice1.shape, **kwargs)
         mixed = _mix_slices_in_checkers(slice1, slice2, checkers)
-        plt.imshow(mixed, cmap='gray',
-                   vmin=min_value, vmax=max_value,
-                   **display_params)
-
+        cmap = 'gray'
     elif mixer_name in ['diff', 'voxelwise_diff', 'vdiff']:
-
-        diff_img, cmap = _diff_image(slice1, slice2, **kwargs)
-        if kwargs['overlay_image'] is True:
-            diff_cmap = diff_colormap()
-            plt.imshow(slice1, alpha=kwargs['overlay_alpha'], **display_params)
-            plt.hold(True)
-            plt.imshow(diff_img,
-                       cmap=diff_cmap,
-                       vmin=min_value, vmax=max_value,
-                       **display_params)
-        else:
-            plt.imshow(diff_img, cmap=cmap,
-                       vmin=min_value, vmax=max_value,
-                       **display_params)
-
+        mixed = _diff_image(slice1, slice2, **kwargs)
+        cmap = 'gray'
     else:
         raise ValueError('Invalid mixer name chosen.')
 
-    return
+    disp_params = dict(cmap=cmap)
+
+    return mixed, disp_params
 
 
 def pick_slices(img_shape, num_rows, num_cols):
