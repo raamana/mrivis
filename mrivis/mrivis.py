@@ -460,7 +460,7 @@ def aseg_on_mri(mri_spec,
 
     num_axes = 3
     if figsize is None:
-        figsize = [3*num_axes * num_rows, 3*num_cols]
+        figsize = [5*num_axes * num_rows, 5*num_cols]
     fig, ax = plt.subplots(num_axes * num_rows, num_cols, figsize=figsize)
 
     # displaying some annotation text if provided
@@ -468,9 +468,11 @@ def aseg_on_mri(mri_spec,
         fig.suptitle(annot, backgroundcolor='black', color='g')
 
     display_params_mri = dict(interpolation='none', aspect='equal', origin='lower',
-                              cmap='gray')
+                              alpha=0.6,
+                              cmap='gray',
+                              vmin=mri.min(), vmax=mri.max())
     display_params_seg = dict(interpolation='none', aspect='equal', origin='lower',
-                              alpha=0.9)
+                              alpha=0.7)
 
     normalize_labels = colors.Normalize(vmin=seg.min(), vmax=seg.max(), clip=True)
     fs_cmap = get_freesurfer_cmap(sub_cortical)
@@ -484,14 +486,17 @@ def aseg_on_mri(mri_spec,
             ax_counter = ax_counter + 1
 
             slice_mri = get_axis(mri, dim_index, slice_num)
-
             slice_seg = get_axis(seg, dim_index, slice_num)
-            slice_rgb = label_mapper.to_rgba(slice_seg)
 
-            plt.imshow(slice_mri, **display_params_mri)
-            plt.imshow(slice_rgb, **display_params_seg)
+            # masking data to set no-value pixels to transparent
+            seg_background = np.isclose(slice_seg, 0.0)
+            seg_masked = np.ma.masked_where(seg_background, slice_seg)
+            mri_masked = np.ma.masked_where(np.logical_not(seg_background), slice_mri)
+
+            seg_rgb = label_mapper.to_rgba(seg_masked)
+            plt.imshow(seg_rgb, **display_params_seg)
+            plt.imshow(mri_masked, **display_params_mri)
             plt.axis('off')
-            print('blah blah')
 
     fig.tight_layout()
 
