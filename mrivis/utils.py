@@ -3,9 +3,13 @@ from os.path import realpath
 
 import nibabel as nib
 import numpy as np
+from matplotlib import pyplot as plt
+import matplotlib as mpl
 
-
-def _diff_image(slice1, slice2, abs_value=True):
+def _diff_image(slice1, slice2,
+                abs_value=True,
+                cmap='gray',
+                **kwargs):
     """Computes the difference image"""
 
     diff = slice1-slice2
@@ -13,7 +17,22 @@ def _diff_image(slice1, slice2, abs_value=True):
     if abs_value:
         diff = np.abs(diff)
 
-    return diff
+    return diff, cmap
+
+
+def diff_colormap():
+    "Custom colormap to map low values to black or another color."
+
+    # bottom = plt.cm.copper(np.linspace(0., 1, 6))
+    black  = np.atleast_2d([0., 0., 0., 1.])
+    bottom = np.repeat(black, 6, axis=0)
+    middle = plt.cm.copper(np.linspace(0, 1, 250))
+    # remain = plt.cm.Reds(np.linspace(0, 1, 240))
+
+    colors = np.vstack((bottom, middle))
+    diff_colormap = mpl.colors.LinearSegmentedColormap.from_list('diff_colormap', colors)
+
+    return diff_colormap
 
 
 def get_axis(array, axis, slice_num):
