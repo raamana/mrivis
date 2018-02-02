@@ -530,7 +530,11 @@ def aseg_on_mri(mri_spec,
             plt.imshow(mri_masked, **display_params_mri)
             plt.axis('off')
 
-    fig.tight_layout()
+    # plt.subplots_adjust(wspace=0.0, hspace=0.0)
+    plt.subplots_adjust(left  =0.01, right  =0.99,
+                        bottom=0.01,   top  =0.99,
+                        wspace=0.05 , hspace=0.02)
+    # fig.tight_layout()
 
     if output_path is not None:
         output_path = output_path.replace(' ', '_')
