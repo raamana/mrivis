@@ -5,7 +5,7 @@ Options include checker board, red green mixer and voxel-wise difference maps.
 
 """
 from mrivis.utils import read_image, _diff_image, get_axis, check_patch_size, check_params, \
-    scale_0to1, crop_to_extents, crop_coords, crop_3dimage, crop_image
+    scale_0to1, crop_to_extents, crop_coords, crop_3dimage, crop_image, diff_colormap
 from mrivis.color_maps import get_freesurfer_cmap
 
 __all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage']
@@ -137,6 +137,15 @@ def color_mix(img_spec1=None,
     overlay_alpha : float
         Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).
 
+    cmap : str or matplotlib.cm.cmap
+        Colormap to show the difference values.
+
+    overlay_image : bool
+        Flag to specify whether to overlay the first image under the difference map.
+
+    overlay_alpha : float
+        Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).
+
     num_rows : int
         number of rows (top to bottom) per each of 3 dimensions
 
@@ -200,6 +209,9 @@ def color_mix(img_spec1=None,
 def voxelwise_diff(img_spec1=None,
                    img_spec2=None,
                    abs_value=True,
+                   cmap='gray',
+                   overlay_image=False,
+                   overlay_alpha=0.8,
                    num_rows=2,
                    num_cols=6,
                    rescale_method='global',
