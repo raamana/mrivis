@@ -486,7 +486,7 @@ def aseg_on_mri(mri_spec,
 
     mri = read_image(mri_spec, bkground_thresh=bkground_thresh)
     seg = read_image(aseg_spec, bkground_thresh=0)
-    img1, img2 = crop_to_seg_extents(mri, seg, padding)
+    mri, seg = crop_to_seg_extents(mri, seg, padding)
 
     slices = pick_slices(mri.shape, num_rows, num_cols)
 
