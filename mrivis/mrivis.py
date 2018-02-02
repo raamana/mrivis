@@ -469,6 +469,8 @@ def collage(img_spec,
 
 def aseg_on_mri(mri_spec,
                 aseg_spec,
+                alpha_mri=1.0,
+                alpha_seg=1.0,
                 num_rows=2,
                 num_cols=6,
                 rescale_method='global',
@@ -502,9 +504,10 @@ def aseg_on_mri(mri_spec,
         fig.suptitle(annot, backgroundcolor='black', color='g')
 
     display_params_mri = dict(interpolation='none', aspect='equal', origin='lower',
-                              cmap='gray',
+                              cmap='gray', alpha=alpha_mri,
                               vmin=mri.min(), vmax=mri.max())
-    display_params_seg = dict(interpolation='none', aspect='equal', origin='lower')
+    display_params_seg = dict(interpolation='none', aspect='equal', origin='lower',
+                              alpha=alpha_seg)
 
     normalize_labels = colors.Normalize(vmin=seg.min(), vmax=seg.max(), clip=True)
     fs_cmap = get_freesurfer_cmap(sub_cortical)
@@ -520,14 +523,14 @@ def aseg_on_mri(mri_spec,
             slice_mri = get_axis(mri, dim_index, slice_num)
             slice_seg = get_axis(seg, dim_index, slice_num)
 
-            # masking data to set no-value pixels to transparent
-            seg_background = np.isclose(slice_seg, 0.0)
-            seg_masked = np.ma.masked_where(seg_background, slice_seg)
-            mri_masked = np.ma.masked_where(np.logical_not(seg_background), slice_mri)
+            # # masking data to set no-value pixels to transparent
+            # seg_background = np.isclose(slice_seg, 0.0)
+            # slice_seg = np.ma.masked_where(seg_background, slice_seg)
+            # slice_mri = np.ma.masked_where(np.logical_not(seg_background), slice_mri)
 
-            seg_rgb = label_mapper.to_rgba(seg_masked)
+            seg_rgb = label_mapper.to_rgba(slice_seg)
             plt.imshow(seg_rgb, **display_params_seg)
-            plt.imshow(mri_masked, **display_params_mri)
+            plt.imshow(slice_mri, **display_params_mri)
             plt.axis('off')
 
     # plt.subplots_adjust(wspace=0.0, hspace=0.0)
