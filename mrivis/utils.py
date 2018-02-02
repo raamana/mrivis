@@ -45,11 +45,11 @@ def get_axis(array, axis, slice_num):
     return slice_data
 
 
-def check_int(num, num_descr):
+def check_int(num, num_descr, min_value=0):
     """Validation and typecasting."""
 
-    if not np.isfinite(num) or num < 1:
-        raise ValueError('{} is not finite or is not > 0'.format(num_descr))
+    if not np.isfinite(num) or num < min_value:
+        raise ValueError('{} is not finite or is not >= {}'.format(num_descr, min_value))
 
     return int(num)
 
@@ -67,9 +67,9 @@ def check_patch_size(patch_size):
 def check_params(num_rows, num_cols, padding):
     """Validation and typcasting"""
 
-    num_rows = check_int(num_rows, 'num_rows')
-    num_cols = check_int(num_cols, 'num_cols')
-    padding = check_int(padding, 'padding')
+    num_rows = check_int(num_rows, 'num_rows', min_value=1)
+    num_cols = check_int(num_cols, 'num_cols', min_value=1)
+    padding = check_int(padding, 'padding', min_value=0)
 
     return num_rows, num_cols, padding
 
