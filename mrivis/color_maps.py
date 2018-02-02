@@ -9,7 +9,8 @@ def get_freesurfer_cortical_LUT():
     https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
     """
 
-    LUT = [ [25,5,25],
+    LUT = [ [0, 0, 0],
+            [25, 5, 25],
             [25,100,40],
             [125,100,160],
             [100,25,0],
