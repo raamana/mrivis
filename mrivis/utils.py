@@ -232,3 +232,31 @@ def crop_2dimage(img, beg_coords, end_coords):
                   ]
 
     return cropped_img
+
+
+def pick_slices(img_shape, num_rows, num_cols):
+    """Picks the slices to display in each dimension"""
+
+    num_panels = num_rows * num_cols * 3
+    skip_count = num_rows * num_cols
+
+    slices = list()
+    for dim_size in img_shape:
+        slices_in_dim = np.around(np.linspace(0, dim_size, num_panels)).astype('int64')
+        # skipping not-so-important slices at boundaries
+        slices_in_dim = slices_in_dim[skip_count: -skip_count]
+        slices.append(slices_in_dim)
+
+    return slices
+
+
+def scale_images_0to1(slice1, slice2):
+    """Scale the two images to [0, 1] based on min/max from both."""
+
+    min_value = max(slice1.min(), slice2.min())
+    max_value = max(slice1.max(), slice2.max())
+
+    slice1 = (slice1 - min_value) / max_value
+    slice2 = (slice2 - min_value) / max_value
+
+    return slice1, slice2

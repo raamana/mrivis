@@ -4,9 +4,10 @@ mrivis: Tools to comapre the similarity of two 3d images (structural, functional
 Options include checker board, red green mixer and voxel-wise difference maps.
 
 """
-from mrivis.utils import read_image, _diff_image, get_axis, check_patch_size, check_params, \
-    scale_0to1, crop_to_extents, crop_to_seg_extents, crop_coords, crop_3dimage, crop_image, diff_colormap
 from mrivis.color_maps import get_freesurfer_cmap
+from mrivis.utils import read_image, _diff_image, get_axis, check_patch_size, check_params, \
+    scale_0to1, crop_to_extents, crop_to_seg_extents, crop_image, diff_colormap, pick_slices, \
+    scale_images_0to1
 
 __all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage']
 
@@ -583,22 +584,6 @@ def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
     return mixed, disp_params
 
 
-def pick_slices(img_shape, num_rows, num_cols):
-    """Picks the slices to display in each dimension"""
-
-    num_panels = num_rows * num_cols * 3
-    skip_count = num_rows * num_cols
-
-    slices = list()
-    for dim_size in img_shape:
-        slices_in_dim = np.around(np.linspace(0, dim_size, num_panels)).astype('int64')
-        # skipping not-so-important slices at boundaries
-        slices_in_dim = slices_in_dim[skip_count: -skip_count]
-        slices.append(slices_in_dim)
-
-    return slices
-
-
 def check_rescaling_collage(img, rescale_method=None):
     ""
 
@@ -690,18 +675,6 @@ def _get_checkers(slice_shape, patch_size):
             checkers = np.delete(checkers, np.s_[slice_shape[1]:], axis=1)
 
     return checkers
-
-
-def scale_images_0to1(slice1, slice2):
-    """Scale the two images to [0, 1] based on min/max from both."""
-
-    min_value = max(slice1.min(), slice2.min())
-    max_value = max(slice1.max(), slice2.max())
-
-    slice1 = (slice1 - min_value) / max_value
-    slice2 = (slice2 - min_value) / max_value
-
-    return slice1, slice2
 
 
 def _mix_color(slice1, slice2, alpha_channels, color_space):
