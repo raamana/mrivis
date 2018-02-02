@@ -502,11 +502,9 @@ def aseg_on_mri(mri_spec,
         fig.suptitle(annot, backgroundcolor='black', color='g')
 
     display_params_mri = dict(interpolation='none', aspect='equal', origin='lower',
-                              alpha=0.6,
                               cmap='gray',
                               vmin=mri.min(), vmax=mri.max())
-    display_params_seg = dict(interpolation='none', aspect='equal', origin='lower',
-                              alpha=0.7)
+    display_params_seg = dict(interpolation='none', aspect='equal', origin='lower')
 
     normalize_labels = colors.Normalize(vmin=seg.min(), vmax=seg.max(), clip=True)
     fs_cmap = get_freesurfer_cmap(sub_cortical)
