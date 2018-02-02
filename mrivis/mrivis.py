@@ -6,11 +6,12 @@ Options include checker board, red green mixer and voxel-wise difference maps.
 """
 from mrivis.utils import read_image, _diff_image, get_axis, check_patch_size, check_params, \
     scale_0to1, crop_to_extents, crop_coords, crop_3dimage, crop_image
+from mrivis.color_maps import get_freesurfer_cmap
 
 __all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage']
 
 import numpy as np
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, colors, cm
 import matplotlib as mpl
 
 def checkerboard(img_spec1=None,
@@ -420,6 +421,77 @@ def collage(img_spec,
             slice1 = crop_image(slice1, padding)
             plt.imshow(slice1, **display_params)
             plt.axis('off')
+
+    fig.tight_layout()
+
+    if output_path is not None:
+        output_path = output_path.replace(' ', '_')
+        fig.savefig(output_path + '.png', bbox_inches='tight')
+
+    # plt.close()
+
+    return fig
+
+
+def aseg_on_mri(mri_spec,
+                aseg_spec,
+            num_rows=2,
+            num_cols=6,
+            rescale_method='global',
+            aseg_cmap='freesurfer',
+                sub_cortical=False,
+            annot=None,
+            padding=5,
+            bkground_thresh=0.05,
+            output_path=None,
+            figsize=None,
+            **kwargs):
+    "Produces a collage of various slices from different orientations in the given 3D image"
+
+    num_rows, num_cols, padding = check_params(num_rows, num_cols, padding)
+
+    mri = read_image(mri_spec, bkground_thresh=bkground_thresh)
+    seg = read_image(aseg_spec, bkground_thresh=0)
+    img1, img2 = crop_to_extents(mri, seg, padding)
+
+    slices = pick_slices(mri.shape, num_rows, num_cols)
+
+    plt.style.use('dark_background')
+
+    num_axes = 3
+    if figsize is None:
+        figsize = [3*num_axes * num_rows, 3*num_cols]
+    fig, ax = plt.subplots(num_axes * num_rows, num_cols, figsize=figsize)
+
+    # displaying some annotation text if provided
+    if annot is not None:
+        fig.suptitle(annot, backgroundcolor='black', color='g')
+
+    display_params_mri = dict(interpolation='none', aspect='equal', origin='lower',
+                              cmap='gray')
+    display_params_seg = dict(interpolation='none', aspect='equal', origin='lower',
+                              alpha=0.9)
+
+    normalize_labels = colors.Normalize(vmin=seg.min(), vmax=seg.max(), clip=True)
+    fs_cmap = get_freesurfer_cmap(sub_cortical)
+    label_mapper = cm.ScalarMappable(norm=normalize_labels, cmap=fs_cmap)
+
+    ax = ax.flatten()
+    ax_counter = 0
+    for dim_index in range(3):
+        for slice_num in slices[dim_index]:
+            plt.sca(ax[ax_counter])
+            ax_counter = ax_counter + 1
+
+            slice_mri = get_axis(mri, dim_index, slice_num)
+
+            slice_seg = get_axis(seg, dim_index, slice_num)
+            slice_rgb = label_mapper.to_rgba(slice_seg)
+
+            plt.imshow(slice_mri, **display_params_mri)
+            plt.imshow(slice_rgb, **display_params_seg)
+            plt.axis('off')
+            print('blah blah')
 
     fig.tight_layout()
 
