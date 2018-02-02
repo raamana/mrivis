@@ -119,6 +119,24 @@ def color_mix(img_spec1=None,
         weights for red and green channels in the composite image.
         Default: [1, 1]
 
+    cmap : str or matplotlib.cm.cmap
+        Colormap to show the difference values.
+
+    overlay_image : bool
+        Flag to specify whether to overlay the first image under the difference map.
+
+    overlay_alpha : float
+        Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).
+
+    cmap : str or matplotlib.cm.cmap
+        Colormap to show the difference values.
+
+    overlay_image : bool
+        Flag to specify whether to overlay the first image under the difference map.
+
+    overlay_alpha : float
+        Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).
+
     num_rows : int
         number of rows (top to bottom) per each of 3 dimensions
 
@@ -205,6 +223,7 @@ def voxelwise_diff(img_spec1=None,
         Flag indicating whether to take the absolute value of the diffenence or not.
         Default: True, display absolute differences only (so order of images does not matter)
 
+        Colormap to show the difference values.
     num_rows : int
         number of rows (top to bottom) per each of 3 dimensions
 
@@ -244,7 +263,10 @@ def voxelwise_diff(img_spec1=None,
     if not isinstance(abs_value, bool):
         abs_value = bool(abs_value)
 
-    mixer_params = dict(abs_value=abs_value)
+    mixer_params = dict(abs_value=abs_value,
+                        cmap=cmap,
+                        overlay_image=overlay_image,
+                        overlay_alpha=overlay_alpha)
     fig = _compare(img_spec1,
                    img_spec2,
                    num_rows=num_rows,
@@ -357,10 +379,9 @@ def _compare(img_spec1,
             slice1 = get_axis(img1, dim_index, slice_num)
             slice2 = get_axis(img2, dim_index, slice_num)
 
-            mixed, mixer_spec_params = _generic_mixer(slice1, slice2, mixer, **kwargs)
-            display_params.update(mixer_spec_params)
-
-            plt.imshow(mixed, vmin=min_value, vmax=max_value, **display_params)
+            _generic_mixer(slice1, slice2, mixer,
+                           min_value, max_value,
+                           display_params, **kwargs)
 
             # adjustments for proper presentation
             plt.axis('off')
@@ -516,8 +537,21 @@ def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
         mixed = _mix_slices_in_checkers(slice1, slice2, checkers)
         cmap = 'gray'
     elif mixer_name in ['diff', 'voxelwise_diff', 'vdiff']:
-        mixed = _diff_image(slice1, slice2, **kwargs)
-        cmap = 'gray'
+
+        diff_img, cmap = _diff_image(slice1, slice2, **kwargs)
+        if kwargs['overlay_image'] is True:
+            diff_cmap = diff_colormap()
+            plt.imshow(slice1, alpha=kwargs['overlay_alpha'], **display_params)
+            plt.hold(True)
+            plt.imshow(diff_img,
+                       cmap=diff_cmap,
+                       vmin=min_value, vmax=max_value,
+                       **display_params)
+        else:
+            plt.imshow(diff_img, cmap=cmap,
+                       vmin=min_value, vmax=max_value,
+                       **display_params)
+
     else:
         raise ValueError('Invalid mixer name chosen.')
 
