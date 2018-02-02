@@ -5,7 +5,7 @@ Options include checker board, red green mixer and voxel-wise difference maps.
 
 """
 from mrivis.utils import read_image, _diff_image, get_axis, check_patch_size, check_params, \
-    scale_0to1, crop_to_extents, crop_coords, crop_3dimage, crop_image, diff_colormap
+    scale_0to1, crop_to_extents, crop_to_seg_extents, crop_coords, crop_3dimage, crop_image, diff_colormap
 from mrivis.color_maps import get_freesurfer_cmap
 
 __all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage']
@@ -13,6 +13,7 @@ __all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage']
 import numpy as np
 from matplotlib import pyplot as plt, colors, cm
 import matplotlib as mpl
+
 
 def checkerboard(img_spec1=None,
                  img_spec2=None,
@@ -24,7 +25,7 @@ def checkerboard(img_spec1=None,
                  annot=None,
                  padding=5,
                  output_path=None,
-                 figsize=None,):
+                 figsize=None, ):
     """
     Checkerboard mixer.
 
@@ -371,7 +372,7 @@ def _compare(img_spec1,
 
     num_axes = 3
     if figsize is None:
-        figsize = [3*num_axes * num_rows, 3*num_cols]
+        figsize = [3 * num_axes * num_rows, 3 * num_cols]
     fig, ax = plt.subplots(num_axes * num_rows, num_cols, figsize=figsize)
 
     # displaying some annotation text if provided
@@ -434,7 +435,7 @@ def collage(img_spec,
 
     num_axes = 3
     if figsize is None:
-        figsize = [3*num_axes * num_rows, 3*num_cols]
+        figsize = [3 * num_axes * num_rows, 3 * num_cols]
     fig, ax = plt.subplots(num_axes * num_rows, num_cols, figsize=figsize)
 
     # displaying some annotation text if provided
@@ -468,24 +469,24 @@ def collage(img_spec,
 
 def aseg_on_mri(mri_spec,
                 aseg_spec,
-            num_rows=2,
-            num_cols=6,
-            rescale_method='global',
-            aseg_cmap='freesurfer',
+                num_rows=2,
+                num_cols=6,
+                rescale_method='global',
+                aseg_cmap='freesurfer',
                 sub_cortical=False,
-            annot=None,
-            padding=5,
-            bkground_thresh=0.05,
-            output_path=None,
-            figsize=None,
-            **kwargs):
+                annot=None,
+                padding=5,
+                bkground_thresh=0.05,
+                output_path=None,
+                figsize=None,
+                **kwargs):
     "Produces a collage of various slices from different orientations in the given 3D image"
 
     num_rows, num_cols, padding = check_params(num_rows, num_cols, padding)
 
     mri = read_image(mri_spec, bkground_thresh=bkground_thresh)
     seg = read_image(aseg_spec, bkground_thresh=0)
-    img1, img2 = crop_to_extents(mri, seg, padding)
+    img1, img2 = crop_to_seg_extents(mri, seg, padding)
 
     slices = pick_slices(mri.shape, num_rows, num_cols)
 
@@ -493,7 +494,7 @@ def aseg_on_mri(mri_spec,
 
     num_axes = 3
     if figsize is None:
-        figsize = [5*num_axes * num_rows, 5*num_cols]
+        figsize = [5 * num_axes * num_rows, 5 * num_cols]
     fig, ax = plt.subplots(num_axes * num_rows, num_cols, figsize=figsize)
 
     # displaying some annotation text if provided
@@ -548,7 +549,7 @@ def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
     mixer_name = mixer_name.lower()
     if mixer_name in ['color_mix', 'rgb']:
         mixed = _mix_color(slice1, slice2, **kwargs)
-        cmap = None # data is already RGB-ed
+        cmap = None  # data is already RGB-ed
     elif mixer_name in ['checkerboard', 'checker', 'cb', 'checker_board']:
         checkers = _get_checkers(slice1.shape, **kwargs)
         mixed = _mix_slices_in_checkers(slice1, slice2, checkers)
@@ -619,7 +620,7 @@ def check_rescaling(img1, img2, rescale_method):
         rescale_images = False
         min_value = None
         max_value = None
-        norm_image = None # mpl.colors.NoNorm doesn't work yet. data is getting linearly normalized to [0, 1]
+        norm_image = None  # mpl.colors.NoNorm doesn't work yet. data is getting linearly normalized to [0, 1]
     elif isinstance(rescale_method, str):
         if rescale_method.lower() in ['global']:
             combined_distr = np.concatenate((img1.flatten(), img2.flatten()))
@@ -657,7 +658,8 @@ def check_images(img_spec1, img_spec2, bkground_thresh=0.05):
 
     if img1.shape != img2.shape:
         raise ValueError('size mismatch! First image: {} Second image: {}\n'
-                         'Two images to be compared must be of the same size in all dimensions.'.format(img1.shape, img2.shape))
+                         'Two images to be compared must be of the same size in all dimensions.'.format(img1.shape,
+                                                                                                        img2.shape))
 
     return img1, img2
 
@@ -743,8 +745,8 @@ def _mix_color(slice1, slice2, alpha_channels, color_space):
         mixed = mpl.colors.hsv_to_rgb(mixed)
 
     # ensuring all values are clipped to [0, 1]
-    mixed[mixed<=0.0] = 0.0
-    mixed[mixed>=1.0] = 1.0
+    mixed[mixed <= 0.0] = 0.0
+    mixed[mixed >= 1.0] = 1.0
 
     return mixed
 

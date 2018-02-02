@@ -153,6 +153,17 @@ def scale_0to1(image):
     return image
 
 
+def crop_to_seg_extents(img, seg, padding):
+    """Crop the image (usually MRI) to fit within the bounding box of a segmentation (or set of seg)"""
+
+    beg_coords, end_coords = crop_coords(seg, padding)
+
+    img = crop_3dimage(img, beg_coords, end_coords)
+    seg = crop_3dimage(seg, beg_coords, end_coords)
+
+    return img, seg
+
+
 def crop_to_extents(img1, img2, padding):
     """Crop the images to ensure both fit within the bounding box"""
 
