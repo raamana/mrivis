@@ -204,7 +204,7 @@ def crop_coords(img, padding):
     empty_axis_exists = np.any([len(arr) == 0 for arr in coords])
     if empty_axis_exists:
         end_coords = img.shape
-        beg_coords = np.ones((0, img.ndim)).astype(int)
+        beg_coords = np.zeros((1, img.ndim)).astype(int).flatten()
     else:
         min_coords = np.array([arr.min() for arr in coords])
         max_coords = np.array([arr.max() for arr in coords])
