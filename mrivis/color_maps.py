@@ -1,5 +1,8 @@
 
 import numpy as np
+from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+import matplotlib
+import matplotlib.pyplot as plt
 
 def get_freesurfer_cortical_LUT():
     """
@@ -64,20 +67,22 @@ def get_freesurfer_subcortical_LUT():
     https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/AnatomicalROI/FreeSurferColorLUT
     """
 
-    raise NotImplementedError
+    return plt.cm.Set1 # tab20_r
 
 
-def get_freesurfer_cmap(sub_cortical=False):
-    """"""
+def get_freesurfer_cmap(vis_type):
+    """Provides different colormaps for different visualization types."""
 
-    from matplotlib.colors import ListedColormap
-
-    if not sub_cortical:
-        LUT = get_freesurfer_cortical_LUT()
+    if vis_type in ('cortical_volumetric'):
+            LUT = get_freesurfer_cortical_LUT()
+            fs_cmap = ListedColormap(LUT)
+    elif vis_type in ('labels', 'label_set'):
+        binary = np.array([0, 0, 0, 1])
+        fs_cmap = plt.cm.Dark2(np.linspace(0, 1, 40)) # other options Set1, tab10
+        colors = np.vstack((binary, fs_cmap))
+        fs_cmap = ListedColormap(colors, 'my_colormap', N=256)
     else:
-        LUT = get_freesurfer_subcortical_LUT()
-
-    fs_cmap = ListedColormap(LUT)
+        raise NotImplementedError('color map for the visualization type {} has not been implemented!'.format(vis_type))
 
     return fs_cmap
 
