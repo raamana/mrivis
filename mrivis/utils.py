@@ -79,7 +79,10 @@ def read_image(img_spec, bkground_thresh):
 
     if isinstance(img_spec, str):
         if pexists(realpath(img_spec)):
-            img = nib.load(img_spec).get_data()
+            hdr = nib.load(img_spec)
+            # trying to stick to an orientation
+            hdr = nib.as_closest_canonical(hdr)
+            img = hdr.get_data()
         else:
             raise IOError('Given path to image does not exist!')
     elif isinstance(img_spec, np.ndarray):
