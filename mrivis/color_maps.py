@@ -73,17 +73,20 @@ def get_freesurfer_subcortical_LUT():
 def get_freesurfer_cmap(vis_type):
     """Provides different colormaps for different visualization types."""
 
-    if vis_type in ('cortical_volumetric'):
+    if vis_type in ('cortical_volumetric', 'cortical_contour'):
             LUT = get_freesurfer_cortical_LUT()
-            fs_cmap = ListedColormap(LUT)
-    elif vis_type in ('labels', 'label_set'):
-        binary = np.array([0, 0, 0, 1])
-        fs_cmap = plt.cm.Dark2(np.linspace(0, 1, 40)) # other options Set1, tab10
-        colors = np.vstack((binary, fs_cmap))
-        fs_cmap = ListedColormap(colors, 'my_colormap', N=256)
+            cmap = ListedColormap(LUT)
+    elif vis_type in ('labels_volumetric', 'labels_contour'):
+        black = np.array([0, 0, 0, 1])
+        cmap = plt.get_cmap('hsv')
+        # TODO using more than 20 labels might be a problem?
+        cmap = cmap(np.linspace(0, 1, 20))
+        # prepending black to paint background as black
+        colors = np.vstack((black, cmap))
+        cmap = ListedColormap(colors, 'my_colormap')
     else:
         raise NotImplementedError('color map for the visualization type {} has not been implemented!'.format(vis_type))
 
-    return fs_cmap
+    return cmap
 
 
