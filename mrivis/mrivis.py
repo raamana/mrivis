@@ -393,9 +393,10 @@ def _compare(img_spec1,
             slice1 = get_axis(img1, dim_index, slice_num)
             slice2 = get_axis(img2, dim_index, slice_num)
 
-            _generic_mixer(slice1, slice2, mixer,
-                           min_value, max_value,
-                           display_params, **kwargs)
+            mixed, mixer_spec_params = _generic_mixer(slice1, slice2, mixer, **kwargs)
+            display_params.update(mixer_spec_params)
+
+            plt.imshow(mixed, vmin=min_value, vmax=max_value, **display_params)
 
             # adjustments for proper presentation
             plt.axis('off')
@@ -535,9 +536,9 @@ def aseg_on_mri(mri_spec,
             plt.axis('off')
 
     # plt.subplots_adjust(wspace=0.0, hspace=0.0)
-    plt.subplots_adjust(left  =0.01, right  =0.99,
-                        bottom=0.01,   top  =0.99,
-                        wspace=0.05 , hspace=0.02)
+    plt.subplots_adjust(left=0.01, right=0.99,
+                        bottom=0.01, top=0.99,
+                        wspace=0.05, hspace=0.02)
     # fig.tight_layout()
 
     if output_path is not None:
@@ -550,7 +551,10 @@ def aseg_on_mri(mri_spec,
 
 
 def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
-    """Generic mixer to process two slices with appropriate mixer and return the composite to be displayed."""
+    """
+    Generic mixer to process two slices with appropriate mixer
+        and return the composite to be displayed.
+    """
 
     mixer_name = mixer_name.lower()
     if mixer_name in ['color_mix', 'rgb']:
@@ -562,19 +566,19 @@ def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
         cmap = 'gray'
     elif mixer_name in ['diff', 'voxelwise_diff', 'vdiff']:
 
-        diff_img, cmap = _diff_image(slice1, slice2, **kwargs)
-        if kwargs['overlay_image'] is True:
-            diff_cmap = diff_colormap()
-            plt.imshow(slice1, alpha=kwargs['overlay_alpha'], **display_params)
-            plt.hold(True)
-            plt.imshow(diff_img,
-                       cmap=diff_cmap,
-                       vmin=min_value, vmax=max_value,
-                       **display_params)
-        else:
-            plt.imshow(diff_img, cmap=cmap,
-                       vmin=min_value, vmax=max_value,
-                       **display_params)
+        mixed, cmap = _diff_image(slice1, slice2, **kwargs)
+        # if kwargs['overlay_image'] is True:
+        #     diff_cmap = diff_colormap()
+        #     plt.imshow(slice1, alpha=kwargs['overlay_alpha'], **display_params)
+        #     plt.hold(True)
+        #     plt.imshow(mixed,
+        #                cmap=diff_cmap,
+        #                vmin=min_value, vmax=max_value,
+        #                **display_params)
+        # else:
+        #     plt.imshow(mixed, cmap=cmap,
+        #                vmin=min_value, vmax=max_value,
+        #                **display_params)
 
     else:
         raise ValueError('Invalid mixer name chosen.')
