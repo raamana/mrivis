@@ -365,7 +365,8 @@ def _compare(img_spec1,
     img1, img2 = check_images(img_spec1, img_spec2, bkground_thresh=bkground_thresh)
     img1, img2 = crop_to_extents(img1, img2, padding)
 
-    slices = pick_slices(img1.shape, num_rows, num_cols)
+    num_slices_per_view = num_rows * num_cols
+    slices = pick_slices(img2, num_slices_per_view)
 
     rescale_images, img1, img2, min_value, max_value = check_rescaling(img1, img2, rescale_method)
 
@@ -431,7 +432,8 @@ def collage(img_spec,
     img = crop_image(img, padding)
 
     img, rescale_method = check_rescaling_collage(img, rescale_method)
-    slices = pick_slices(img.shape, num_rows, num_cols)
+    num_slices_per_view = num_rows * num_cols
+    slices = pick_slices(img, num_slices_per_view)
 
     plt.style.use('dark_background')
 
@@ -492,7 +494,8 @@ def aseg_on_mri(mri_spec,
     seg = read_image(aseg_spec, bkground_thresh=0)
     mri, seg = crop_to_seg_extents(mri, seg, padding)
 
-    slices = pick_slices(mri.shape, num_rows, num_cols)
+    num_slices_per_view = num_rows * num_cols
+    slices = pick_slices(seg, num_slices_per_view)
 
     plt.style.use('dark_background')
 

@@ -237,17 +237,33 @@ def crop_2dimage(img, beg_coords, end_coords):
     return cropped_img
 
 
-def pick_slices(img_shape, num_rows, num_cols):
-    """Picks the slices to display in each dimension"""
+def pick_slices(img, num_slices_per_view):
+    """
+    Picks the slices to display in each dimension,
+        skipping any empty slices (without any segmentation at all).
 
-    num_panels = num_rows * num_cols * 3
-    skip_count = num_rows * num_cols
+    """
 
     slices = list()
-    for dim_size in img_shape:
-        slices_in_dim = np.around(np.linspace(0, dim_size, num_panels)).astype('int64')
-        # skipping not-so-important slices at boundaries
-        slices_in_dim = slices_in_dim[skip_count: -skip_count]
+    for view in range(len(img.shape)):
+        dim_size = img.shape[view]
+        non_empty_slices = np.array([sl for sl in range(dim_size) if np.count_nonzero(get_axis(img, view, sl)) > 0])
+        num_non_empty = len(non_empty_slices)
+
+        # trying to 5% slices at the tails (bottom clipping at 0)
+        skip_count = max(0, np.around(num_non_empty*0.05).astype('int16'))
+        # only when possible
+        if skip_count > 0 and (num_non_empty-2*skip_count>=num_slices_per_view):
+            non_empty_slices = non_empty_slices[skip_count : -skip_count]
+            num_non_empty = len(non_empty_slices)
+
+        # sampling non-empty slices only
+        sampled_indices = np.linspace(0, num_non_empty, num=min(num_non_empty, num_slices_per_view), endpoint=False)
+        slices_in_dim = non_empty_slices[ np.around(sampled_indices).astype('int64') ]
+
+        # ensure you do not overshoot
+        slices_in_dim = [sn for sn in slices_in_dim if sn >= 0 or sn <= num_non_empty]
+
         slices.append(slices_in_dim)
 
     return slices
