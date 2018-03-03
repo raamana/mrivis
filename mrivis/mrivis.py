@@ -454,7 +454,7 @@ def collage(img_spec,
             plt.sca(ax[ax_counter])
             ax_counter = ax_counter + 1
             slice1 = get_axis(img, dim_index, slice_num)
-            slice1 = crop_image(slice1, padding)
+            # slice1 = crop_image(slice1, padding)
             plt.imshow(slice1, **display_params)
             plt.axis('off')
 
