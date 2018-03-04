@@ -151,7 +151,7 @@ def scale_0to1(image):
 
     min_value = image.min()
     max_value = image.max()
-    image = (image - min_value) / max_value
+    image = (image - min_value) / (max_value-min_value)
 
     return image
 
