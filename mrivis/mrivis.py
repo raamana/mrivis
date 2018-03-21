@@ -431,7 +431,8 @@ def collage(img_spec,
     img = read_image(img_spec, bkground_thresh=bkground_thresh)
     img = crop_image(img, padding)
 
-    img, rescale_method = check_rescaling_collage(img, rescale_method)
+    img, (min_value, max_value) = check_rescaling_collage(img, rescale_method,
+                                                          return_extrema=True)
     num_slices_per_view = num_rows * num_cols
     slices = pick_slices(img, num_slices_per_view)
 
@@ -446,8 +447,9 @@ def collage(img_spec,
     if annot is not None:
         fig.suptitle(annot, backgroundcolor='black', color='g')
 
-    display_params = dict(interpolation='none', aspect='equal', origin='lower',
-                          cmap=cmap)
+    display_params = dict(interpolation='none', cmap=cmap,
+                          aspect='equal', origin='lower',
+                          vmin=min_value, vmax=max_value)
 
     ax = ax.flatten()
     ax_counter = 0
@@ -591,7 +593,8 @@ def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
     return mixed, disp_params
 
 
-def check_rescaling_collage(img, rescale_method=None):
+def check_rescaling_collage(img, rescale_method=None,
+                            return_extrema=True):
     ""
 
     if not (isinstance(rescale_method, str) or rescale_method is None):
@@ -602,9 +605,14 @@ def check_rescaling_collage(img, rescale_method=None):
 
     rescale_method = rescale_method.lower()
     if rescale_method in ['global']:
-        img = scale_0to1(img)
+        img= scale_0to1(img)
 
-    return img, rescale_method
+    if return_extrema:
+        min_value = img.min()
+        max_value = img.max()
+        return img, (min_value, max_value)
+    else:
+        return img
 
 
 def check_rescaling(img1, img2, rescale_method):
