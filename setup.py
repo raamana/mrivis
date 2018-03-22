@@ -13,8 +13,9 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'Click>=6.0',
-    # TODO: put package requirements here
+    'nibabel',
+    'matplotlib',
+    'numpy',
 ]
 
 setup_requirements = [
