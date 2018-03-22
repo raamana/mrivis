@@ -420,7 +420,7 @@ def collage(img_spec,
             cmap='gray',
             annot=None,
             padding=5,
-            bkground_thresh=0.05,
+            bkground_thresh=None,
             output_path=None,
             figsize=None,
             **kwargs):
