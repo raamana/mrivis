@@ -185,6 +185,9 @@ def crop_to_extents(img1, img2, padding):
 def crop_image(img, padding=5):
     "Crops an image or slice to its extents"
 
+    if padding < 1:
+        return img
+
     beg_coords, end_coords = crop_coords(img, padding)
 
     if len(img.shape)==3:
