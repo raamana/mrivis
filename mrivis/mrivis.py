@@ -38,8 +38,10 @@ def checkerboard(img_spec1=None,
     img_spec2 : str or nibabel image-like object
         MR image (or path to one) to be visualized
 
-    patch_size : int or list or (int, int)
+    patch_size : int or list or (int, int) or None
         size of checker patch (either square or rectangular)
+        If None, number of voxels/patch are chosen such that,
+            there will be 7 patches through the width/height.
 
     num_rows : int
         number of rows (top to bottom) per each of 3 dimensions
@@ -628,6 +630,8 @@ def check_rescaling(img1, img2, rescale_method):
         norm_image = None  # mpl.colors.NoNorm doesn't work yet. data is getting linearly normalized to [0, 1]
     elif isinstance(rescale_method, str):
         if rescale_method.lower() in ['global']:
+            # TODO need a way to alert the user if one of the distributions is too narrow
+            #  in which case that image will be collapsed to an uniform value
             combined_distr = np.concatenate((img1.flatten(), img2.flatten()))
             min_value = combined_distr.min()
             max_value = combined_distr.max()
@@ -672,7 +676,13 @@ def check_images(img_spec1, img_spec2, bkground_thresh=0.05):
 def _get_checkers(slice_shape, patch_size):
     """Creates checkerboard of a given tile size, filling a given slice."""
 
-    patch_size = check_patch_size(patch_size)
+    if patch_size is not None:
+        patch_size = check_patch_size(patch_size)
+    else:
+        # 7 patches in each axis, min voxels/patch = 3
+        # TODO make 7 a user settable parameter
+        patch_size = np.round(np.array(slice_shape) / 7).astype('int16')
+        patch_size = np.maximum(patch_size, np.array([3, 3]))
 
     black = np.zeros(patch_size)
     white = np.ones(patch_size)
