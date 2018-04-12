@@ -607,7 +607,7 @@ def check_rescaling_collage(img, rescale_method=None,
 
     rescale_method = rescale_method.lower()
     if rescale_method in ['global']:
-        img= scale_0to1(img)
+        img = scale_0to1(img)
 
     if return_extrema:
         min_value = img.min()
@@ -667,8 +667,9 @@ def check_images(img_spec1, img_spec2, bkground_thresh=0.05):
 
     if img1.shape != img2.shape:
         raise ValueError('size mismatch! First image: {} Second image: {}\n'
-                         'Two images to be compared must be of the same size in all dimensions.'.format(img1.shape,
-                                                                                                        img2.shape))
+                         'Two images to be compared must be of the same size in all dimensions.'.format(
+            img1.shape,
+            img2.shape))
 
     return img1, img2
 
@@ -732,7 +733,8 @@ def _mix_color(slice1, slice2, alpha_channels, color_space):
 
     elif color_space.lower() in ['hsv']:
 
-        raise NotImplementedError('This method (color_space="hsv") is yet to fully conceptualized and implemented.')
+        raise NotImplementedError(
+            'This method (color_space="hsv") is yet to fully conceptualized and implemented.')
 
         # TODO other ideas: hue/saturation/intensity value driven by difference in intensity?
         hue = alpha_channels[0] * slice1

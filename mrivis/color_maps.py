@@ -1,7 +1,8 @@
 
+__all__ = ['get_freesurfer_cmap', ]
+
 import numpy as np
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-import matplotlib
 import matplotlib.pyplot as plt
 
 def get_freesurfer_cortical_LUT():
