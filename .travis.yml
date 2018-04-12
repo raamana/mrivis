@@ -16,4 +16,4 @@ branches:
     - master
 
 script:
-  - travis_wait 999 pytest --verbose
+  - pytest
