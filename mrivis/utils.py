@@ -1,6 +1,6 @@
 from genericpath import exists as pexists
 from os.path import realpath
-
+from collections import Iterable
 import nibabel as nib
 import numpy as np
 from matplotlib import pyplot as plt
@@ -45,11 +45,38 @@ def get_axis(array, axis, slice_num):
     return slice_data
 
 
-def check_int(num, num_descr, min_value=0):
+def check_views(view_set, max_views=3):
+    """Ensures valid view/dimensions are selected."""
+
+    if not isinstance(view_set, Iterable):
+        view_set = tuple([view_set, ])
+
+    if len(view_set) > max_views:
+        raise ValueError('Can only have {} views'.format(max_views))
+
+    return [ check_int(view, 'view', min_value=0, max_value=max_views-1) for view in view_set ]
+
+
+def check_num_slices(img_shape, num_slices):
+    """Ensures requested number of slices is valid."""
+
+    if not isinstance(num_slices, Iterable) or len(num_slices) == 1:
+        num_slices = np.repeat(num_slices, len(img_shape))
+    elif len(num_slices) > len(img_shape):
+        raise ValueError('The number of dimensions in slices requested exceeds the image. '
+                         'Must be atleast 1 but less than {}'.format(len(img_shape)+1))
+
+    # clipping to [1, N]: atleast 1 and atmost the size
+    return np.maximum(1, np.minimum(img_shape, num_slices))
+
+
+def check_int(num, num_descr, min_value=0, max_value=np.Inf):
     """Validation and typecasting."""
 
-    if not np.isfinite(num) or num < min_value:
-        raise ValueError('{} is not finite or is not >= {}'.format(num_descr, min_value))
+    if not np.isfinite(num) or num < min_value or num > max_value:
+        raise ValueError('{}={} is not finite or '
+                         'is not >= {} or '
+                         'is not < {}'.format(num_descr, num, min_value, max_value))
 
     return int(num)
 
