@@ -4,7 +4,7 @@
 Tools for comparison of registration and spatial similarity of 3d MRI scans (T1, T2, PET etc) using checkerboard plots.
 
 
-![https://img.shields.io/pypi/v/mrivis.svg](https://pypi.python.org/pypi/mrivis)
+![](https://img.shields.io/pypi/v/mrivis.svg)
 
 
 ## Installation
