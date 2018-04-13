@@ -4,9 +4,10 @@ mrivis: Tools to comapre the similarity of two 3d images (structural, functional
 Options include checker board, red green mixer and voxel-wise difference maps.
 
 """
+from mrivis.base import SlicePicker
 from mrivis.color_maps import get_freesurfer_cmap
-from mrivis.utils import read_image, _diff_image, get_axis, check_patch_size, check_params, \
-    scale_0to1, crop_to_extents, crop_to_seg_extents, crop_image, diff_colormap, pick_slices, \
+from mrivis.utils import _diff_image, check_params, check_patch_size, crop_image, \
+    crop_to_extents, crop_to_seg_extents, get_axis, pick_slices, read_image, scale_0to1, \
     scale_images_0to1
 
 __all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage']
@@ -19,8 +20,9 @@ import matplotlib as mpl
 def checkerboard(img_spec1=None,
                  img_spec2=None,
                  patch_size=10,
+                 view_set=(0, 1, 2),
+                 num_slices=(10,),
                  num_rows=2,
-                 num_cols=6,
                  rescale_method='global',
                  background_threshold=0.05,
                  annot=None,
@@ -43,11 +45,18 @@ def checkerboard(img_spec1=None,
         If None, number of voxels/patch are chosen such that,
             there will be 7 patches through the width/height.
 
+    view_set : iterable
+        Integers specifying the dimensions to be visualized.
+        Choices: (0, 1, 2) for a 3D image
+
+    num_slices : int or iterable of size as view_set
+        number of slices to be selected for each view
+        Must be of the same length as view_set,
+            each element specifying the number of slices for each dimension.
+            If only one number is given, same number will be chosen for all dimensions.
+
     num_rows : int
         number of rows (top to bottom) per each of 3 dimensions
-
-    num_cols : int
-        number of panels (left to right) per row of each dimension.
 
     rescale_method : bool or str or list or None
         Range to rescale the intensity values to
@@ -78,20 +87,22 @@ def checkerboard(img_spec1=None,
 
     """
 
-    mixer_params = dict(patch_size=patch_size)
+    img_one, img_two = _preprocess_images(img_spec1,
+                                          img_spec2,
+                                          rescale_method=rescale_method,
+                                          bkground_thresh=background_threshold,
+                                          padding=padding)
+    slicer = SlicePicker(img_two, view_set=view_set, num_slices=num_slices)
+    fig, axes = _open_figure(slicer, num_rows, figsize=figsize)
 
-    fig = _compare(img_spec1,
-                   img_spec2,
-                   num_rows=num_rows,
-                   num_cols=num_cols,
-                   mixer='checker_board',
-                   rescale_method=rescale_method,
-                   bkground_thresh=background_threshold,
-                   annot=annot,
-                   padding=padding,
-                   output_path=output_path,
-                   figsize=figsize,
-                   **mixer_params)
+    display_params = dict(interpolation='none', aspect='auto', origin='lower',
+                          cmap='gray', vmin=0.0, vmax=1.0)
+
+    for ax, (slice_one, slice_two) in zip(axes, slicer.get_slices_multi(img_one, img_two)):
+        mixed_slice = _checker_mixer(slice_one, slice_two, checker_size=patch_size)
+        ax.imshow(mixed_slice, **display_params)
+
+    _save_figure(fig, annot=annot, output_path=output_path)
 
     return fig
 
@@ -415,6 +426,53 @@ def _compare(img_spec1,
     return fig
 
 
+def _preprocess_images(img_spec1,
+                       img_spec2,
+                       rescale_method='global',
+                       bkground_thresh=None,
+                       padding=5,
+                       ):
+
+    img_one, img_two = check_images(img_spec1, img_spec2, bkground_thresh=bkground_thresh)
+    img_one, img_two = crop_to_extents(img_one, img_two, padding)
+
+    rescale_images, img_one, img_two, \
+    min_value, max_value = check_rescaling(img_one, img_two, rescale_method)
+
+    return img_one, img_two
+
+
+def _open_figure(slicer, num_rows_per_view, figsize=(15, 11)):
+
+    total_num_rows = len(slicer.view_set) * num_rows_per_view
+    total_num_panels = sum(slicer.num_slices)
+    num_cols = int(np.ceil(total_num_panels / total_num_rows))
+
+    plt.style.use('dark_background')
+    fig, axes = plt.subplots(total_num_rows, num_cols, figsize=figsize,
+                             subplot_kw=dict(rasterized=True),
+                             gridspec_kw=dict(wspace=0.005, hspace=0.005))
+    axes = axes.flatten()
+    # plt.subplots_adjust(wspace=0.005, hspace=0.005, top=0.01, bottom=0.0)
+
+    for ix, ax in enumerate(axes):
+        ax.axis('off')
+
+    return fig, axes
+
+
+def _save_figure(fig, annot=None, output_path=None):
+
+    if annot is not None:
+        fig.suptitle(annot, backgroundcolor='black', color='g')
+
+    fig.tight_layout()
+
+    if output_path is not None:
+        output_path = output_path.replace(' ', '_')
+        fig.savefig(output_path + '.png', bbox_inches='tight', dpi=200)
+
+
 def collage(img_spec,
             num_rows=2,
             num_cols=6,
@@ -569,7 +627,7 @@ def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
         cmap = None  # data is already RGB-ed
     elif mixer_name in ['checkerboard', 'checker', 'cb', 'checker_board']:
         checkers = _get_checkers(slice1.shape, **kwargs)
-        mixed = _mix_slices_in_checkers(slice1, slice2, checkers)
+        mixed = _checker_mixer(slice1, slice2, checkers)
         cmap = 'gray'
     elif mixer_name in ['diff', 'voxelwise_diff', 'vdiff']:
 
@@ -756,9 +814,12 @@ def _mix_color(slice1, slice2, alpha_channels, color_space):
     return mixed
 
 
-def _mix_slices_in_checkers(slice1, slice2, checkers):
+def _checker_mixer(slice1,
+                   slice2,
+                   checker_size=None):
     """Mixes the two slices in alternating areas specified by checkers"""
 
+    checkers = _get_checkers(slice1.shape, checker_size)
     if slice1.shape != slice2.shape or slice2.shape != checkers.shape:
         raise ValueError('size mismatch between cropped slices and checkers!!!')
 

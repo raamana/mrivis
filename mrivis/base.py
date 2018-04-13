@@ -1,3 +1,5 @@
+__all__ = ['SlicePicker']
+
 import numpy as np
 from mrivis.utils import check_views, check_num_slices
 
