@@ -4,18 +4,38 @@ from mrivis.utils import check_views, check_num_slices
 class SlicePicker(object):
     """
     Class to pick non-empty slices along the various dimensions for a given image.
+
+    The term `slice` here refers to one cross-section in a 3D image,
+        towards which this class is designed for.
+        However there are no explicit restrictions placed on dicing N=4+ array
+        and receiving a n-1 dim array.
     """
 
     def __init__(self,
                  image_in,
                  view_set=(0, 1, 2),
                  num_slices=(10, )):
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        image_in : ndarray
+            3D array to be sliced.
+            there are no explicit restrictions placed on number of dimensions for image_in,
+             to get a n-1 dim array, but appropriate reshaping may need to be performed.
+
+        view_set : iterable
+
+        num_slices : int or iterable of size as view_set
+
+        """
 
         self._image = image_in
         self._image_shape = self._image.shape
         self.view_set = check_views(view_set, max_views=len(self._image_shape))
         self.num_slices = check_num_slices(self._image_shape, num_slices)
-        self._pick_slices()  # creates self.slices
+        self._pick_slices()  # creates self._slices
 
     def _pick_slices(self):
         """
