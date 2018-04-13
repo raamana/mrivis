@@ -1,5 +1,5 @@
 import numpy as np
-from mrivis.utils import check_views, check_num_slices, get_axis
+from mrivis.utils import check_views, check_num_slices
 
 class SlicePicker(object):
     """
@@ -27,7 +27,7 @@ class SlicePicker(object):
         for view, ns in zip(self.view_set, self.num_slices):
             dim_size = self._image_shape[view]
             non_empty_slices = np.array([sl for sl in range(dim_size) if
-                                         np.count_nonzero(get_axis(self._image, view, sl)) > 0])
+                                         np.count_nonzero(self._get_axis(self._image, view, sl)) > 0])
             num_non_empty = len(non_empty_slices)
 
             # trying to skip 5% slices at the tails (bottom clipping at 0)
@@ -47,19 +47,36 @@ class SlicePicker(object):
             # adding view and slice # at the same time.
             self._slices.extend([(view, slice) for slice in slices_in_dim])
 
+    def _get_axis(self, array, axis, slice_num, extended=False):
+        """Returns a fixed axis"""
+
+        slice_list = [slice(None)] * array.ndim
+        slice_list[axis] = slice_num
+        slice_data = array[slice_list].T  # transpose for proper orientation
+
+        if not extended:
+            # return just the slice data
+            return slice_data
+        else:
+            # additionally include which dim and which slice num
+            return axis, slice_num, slice_data
+
     def get_slice_indices(self):
-        """Returns the indices for the slices selected (each a tuple : (dim, slice_num))"""
+        """Returns indices for the slices selected (each a tuple : (dim, slice_num))"""
 
         return self._slices
 
-    def get_slices(self):
-        """Generator over all the slices selected, each time returning 2D image"""
+    def get_slices(self, extended=False):
+        """Generator over all the slices selected, each time returning a cross-section."""
 
         for dim, slice_num in self._slices:
-            yield get_axis(self._image, dim, slice_num)
+            yield self._get_axis(self._image, dim, slice_num, extended=extended)
 
-    def get_slices_multi(self, *image_list):
-        """Returns the same slice from the multiple images supplied."""
+    def get_slices_multi(self, *image_list, extended=False):
+        """Returns the same cross-section from the multiple images supplied.
+
+        All images must be of the same shape as the original image defining this object.
+        """
 
         # ensure all the images have the same shape
         for img in image_list:
@@ -68,7 +85,15 @@ class SlicePicker(object):
                                  'They must have the shape: {}'.format(self._image_shape))
 
         for dim, slice_num in self._slices:
-            yield (get_axis(img, dim, slice_num) for img in image_list)
+            multiple_slices = (self._get_axis(img, dim, slice_num) for img in image_list)
+            if not extended:
+                # return just the slice data
+                yield multiple_slices
+            else:
+                # additionally include which dim and which slice num
+                # not using extended option in get_axis, to avoid complicating unpacking
+                return dim, slice_num, multiple_slices
+
 
     def __iter__(self):
         """Returns the next panel, and the associated dimension and slice number"""
