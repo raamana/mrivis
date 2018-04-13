@@ -120,6 +120,11 @@ class SlicePicker(object):
 
         return iter(self._slices)
 
+    def __len__(self):
+        """Returns the total number of slices across all the views."""
+
+        return len(self._slices)
+
 
 if __name__ == '__main__':
     pass
