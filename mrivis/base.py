@@ -359,6 +359,20 @@ class Collage(object):
             for ax in self.grids[grid_index]:
                 ax.set_visible(visibility)
 
+    def save(self, annot=None, output_path=None):
+        """Saves the collage to disk as an image."""
+
+        if annot is not None:
+            self.fig.suptitle(annot, backgroundcolor='black', color='g')
+
+        if output_path is not None:
+            output_path = output_path.replace(' ', '_')
+            # TODO improve bbox calculations to include ONLY the axes from collage
+            # and nothing else
+            self.fig.savefig(output_path + '.png', bbox_inches='tight', dpi=200,
+                             bbox_extra_artists=self.flat_grid)
+
+
     def clear(self):
         """Clears all the axes to start fresh."""
 
