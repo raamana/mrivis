@@ -162,22 +162,22 @@ class Collage(object):
     def __init__(self,
                  view_set=(0, 1, 2),
                  num_rows=2,
-                 num_slices=(10,),
+                 num_slices=(12,),
                  display_params=None,
                  fig=None,
-                 figsize=(15, 11),
-                 bounding_rect=(0.0, 0.0, 1.0, 1.0),
+                 figsize=(14, 11),
+                 bounding_rect=(0.02, 0.02, 0.98, 0.98),
                  ):
         """Constructor."""
 
         self.view_set = check_views(view_set, max_views=3)
-        self.num_slices = [check_int(ns, 'num. slices', min_value=1) for ns in num_slices]
-
-        self._make_layout(fig, figsize, num_rows, bounding_rect)
+        self.num_slices = check_num_slices(num_slices, img_shape=None,
+                                           num_dims=len(self.view_set))
+        self._make_layout(fig, figsize, num_rows, bounding_rect=bounding_rect)
 
         if display_params is None:
             self.display_params = dict(interpolation='none', origin='lower',
-                                       cmap='gray', vmin=0.0, vmax=1.0)
+                                       aspect='equal', cmap='gray', vmin=0.0, vmax=1.0)
         else:
             self.display_params = display_params
 
@@ -186,10 +186,11 @@ class Collage(object):
 
     def _make_layout(self,
                      fig,
-                     figsize=(15, 11),
+                     figsize=(14, 10),
                      num_rows_per_view=2,
-                     bounding_rect=(0.0, 0.0, 1.0, 1.0),
-                     grid_pad=0.01):
+                     bounding_rect=(0.03, 0.93, 0.97, 0.97),
+                     grid_pad=0.01,
+                     grid_aspect=False):
 
         plt.style.use('dark_background')
         if fig is None:
@@ -212,8 +213,9 @@ class Collage(object):
             rect = (left, bottom + ix * effective_height_each_view,
                     width, height_each_view)
             ig = ImageGrid(self.fig, rect=rect,
-                           nrows_ncols=(num_cols_per_row, total_num_rows),
-                           share_all=True, axes_pad=0.005, direction='row')
+                           nrows_ncols=(num_rows_per_view, num_cols_per_row),
+                           axes_pad=0.005, aspect=grid_aspect,
+                           share_all=True, direction='row')
             self.grids.append(ig)
             # self._set_aspect_ratio(view, ig)
 
@@ -241,10 +243,10 @@ class Collage(object):
             ax.axis('off')
 
 
-    def show(self):
+    def show(self, grid=None):
         """Makes the collage visible."""
 
-        self._set_visible(True)
+        self._set_visible(True, grid_index=grid)
 
 
     def attach(self, image_in, show=True):
@@ -267,17 +269,21 @@ class Collage(object):
             self.show()
 
 
-    def hide(self):
+    def hide(self, grid=None):
         """Removes the collage from view."""
 
-        self._set_visible(False)
+        self._set_visible(False, grid_index=grid)
 
 
-    def _set_visible(self, visibility):
+    def _set_visible(self, visibility, grid_index=None):
         """Sets the visibility property of all axes."""
 
-        for ax in self.flat_grid:
-            ax.set_visible(visibility)
+        if grid_index is None:
+            for ax in self.flat_grid:
+                ax.set_visible(visibility)
+        else:
+            for ax in self.grids[grid_index]:
+                ax.set_visible(visibility)
 
 
 if __name__ == '__main__':
