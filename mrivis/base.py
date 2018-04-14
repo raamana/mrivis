@@ -1,7 +1,7 @@
 __all__ = ['SlicePicker', 'Collage']
 
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
+from collections import Iterable
 import numpy as np
 from mpl_toolkits.axes_grid1 import ImageGrid
 from mrivis.utils import check_int, check_num_slices, check_views
@@ -103,10 +103,13 @@ class SlicePicker(object):
         for dim, slice_num in self._slices:
             yield self._get_axis(self._image, dim, slice_num, extended=extended)
 
-    def get_slices_multi(self, *image_list, extended=False):
+    def get_slices_multi(self, image_list, extended=False):
         """Returns the same cross-section from the multiple images supplied.
 
         All images must be of the same shape as the original image defining this object.
+
+        image_list : Iterable
+            containing atleast 2 images
         """
 
         # ensure all the images have the same shape

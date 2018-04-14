@@ -3,7 +3,8 @@ import os
 
 from matplotlib import pyplot as plt
 from os.path import join as pjoin, abspath, realpath, basename, dirname, exists as pexists
-from mrivis.mrivis import checkerboard, color_mix, voxelwise_diff
+from mrivis import checkerboard, color_mix, voxelwise_diff
+from mrivis.utils import scale_0to1
 from pytest import raises
 
 test_dir = dirname(realpath(__file__))
@@ -25,8 +26,10 @@ im_sets = ((highly_mismatched2, highly_mismatched1, 'different subjects _mismatc
            (identical1, identical2, 'identical'),
            )
 
-num_rows = 1
-num_cols = 3
+num_rows = 2
+num_cols = 5
+num_slices = 10
+
 img_lim = None # [0, 4000]
 rescaling='each'
 
@@ -78,11 +81,25 @@ def test_checkerboard():
                          patch_size=ps,
                          rescale_method=rescaling,
                          num_rows=num_rows,
-                         num_cols=num_cols,
+                         num_slices=num_slices,
                          annot=comb_id,
                          output_path=out_path)
-        if not pexists(out_path+'.png'):
-            raise IOError('expected output file not created:\n'
-                          '{}'.format(out_path))
+            if not pexists(out_path+'.png'):
+                raise IOError('expected output file not created:\n'
+                              '{}'.format(out_path))
 
-plt.close('all')
+def test_collage():
+    from mrivis.base import Collage
+    from mrivis.utils import read_image
+    img_path = pjoin(base_dir, '3569_bl_PPMI.nii')
+    img = read_image(img_path, None)
+    scaled = scale_0to1(img)
+    c = Collage(num_slices=15, view_set=(0, 1), num_rows=3)
+    c.attach(scaled)
+    plt.show(block=False)
+    print(c)
+
+test_checkerboard()
+# test_color_mix()
+# test_voxelwise_diff()
+# test_collage()
