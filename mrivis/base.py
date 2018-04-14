@@ -359,6 +359,13 @@ class Collage(object):
             for ax in self.grids[grid_index]:
                 ax.set_visible(visibility)
 
+    def clear(self):
+        """Clears all the axes to start fresh."""
+
+        for ax in self.flat_grid:
+            for im_h in ax.findobj(AxesImage):
+                im_h.remove()
+
 
 if __name__ == '__main__':
     pass
