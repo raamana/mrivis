@@ -466,7 +466,10 @@ def _save_figure(fig, annot=None, output_path=None):
     if annot is not None:
         fig.suptitle(annot, backgroundcolor='black', color='g')
 
-    fig.tight_layout()
+    try:
+        fig.tight_layout()
+    except:
+        pass
 
     if output_path is not None:
         output_path = output_path.replace(' ', '_')
