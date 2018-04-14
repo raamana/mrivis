@@ -1,6 +1,7 @@
 __all__ = ['SlicePicker', 'Collage']
 
 import matplotlib.pyplot as plt
+from matplotlib.image import AxesImage
 from collections import Iterable
 import numpy as np
 from mpl_toolkits.axes_grid1 import ImageGrid
@@ -265,7 +266,73 @@ class Collage(object):
             for ax, slice_data in zip(self.flat_grid, self.slicer.get_slices()):
                 ax.imshow(slice_data, **self.display_params)
         except:
+            self._data_attached = False
             raise ValueError('unable to attach the given image data to current collage')
+        else:
+            self._data_attached = True
+
+        # show all the axes
+        if show:
+            self.show()
+
+
+    def transform_and_attach(self,
+                             image_list,
+                             func,
+                             show=True):
+        """
+        Displays the transformed (combined) version of the cross-sections from each image,
+            (same slice and dimension). So if you input n>=1 images, n slices are obtained
+            from each image, which are passed to the func (callable) provided, and the
+            result will be displayed in the corresponding cell of the collage.
+            Useful applications:
+            - input two images, a function to overlay edges of one image on the other
+            - input two images, a function to mix them in a checkerboard pattern
+            - input one image, a function to saturate the upper half of intensities
+                (to increase contrast and reveal any subtle ghosting in slices)
+
+        func must be able to receive as many arguments as many elements in image_list.
+            if your func needs additional parameters, make them keyword arguments, and
+            use functools.partial to obtain a new callable that takes in just the slices.
+
+        Parameters
+        -----------
+        image_list : list or ndarray
+            list of images or a single ndarray
+
+        func : callable
+            function to be applied on the input images (their slices)
+                to produce a single slice to be displayed.
+
+        show : bool
+            flag to indicate whether make the collage visible.
+
+        """
+
+        if not callable(func):
+            raise TypeError('func must be callable!')
+
+        if not isinstance(image_list, (tuple,list)) and isinstance(image_list, np.ndarray):
+            image_list = [image_list, ]
+
+        if len(image_list) > 1:
+            shape1 = image_list[0].shape
+            for ii in range(1, len(image_list)):
+                if image_list[ii].shape != shape1:
+                    raise ValueError('All images must be of same shape!')
+
+        self.slicer = SlicePicker(image_in=image_list[0],
+                                  view_set=self.view_set,
+                                  num_slices=self.num_slices)
+
+        try:
+            for ax, slice_list in zip(self.flat_grid,
+                                      self.slicer.get_slices_multi(image_list)):
+                ax.imshow(func(*slice_list), **self.display_params)
+                # TODO imshow needs to be replaced with img_handle.set_data()
+        except:
+            self._data_attached = False
+            raise ValueError('unable to attach mix of given images to current collage')
         else:
             self._data_attached = True
 
