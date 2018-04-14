@@ -38,9 +38,11 @@ class SlicePicker(object):
         """
 
         self._image = image_in
-        self._image_shape = self._image.shape
+        self._image_shape = np.array(self._image.shape)
         self.view_set = check_views(view_set, max_views=len(self._image_shape))
-        self.num_slices = check_num_slices(num_slices, self._image_shape)
+        self.num_slices = check_num_slices(num_slices,
+                                           img_shape=self._image_shape[self.view_set],
+                                           num_dims=len(self.view_set))
         self._pick_slices()  # creates self._slices
 
     def _pick_slices(self):
@@ -109,7 +111,7 @@ class SlicePicker(object):
 
         # ensure all the images have the same shape
         for img in image_list:
-            if img.shape != self._image_shape:
+            if img.shape != self._image.shape:
                 raise ValueError('Supplied images are not compatible with this class. '
                                  'They must have the shape: {}'.format(self._image_shape))
 
