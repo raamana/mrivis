@@ -1,7 +1,10 @@
-__all__ = ['SlicePicker']
+__all__ = ['SlicePicker', 'Collage']
 
+import matplotlib.pyplot as plt
 import numpy as np
-from mrivis.utils import check_views, check_num_slices
+from mpl_toolkits.axes_grid1 import ImageGrid
+from mrivis.utils import check_int, check_num_slices, check_views
+
 
 class SlicePicker(object):
     """
@@ -45,11 +48,14 @@ class SlicePicker(object):
             skipping any empty slices (without any data at all).
         """
 
+        not_empty = lambda vu, sl: np.count_nonzero(
+            self._get_axis(self._image, vu, sl)) > 0
+
         self._slices = list()
         for view, ns in zip(self.view_set, self.num_slices):
             dim_size = self._image_shape[view]
-            non_empty_slices = np.array([sl for sl in range(dim_size) if
-                                         np.count_nonzero(self._get_axis(self._image, view, sl)) > 0])
+            non_empty_slices = np.array([sl for sl in range(dim_size)
+                                         if not_empty(view, sl)])
             num_non_empty = len(non_empty_slices)
 
             # trying to skip 5% slices at the tails (bottom clipping at 0)
@@ -126,6 +132,134 @@ class SlicePicker(object):
         """Returns the total number of slices across all the views."""
 
         return len(self._slices)
+
+
+class Collage(object):
+    """
+    Class exhibiting multiple slices from a 3D image,
+        with convenience routines handling all the cross-sections as a single set.
+    """
+
+
+    def __init__(self,
+                 view_set=(0, 1, 2),
+                 num_rows=2,
+                 num_slices=(10,),
+                 display_params=None,
+                 fig=None,
+                 figsize=(15, 11),
+                 bounding_rect=(0.0, 0.0, 1.0, 1.0),
+                 ):
+        """Constructor."""
+
+        self.view_set = check_views(view_set, max_views=3)
+        self.num_slices = [check_int(ns, 'num. slices', min_value=1) for ns in num_slices]
+
+        self._make_layout(fig, figsize, num_rows, bounding_rect)
+
+        if display_params is None:
+            self.display_params = dict(interpolation='none', origin='lower',
+                                       cmap='gray', vmin=0.0, vmax=1.0)
+        else:
+            self.display_params = display_params
+
+        self._data_attached = False
+
+
+    def _make_layout(self,
+                     fig,
+                     figsize=(15, 11),
+                     num_rows_per_view=2,
+                     bounding_rect=(0.0, 0.0, 1.0, 1.0),
+                     grid_pad=0.01):
+
+        plt.style.use('dark_background')
+        if fig is None:
+            self.fig = plt.figure(figsize=figsize)
+        else:
+            self.fig = fig
+
+        total_num_rows = len(self.view_set) * num_rows_per_view
+        total_num_panels = sum(self.num_slices)
+        num_cols_per_row = int(np.ceil(total_num_panels / total_num_rows))
+
+        left, bottom, width, height = bounding_rect
+        avail_height = height - bottom
+        num_views = len(self.view_set)
+        height_each_view = (avail_height - num_views * grid_pad) / num_views
+        effective_height_each_view = height_each_view + grid_pad
+
+        self.grids = list()
+        for ix, view in enumerate(self.view_set):
+            rect = (left, bottom + ix * effective_height_each_view,
+                    width, height_each_view)
+            ig = ImageGrid(self.fig, rect=rect,
+                           nrows_ncols=(num_cols_per_row, total_num_rows),
+                           share_all=True, axes_pad=0.005, direction='row')
+            self.grids.append(ig)
+            # self._set_aspect_ratio(view, ig)
+
+        # flattened for easy access
+        self.flat_grid = [ax for gg in self.grids for ax in gg]
+        self._set_axes_off()
+
+
+    def _set_aspect_ratio(self, view, ig):
+        """Sets the default properties for each axes"""
+
+        # pick sizes in the remaining dimensions
+        panel_sizes = [size for ix, size in enumerate(self.image.shape) if ix != view]
+        # compute ratio
+        aspect_ratio = panel_sizes[0] / panel_sizes[1]
+        # apply it to each of the axes
+        for ax in ig:
+            ax.set(aspect=aspect_ratio)
+
+
+    def _set_axes_off(self):
+        """Turns off all the x and y axes in each Axis"""
+
+        for ax in self.flat_grid:
+            ax.axis('off')
+
+
+    def show(self):
+        """Makes the collage visible."""
+
+        self._set_visible(True)
+
+
+    def attach(self, image_in, show=True):
+        """Attaches the relevant cross-sections to each axis"""
+
+        self.slicer = SlicePicker(image_in=image_in,
+                                  view_set=self.view_set,
+                                  num_slices=self.num_slices)
+
+        try:
+            for ax, slice_data in zip(self.flat_grid, self.slicer.get_slices()):
+                ax.imshow(slice_data, **self.display_params)
+        except:
+            raise ValueError('unable to attach the given image data to current collage')
+        else:
+            self._data_attached = True
+
+        # show all the axes
+        if show:
+            self.show()
+
+
+    def hide(self):
+        """Removes the collage from view."""
+
+        self._set_visible(False)
+
+
+    def _set_visible(self, visibility):
+        """Sets the visibility property of all axes."""
+
+        for ax in self.flat_grid:
+            ax.set_visible(visibility)
 
 
 if __name__ == '__main__':
