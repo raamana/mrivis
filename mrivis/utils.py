@@ -57,17 +57,24 @@ def check_views(view_set, max_views=3):
     return [ check_int(view, 'view', min_value=0, max_value=max_views-1) for view in view_set ]
 
 
-def check_num_slices(img_shape, num_slices):
-    """Ensures requested number of slices is valid."""
+def check_num_slices(num_slices, img_shape=None, num_dims=3):
+    """Ensures requested number of slices is valid.
+
+    Atleast 1 and atmost the image size, if available
+    """
 
     if not isinstance(num_slices, Iterable) or len(num_slices) == 1:
-        num_slices = np.repeat(num_slices, len(img_shape))
-    elif len(num_slices) > len(img_shape):
-        raise ValueError('The number of dimensions in slices requested exceeds the image. '
-                         'Must be atleast 1 but less than {}'.format(len(img_shape)+1))
+        num_slices = np.repeat(num_slices, num_dims)
 
-    # clipping to [1, N]: atleast 1 and atmost the size
-    return np.maximum(1, np.minimum(img_shape, num_slices))
+    if img_shape is not None:
+        if len(num_slices) != len(img_shape):
+            raise ValueError('The number of dimensions requested is different from image.'
+                         ' Must be either 1 or equal to {}'.format(len(img_shape)+1))
+        # upper bounding them to image shape
+        num_slices = np.minimum(img_shape, num_slices)
+
+    # lower bounding it to 1
+    return np.maximum(1, num_slices)
 
 
 def check_int(num,
