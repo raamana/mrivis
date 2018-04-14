@@ -284,6 +284,8 @@ class Collage(object):
             for ax in self.flat_grid:
                 ax.set_visible(visibility)
         else:
+            if grid_index < 0 or grid_index >= len(self.grids):
+                raise IndexError('Valid indices : 0 to {}'.format(len(self.grids)-1))
             for ax in self.grids[grid_index]:
                 ax.set_visible(visibility)
 
