@@ -4,7 +4,9 @@ mrivis: Tools to comapre the similarity of two 3d images (structural, functional
 Options include checker board, red green mixer and voxel-wise difference maps.
 
 """
-from mrivis.base import SlicePicker
+from functools import partial
+
+from mrivis.base import Collage
 from mrivis.color_maps import get_freesurfer_cmap
 from mrivis.utils import _diff_image, check_params, check_patch_size, crop_image, \
     crop_to_extents, crop_to_seg_extents, get_axis, pick_slices, read_image, scale_0to1, \
@@ -47,7 +49,7 @@ def checkerboard(img_spec1=None,
 
     view_set : iterable
         Integers specifying the dimensions to be visualized.
-        Choices: (0, 1, 2) for a 3D image
+        Choices: one or more of (0, 1, 2) for a 3D image
 
     num_slices : int or iterable of size as view_set
         number of slices to be selected for each view
@@ -92,19 +94,17 @@ def checkerboard(img_spec1=None,
                                           rescale_method=rescale_method,
                                           bkground_thresh=background_threshold,
                                           padding=padding)
-    slicer = SlicePicker(img_two, view_set=view_set, num_slices=num_slices)
-    fig, axes = _open_figure(slicer, num_rows, figsize=figsize)
 
     display_params = dict(interpolation='none', aspect='auto', origin='lower',
                           cmap='gray', vmin=0.0, vmax=1.0)
 
-    for ax, (slice_one, slice_two) in zip(axes, slicer.get_slices_multi(img_one, img_two)):
-        mixed_slice = _checker_mixer(slice_one, slice_two, checker_size=patch_size)
-        ax.imshow(mixed_slice, **display_params)
+    mixer = partial(_checker_mixer, checker_size=patch_size)
+    collage = Collage(view_set=view_set, num_slices=num_slices, num_rows=num_rows,
+                      figsize=figsize, display_params=display_params)
+    collage.transform_and_attach((img_one, img_two), func=mixer)
+    collage.save(output_path=output_path, annot=annot)
 
-    _save_figure(fig, annot=annot, output_path=output_path)
-
-    return fig
+    return collage
 
 
 def color_mix(img_spec1=None,
