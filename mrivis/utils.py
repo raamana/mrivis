@@ -183,11 +183,26 @@ def threshold_image(img, bkground_thresh, bkground_value=0.0):
     return img
 
 
-def scale_0to1(image):
-    """Scale the two images to [0, 1] based on min/max from both."""
+def scale_0to1(image_in,
+               exclude_outliers_below=False,
+               exclude_outliers_above=False):
+    """Scale the two images to [0, 1] based on min/max from both.
 
-    min_value = image.min()
-    max_value = image.max()
+    exclude_outliers_{below,above} can be a float between 0 and 100.
+    """
+
+    min_value = image_in.min()
+    max_value = image_in.max()
+    # making a copy to ensure no side-effects
+    image = image_in.copy()
+    if exclude_outliers_below:
+        perctl = float(exclude_outliers_below)
+        image[image < np.percentile(image, perctl)] = min_value
+
+    if exclude_outliers_above:
+        perctl = float(exclude_outliers_above)
+        image[image > np.percentile(image, 100.0-perctl)] = max_value
+
     image = (image - min_value) / (max_value-min_value)
 
     return image

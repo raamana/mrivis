@@ -88,6 +88,11 @@ def test_checkerboard():
                 raise IOError('expected output file not created:\n'
                               '{}'.format(out_path))
 
+def saturate(img):
+    max3rd = img.max() / 3
+    img[img>max3rd] = max3rd
+    return img
+
 def test_collage():
     from mrivis.base import Collage
     from mrivis.utils import read_image
@@ -95,11 +100,12 @@ def test_collage():
     img = read_image(img_path, None)
     scaled = scale_0to1(img)
     c = Collage(num_slices=15, view_set=(0, 1), num_rows=3)
-    c.attach(scaled)
+    # c.attach(scaled)
+    c.transform_and_attach(scaled, saturate)
     plt.show(block=False)
     print(c)
 
-test_checkerboard()
+# test_checkerboard()
 # test_color_mix()
 # test_voxelwise_diff()
-# test_collage()
+test_collage()
