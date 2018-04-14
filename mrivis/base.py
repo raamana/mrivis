@@ -1,6 +1,7 @@
 __all__ = ['SlicePicker', 'Collage']
 
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 import numpy as np
 from mpl_toolkits.axes_grid1 import ImageGrid
 from mrivis.utils import check_int, check_num_slices, check_views
@@ -39,7 +40,7 @@ class SlicePicker(object):
         self._image = image_in
         self._image_shape = self._image.shape
         self.view_set = check_views(view_set, max_views=len(self._image_shape))
-        self.num_slices = check_num_slices(self._image_shape, num_slices)
+        self.num_slices = check_num_slices(num_slices, self._image_shape)
         self._pick_slices()  # creates self._slices
 
     def _pick_slices(self):
@@ -132,6 +133,23 @@ class SlicePicker(object):
         """Returns the total number of slices across all the views."""
 
         return len(self._slices)
+
+    def __str__(self):
+
+        return 'views : {}\n#slices: {}'.format(self.view_set, self.num_slices)
+
+    def __repr__(self):
+
+        sv = [ [] for _ in self.view_set]
+        for v, d in self._slices:
+            sv[v].append(d)
+
+        dim_repr = list()
+        for v in self.view_set:
+            dim_repr.append('{} slices in dim {} : {}'.format(len(sv[v]), v, sv[v]))
+
+        return '\n'.join(dim_repr)
+
 
 
 class Collage(object):
