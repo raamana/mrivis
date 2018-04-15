@@ -1,11 +1,11 @@
 __all__ = ['SlicePicker', 'Collage']
 
 import matplotlib.pyplot as plt
-from matplotlib.image import AxesImage
-from collections import Iterable
 import numpy as np
+from matplotlib.image import AxesImage
 from mpl_toolkits.axes_grid1 import ImageGrid
-from mrivis.utils import check_int, check_num_slices, check_views
+
+from mrivis.utils import check_num_slices, check_views
 
 
 class SlicePicker(object):
@@ -179,14 +179,12 @@ class Collage(object):
         self.view_set = check_views(view_set, max_views=3)
         self.num_slices = check_num_slices(num_slices, img_shape=None,
                                            num_dims=len(self.view_set))
-        self._make_layout(fig, figsize, num_rows, bounding_rect=bounding_rect)
-
         if display_params is None:
             self.display_params = dict(interpolation='none', origin='lower',
                                        aspect='equal', cmap='gray', vmin=0.0, vmax=1.0)
         else:
             self.display_params = display_params
-
+        self._make_layout(fig, figsize, num_rows, bounding_rect=bounding_rect)
         self._data_attached = False
 
 
@@ -227,26 +225,19 @@ class Collage(object):
 
         # flattened for easy access
         self.flat_grid = [ax for gg in self.grids for ax in gg]
-        self._set_axes_off()
+        # create self.images with one image in each axis
+        self._create_imshow_objects()
 
 
-    def _set_aspect_ratio(self, view, ig):
-        """Sets the default properties for each axes"""
-
-        # pick sizes in the remaining dimensions
-        panel_sizes = [size for ix, size in enumerate(self.image.shape) if ix != view]
-        # compute ratio
-        aspect_ratio = panel_sizes[0] / panel_sizes[1]
-        # apply it to each of the axes
-        for ax in ig:
-            ax.set(aspect=aspect_ratio)
-
-
-    def _set_axes_off(self):
+    def _create_imshow_objects(self):
         """Turns off all the x and y axes in each Axis"""
 
-        for ax in self.flat_grid:
+        # empty/dummy data for placeholding
+        empty_image = np.full((20, 20), 0.0)
+        self.images = [None] * len(self.flat_grid)
+        for ix, ax in enumerate(self.flat_grid):
             ax.axis('off')
+            self.images[ix] = ax.imshow(empty_image, **self.display_params)
 
 
     def show(self, grid=None):
@@ -263,8 +254,8 @@ class Collage(object):
                                   num_slices=self.num_slices)
 
         try:
-            for ax, slice_data in zip(self.flat_grid, self.slicer.get_slices()):
-                ax.imshow(slice_data, **self.display_params)
+            for img_obj, slice_data in zip(self.images, self.slicer.get_slices()):
+                img_obj.set_data(slice_data)
         except:
             self._data_attached = False
             raise ValueError('unable to attach the given image data to current collage')
@@ -326,10 +317,9 @@ class Collage(object):
                                   num_slices=self.num_slices)
 
         try:
-            for ax, slice_list in zip(self.flat_grid,
-                                      self.slicer.get_slices_multi(image_list)):
-                ax.imshow(func(*slice_list), **self.display_params)
-                # TODO imshow needs to be replaced with img_handle.set_data()
+            for img_obj, slice_list in zip(self.images,
+                                           self.slicer.get_slices_multi(image_list)):
+                img_obj.set_data(func(*slice_list))
         except:
             self._data_attached = False
             raise ValueError('unable to attach mix of given images to current collage')
