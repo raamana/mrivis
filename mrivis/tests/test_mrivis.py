@@ -4,8 +4,10 @@ import os
 from matplotlib import pyplot as plt
 from os.path import join as pjoin, abspath, realpath, basename, dirname, exists as pexists
 from mrivis import checkerboard, color_mix, voxelwise_diff
-from mrivis.utils import scale_0to1
-from pytest import raises
+from mrivis.utils import scale_0to1, read_image
+import numpy as np
+from mrivis.base import Collage, SlicePicker
+
 
 test_dir = dirname(realpath(__file__))
 base_dir = realpath(pjoin(test_dir, '..', '..', 'example_datasets'))
@@ -63,7 +65,7 @@ def test_color_mix():
                       alpha_channels=(alpha, alpha),
                       rescale_method=rescaling,
                       num_rows=num_rows,
-                      num_cols=num_cols,
+                      num_slices=num_slices,
                       annot=comb_id,
                       output_path=out_path)
         if not pexists(out_path+'.png'):
@@ -88,24 +90,55 @@ def test_checkerboard():
                 raise IOError('expected output file not created:\n'
                               '{}'.format(out_path))
 
-def saturate(img):
-    max3rd = img.max() / 3
-    img[img>max3rd] = max3rd
-    return img
 
-def test_collage():
-    from mrivis.base import Collage
-    from mrivis.utils import read_image
+def test_collage_class():
+
     img_path = pjoin(base_dir, '3569_bl_PPMI.nii')
     img = read_image(img_path, None)
     scaled = scale_0to1(img)
     c = Collage(num_slices=15, view_set=(0, 1), num_rows=3)
-    # c.attach(scaled)
-    c.transform_and_attach(scaled, saturate)
-    plt.show(block=False)
-    print(c)
 
-# test_checkerboard()
+    try:
+        c.attach(scaled)
+    except:
+        raise ValueError('Attach does not work')
+
+    try:
+        c.transform_and_attach(scaled, np.square)
+    except:
+        raise ValueError('transform_and_attach does not work')
+
+    try:
+        print(c)
+    except:
+        raise ValueError('repr implementation failed')
+
+
+def test_slice_picker():
+
+    img_path = pjoin(base_dir, '3569_bl_PPMI.nii')
+    img = read_image(img_path, None)
+    sp = SlicePicker(img, num_slices=15, view_set=(0, 1))
+
+    try:
+        for dim, sl_num, data in sp.get_slices(extended=True):
+            print(dim, sl_num, data.shape)
+    except:
+        raise ValueError('Attach does not work')
+
+    try:
+        for d1, d2 in sp.get_slices_multi((img, img)):
+            assert np.allclose(d1, d2)
+    except:
+        raise ValueError('get_slices_multi does not work')
+
+    try:
+        print(sp)
+    except:
+        raise ValueError('repr implementation failed')
+
+
+test_checkerboard()
 # test_color_mix()
 # test_voxelwise_diff()
-test_collage()
+# test_collage_class()
