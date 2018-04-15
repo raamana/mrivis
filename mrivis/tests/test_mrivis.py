@@ -3,8 +3,11 @@ import os
 
 from matplotlib import pyplot as plt
 from os.path import join as pjoin, abspath, realpath, basename, dirname, exists as pexists
-from mrivis.mrivis import checkerboard, color_mix, voxelwise_diff
-from pytest import raises
+from mrivis import checkerboard, color_mix, voxelwise_diff
+from mrivis.utils import scale_0to1, read_image
+import numpy as np
+from mrivis.base import Collage, SlicePicker
+
 
 test_dir = dirname(realpath(__file__))
 base_dir = realpath(pjoin(test_dir, '..', '..', 'example_datasets'))
@@ -25,8 +28,10 @@ im_sets = ((highly_mismatched2, highly_mismatched1, 'different subjects _mismatc
            (identical1, identical2, 'identical'),
            )
 
-num_rows = 1
-num_cols = 3
+num_rows = 2
+num_cols = 5
+num_slices = 10
+
 img_lim = None # [0, 4000]
 rescaling='each'
 
@@ -60,7 +65,7 @@ def test_color_mix():
                       alpha_channels=(alpha, alpha),
                       rescale_method=rescaling,
                       num_rows=num_rows,
-                      num_cols=num_cols,
+                      num_slices=num_slices,
                       annot=comb_id,
                       output_path=out_path)
         if not pexists(out_path+'.png'):
@@ -78,11 +83,62 @@ def test_checkerboard():
                          patch_size=ps,
                          rescale_method=rescaling,
                          num_rows=num_rows,
-                         num_cols=num_cols,
+                         num_slices=num_slices,
                          annot=comb_id,
                          output_path=out_path)
-        if not pexists(out_path+'.png'):
-            raise IOError('expected output file not created:\n'
-                          '{}'.format(out_path))
+            if not pexists(out_path+'.png'):
+                raise IOError('expected output file not created:\n'
+                              '{}'.format(out_path))
 
-plt.close('all')
+
+def test_collage_class():
+
+    img_path = pjoin(base_dir, '3569_bl_PPMI.nii')
+    img = read_image(img_path, None)
+    scaled = scale_0to1(img)
+    c = Collage(num_slices=15, view_set=(0, 1), num_rows=3)
+
+    try:
+        c.attach(scaled)
+    except:
+        raise ValueError('Attach does not work')
+
+    try:
+        c.transform_and_attach(scaled, np.square)
+    except:
+        raise ValueError('transform_and_attach does not work')
+
+    try:
+        print(c)
+    except:
+        raise ValueError('repr implementation failed')
+
+
+def test_slice_picker():
+
+    img_path = pjoin(base_dir, '3569_bl_PPMI.nii')
+    img = read_image(img_path, None)
+    sp = SlicePicker(img, num_slices=15, view_set=(0, 1))
+
+    try:
+        for dim, sl_num, data in sp.get_slices(extended=True):
+            print(dim, sl_num, data.shape)
+    except:
+        raise ValueError('Attach does not work')
+
+    try:
+        for d1, d2 in sp.get_slices_multi((img, img)):
+            assert np.allclose(d1, d2)
+    except:
+        raise ValueError('get_slices_multi does not work')
+
+    try:
+        print(sp)
+    except:
+        raise ValueError('repr implementation failed')
+
+
+test_checkerboard()
+# test_color_mix()
+# test_voxelwise_diff()
+# test_collage_class()

@@ -57,20 +57,30 @@ def check_views(view_set, max_views=3):
     return [ check_int(view, 'view', min_value=0, max_value=max_views-1) for view in view_set ]
 
 
-def check_num_slices(img_shape, num_slices):
-    """Ensures requested number of slices is valid."""
+def check_num_slices(num_slices, img_shape=None, num_dims=3):
+    """Ensures requested number of slices is valid.
+
+    Atleast 1 and atmost the image size, if available
+    """
 
     if not isinstance(num_slices, Iterable) or len(num_slices) == 1:
-        num_slices = np.repeat(num_slices, len(img_shape))
-    elif len(num_slices) > len(img_shape):
-        raise ValueError('The number of dimensions in slices requested exceeds the image. '
-                         'Must be atleast 1 but less than {}'.format(len(img_shape)+1))
+        num_slices = np.repeat(num_slices, num_dims)
 
-    # clipping to [1, N]: atleast 1 and atmost the size
-    return np.maximum(1, np.minimum(img_shape, num_slices))
+    if img_shape is not None:
+        if len(num_slices) != len(img_shape):
+            raise ValueError('The number of dimensions requested is different from image.'
+                         ' Must be either 1 or equal to {}'.format(len(img_shape)+1))
+        # upper bounding them to image shape
+        num_slices = np.minimum(img_shape, num_slices)
+
+    # lower bounding it to 1
+    return np.maximum(1, num_slices)
 
 
-def check_int(num, num_descr, min_value=0, max_value=np.Inf):
+def check_int(num,
+              num_descr='number',
+              min_value=0,
+              max_value=np.Inf):
     """Validation and typecasting."""
 
     if not np.isfinite(num) or num < min_value or num > max_value:
@@ -173,11 +183,26 @@ def threshold_image(img, bkground_thresh, bkground_value=0.0):
     return img
 
 
-def scale_0to1(image):
-    """Scale the two images to [0, 1] based on min/max from both."""
+def scale_0to1(image_in,
+               exclude_outliers_below=False,
+               exclude_outliers_above=False):
+    """Scale the two images to [0, 1] based on min/max from both.
 
-    min_value = image.min()
-    max_value = image.max()
+    exclude_outliers_{below,above} can be a float between 0 and 100.
+    """
+
+    min_value = image_in.min()
+    max_value = image_in.max()
+    # making a copy to ensure no side-effects
+    image = image_in.copy()
+    if exclude_outliers_below:
+        perctl = float(exclude_outliers_below)
+        image[image < np.percentile(image, perctl)] = min_value
+
+    if exclude_outliers_above:
+        perctl = float(exclude_outliers_above)
+        image[image > np.percentile(image, 100.0-perctl)] = max_value
+
     image = (image - min_value) / (max_value-min_value)
 
     return image
