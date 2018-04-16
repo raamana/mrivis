@@ -21,9 +21,9 @@ class SlicePicker(object):
     def __init__(self,
                  image_in,
                  view_set=(0, 1, 2),
-                 num_slices=(10, )):
+                 num_slices=(10,)):
         """
-        Constructor.
+        Class to pick non-empty slices along the various dimensions for a given image.
 
         Parameters
         ----------
@@ -129,7 +129,6 @@ class SlicePicker(object):
                 # not using extended option in get_axis, to avoid complicating unpacking
                 return dim, slice_num, multiple_slices
 
-
     def __iter__(self):
         """Returns the next panel, and the associated dimension and slice number"""
 
@@ -146,7 +145,7 @@ class SlicePicker(object):
 
     def __repr__(self):
 
-        sv = [ [] for _ in self.view_set]
+        sv = [[] for _ in self.view_set]
         for v, d in self._slices:
             sv[v].append(d)
 
@@ -157,13 +156,11 @@ class SlicePicker(object):
         return '\n'.join(dim_repr)
 
 
-
 class Collage(object):
     """
     Class exhibiting multiple slices from a 3D image,
         with convenience routines handling all the cross-sections as a single set.
     """
-
 
     def __init__(self,
                  view_set=(0, 1, 2),
@@ -171,10 +168,23 @@ class Collage(object):
                  num_slices=(12,),
                  display_params=None,
                  fig=None,
-                 figsize=(14, 11),
+                 figsize=(14, 10),
                  bounding_rect=(0.02, 0.02, 0.98, 0.98),
                  ):
-        """Constructor."""
+        """
+        Class exhibiting multiple slices from a 3D image,
+        with convenience routines handling all the cross-sections as a single set.
+
+        Parameters
+        ----------
+        view_set
+        num_rows
+        num_slices
+        display_params
+        fig
+        figsize
+        bounding_rect
+        """
 
         self.view_set = check_views(view_set, max_views=3)
         self.num_slices = check_num_slices(num_slices, img_shape=None,
@@ -187,14 +197,14 @@ class Collage(object):
         self._make_layout(fig, figsize, num_rows, bounding_rect=bounding_rect)
         self._data_attached = False
 
-
     def _make_layout(self,
                      fig,
                      figsize=(14, 10),
                      num_rows_per_view=2,
-                     bounding_rect=(0.03, 0.93, 0.97, 0.97),
+                     bounding_rect=(0.03, 0.03, 0.97, 0.97),
                      grid_pad=0.01,
-                     grid_aspect=False):
+                     axis_pad=0.01,
+                     **axis_kwargs):
 
         plt.style.use('dark_background')
         if fig is None:
@@ -216,18 +226,60 @@ class Collage(object):
         for ix, view in enumerate(self.view_set):
             rect = (left, bottom + ix * effective_height_each_view,
                     width, height_each_view)
-            ig = ImageGrid(self.fig, rect=rect,
-                           nrows_ncols=(num_rows_per_view, num_cols_per_row),
-                           axes_pad=0.005, aspect=grid_aspect,
-                           share_all=True, direction='row')
-            self.grids.append(ig)
-            # self._set_aspect_ratio(view, ig)
+            ax_grid = self._make_grid_of_axes(bounding_rect=rect, axis_pad=axis_pad,
+                                              num_rows=num_rows_per_view, num_cols=num_cols_per_row,
+                                              **axis_kwargs)
+            self.grids.append(ax_grid)
 
         # flattened for easy access
         self.flat_grid = [ax for gg in self.grids for ax in gg]
         # create self.images with one image in each axis
         self._create_imshow_objects()
 
+    def _make_grid_of_axes(self, bounding_rect=(0.03, 0.03, 0.97, 0.97),
+                           num_rows=2, num_cols=6, axis_pad=0.01, commn_annot=None,
+                           **axis_kwargs):
+        """Creates a grid of axes bounded within a given rectangle."""
+
+        axes_in_grid = list()
+        extents = self._compute_cell_extents_grid(bounding_rect=bounding_rect, num_cols=num_cols,
+                                                  num_rows=num_rows, axis_pad=axis_pad)
+        for cell_ext in extents:
+            ax_cell = self.fig.add_axes(cell_ext, frameon=False, **axis_kwargs)
+            if commn_annot is not None:
+                ax_cell.set_title(commn_annot)
+            ax_cell.set_axis_off()
+            axes_in_grid.append(ax_cell)
+
+        return axes_in_grid
+
+
+    @staticmethod
+    def _compute_cell_extents_grid(bounding_rect=(0.03, 0.03, 0.97, 0.97),
+                                   num_rows=2, num_cols=6,
+                                   axis_pad=0.01):
+        """
+        Produces array of num_rows*num_cols elements each containing the rectangular extents of
+        the corresponding cell the grid, whose position is within bounding_rect.
+        """
+
+        left, bottom, width, height = bounding_rect
+        height_padding = axis_pad * (num_rows + 1)
+        width_padding = axis_pad * (num_cols + 1)
+        cell_height = float((height - height_padding) / num_rows)
+        cell_width = float((width - width_padding) / num_cols)
+
+        cell_height_padded = cell_height + axis_pad
+        cell_width_padded = cell_width + axis_pad
+
+        extents = list()
+        for row in range(num_rows):
+            for col in range(num_cols):
+                extents.append((left  + col * cell_width_padded,
+                                bottom+ row * cell_height_padded,
+                                cell_width, cell_height))
+
+        return extents
 
     def _create_imshow_objects(self):
         """Turns off all the x and y axes in each Axis"""
@@ -239,12 +291,10 @@ class Collage(object):
             ax.axis('off')
             self.images[ix] = ax.imshow(empty_image, **self.display_params)
 
-
     def show(self, grid=None):
         """Makes the collage visible."""
 
         self._set_visible(True, grid_index=grid)
-
 
     def attach(self, image_in, show=True):
         """Attaches the relevant cross-sections to each axis"""
@@ -265,7 +315,6 @@ class Collage(object):
         # show all the axes
         if show:
             self.show()
-
 
     def transform_and_attach(self,
                              image_list,
@@ -303,7 +352,7 @@ class Collage(object):
         if not callable(func):
             raise TypeError('func must be callable!')
 
-        if not isinstance(image_list, (tuple,list)) and isinstance(image_list, np.ndarray):
+        if not isinstance(image_list, (tuple, list)) and isinstance(image_list, np.ndarray):
             image_list = [image_list, ]
 
         if len(image_list) > 1:
@@ -330,12 +379,10 @@ class Collage(object):
         if show:
             self.show()
 
-
     def hide(self, grid=None):
         """Removes the collage from view."""
 
         self._set_visible(False, grid_index=grid)
-
 
     def _set_visible(self, visibility, grid_index=None):
         """Sets the visibility property of all axes."""
@@ -345,7 +392,7 @@ class Collage(object):
                 ax.set_visible(visibility)
         else:
             if grid_index < 0 or grid_index >= len(self.grids):
-                raise IndexError('Valid indices : 0 to {}'.format(len(self.grids)-1))
+                raise IndexError('Valid indices : 0 to {}'.format(len(self.grids) - 1))
             for ax in self.grids[grid_index]:
                 ax.set_visible(visibility)
 
@@ -361,7 +408,6 @@ class Collage(object):
             # and nothing else
             self.fig.savefig(output_path + '.png', bbox_inches='tight', dpi=200,
                              bbox_extra_artists=self.flat_grid)
-
 
     def clear(self):
         """Clears all the axes to start fresh."""
