@@ -284,7 +284,7 @@ class Collage(object):
         cell_width_padded = cell_width + axis_pad
 
         extents = list()
-        for row in range(num_rows):
+        for row in range(num_rows-1, -1, -1):
             for col in range(num_cols):
                 extents.append((left  + col * cell_width_padded,
                                 bottom+ row * cell_height_padded,
