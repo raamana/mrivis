@@ -300,12 +300,12 @@ class Collage(object):
     def attach(self, image_in, show=True):
         """Attaches the relevant cross-sections to each axis"""
 
-        self.slicer = SlicePicker(image_in=image_in,
+        slicer = SlicePicker(image_in=image_in,
                                   view_set=self.view_set,
                                   num_slices=self.num_slices)
 
         try:
-            for img_obj, slice_data in zip(self.images, self.slicer.get_slices()):
+            for img_obj, slice_data in zip(self.images, slicer.get_slices()):
                 img_obj.set_data(slice_data)
         except:
             self._data_attached = False
@@ -362,13 +362,13 @@ class Collage(object):
                 if image_list[ii].shape != shape1:
                     raise ValueError('All images must be of same shape!')
 
-        self.slicer = SlicePicker(image_in=image_list[0],
+        slicer = SlicePicker(image_in=image_list[0],
                                   view_set=self.view_set,
                                   num_slices=self.num_slices)
 
         try:
             for img_obj, slice_list in zip(self.images,
-                                           self.slicer.get_slices_multi(image_list)):
+                                           slicer.get_slices_multi(image_list)):
                 img_obj.set_data(func(*slice_list))
         except:
             self._data_attached = False
