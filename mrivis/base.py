@@ -245,7 +245,7 @@ class Collage(object):
         extents = self._compute_cell_extents_grid(bounding_rect=bounding_rect, num_cols=num_cols,
                                                   num_rows=num_rows, axis_pad=axis_pad)
         for cell_ext in extents:
-            ax_cell = self.fig.add_axes(cell_ext, frameon=False, **axis_kwargs)
+            ax_cell = self.fig.add_axes(cell_ext, frameon=False, visible=False, **axis_kwargs)
             if commn_annot is not None:
                 ax_cell.set_title(commn_annot)
             ax_cell.set_axis_off()
@@ -284,12 +284,13 @@ class Collage(object):
     def _create_imshow_objects(self):
         """Turns off all the x and y axes in each Axis"""
 
-        # empty/dummy data for placeholding
-        empty_image = np.full((20, 20), 0.0)
+        # uniform values for initial image can cause weird behaviour with normalization
+        #       as imshow.set_data() does not automatically update the normalization!!
+        # using random data is a better choice
+        random_image = np.random.rand(20, 20)
         self.images = [None] * len(self.flat_grid)
         for ix, ax in enumerate(self.flat_grid):
-            ax.axis('off')
-            self.images[ix] = ax.imshow(empty_image, **self.display_params)
+            self.images[ix] = ax.imshow(random_image, **self.display_params)
 
     def show(self, grid=None):
         """Makes the collage visible."""
