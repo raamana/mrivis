@@ -184,6 +184,10 @@ class Collage(object):
         Class exhibiting multiple slices from a 3D image,
         with convenience routines handling all the cross-sections as a single set.
 
+        Once created with certain `display_params` (containing vmin and vmax),
+            this class does NOT automatically rescale the data, as you attach different images.
+            Ensure the input images are rescaled to [0, 1] BEFORE attaching.
+
         Parameters
         ----------
         view_set

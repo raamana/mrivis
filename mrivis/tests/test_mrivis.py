@@ -138,7 +138,8 @@ def test_slice_picker():
         raise ValueError('repr implementation failed')
 
 
-test_checkerboard()
+# test_checkerboard()
 # test_color_mix()
 # test_voxelwise_diff()
-# test_collage_class()
+test_collage_class()
+test_slice_picker()
