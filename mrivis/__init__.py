@@ -5,11 +5,13 @@
 __author__ = """Pradeep Reddy Raamana"""
 __email__ = 'raamana@gmail.com'
 
-__all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage', 'aseg_on_mri', 'color_maps']
+__all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage', 'aseg_on_mri',
+           'Collage', 'SlicePicker', 'color_maps']
 
 from sys import version_info
 if version_info.major > 2:
     from mrivis.workflow import checkerboard, color_mix, voxelwise_diff, collage, aseg_on_mri
+    from mrivis.base import Collage, SlicePicker
     from mrivis import color_maps
 else:
     # from .mrivis import checkerboard
