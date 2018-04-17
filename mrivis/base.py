@@ -42,7 +42,11 @@ class SlicePicker(object):
 
         """
 
-        self._image = image_in
+        if len(image_in.shape) < 3:
+            raise ValueError('Image must be atleast 3D')
+        else:
+            self._image = image_in
+
         self._image_shape = np.array(self._image.shape)
         self.view_set = check_views(view_set, max_views=len(self._image_shape))
         self.num_slices = check_num_slices(num_slices,
@@ -311,6 +315,9 @@ class Collage(object):
     def attach(self, image_in, show=True):
         """Attaches the relevant cross-sections to each axis"""
 
+        if len(image_in.shape) < 3:
+            raise ValueError('Image must be atleast 3D')
+
         slicer = SlicePicker(image_in=image_in,
                                   view_set=self.view_set,
                                   num_slices=self.num_slices)
@@ -372,6 +379,8 @@ class Collage(object):
             for ii in range(1, len(image_list)):
                 if image_list[ii].shape != shape1:
                     raise ValueError('All images must be of same shape!')
+                if len(image_list[ii].shape) < 3:
+                    raise ValueError('All images must be atleast 3D')
 
         slicer = SlicePicker(image_in=image_list[0],
                                   view_set=self.view_set,
