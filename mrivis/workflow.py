@@ -111,8 +111,9 @@ def color_mix(img_spec1=None,
               img_spec2=None,
               alpha_channels=None,
               color_space='rgb',
+              view_set=(0, 1, 2),
+              num_slices=(10,),
               num_rows=2,
-              num_cols=6,
               rescale_method='global',
               background_threshold=0.05,
               annot=None,
@@ -161,11 +162,18 @@ def color_mix(img_spec1=None,
     overlay_alpha : float
         Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).
 
+    view_set : iterable
+        Integers specifying the dimensions to be visualized.
+        Choices: one or more of (0, 1, 2) for a 3D image
+
+    num_slices : int or iterable of size as view_set
+        number of slices to be selected for each view
+        Must be of the same length as view_set,
+            each element specifying the number of slices for each dimension.
+            If only one number is given, same number will be chosen for all dimensions.
+
     num_rows : int
         number of rows (top to bottom) per each of 3 dimensions
-
-    num_cols : int
-        number of panels (left to right) per row of each dimension.
 
     rescale_method : bool or str or list or None
         Range to rescale the intensity values to
