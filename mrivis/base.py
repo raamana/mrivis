@@ -33,8 +33,12 @@ class SlicePicker(object):
              to get a n-1 dim array, but appropriate reshaping may need to be performed.
 
         view_set : iterable
+            List of integers selecting the dimesnions to be sliced.
 
         num_slices : int or iterable of size as view_set
+            Number of slices to be selected in each view.
+
+        sampling
 
         """
 
@@ -166,6 +170,7 @@ class Collage(object):
                  view_set=(0, 1, 2),
                  num_rows=2,
                  num_slices=(12,),
+                 attach_image=None,
                  display_params=None,
                  fig=None,
                  figsize=(14, 10),
@@ -180,6 +185,9 @@ class Collage(object):
         view_set
         num_rows
         num_slices
+        attach_image : ndarray
+            The image to be attached to the collage, once it is created. Must be atleast 3d.
+
         display_params
         fig
         figsize
@@ -195,7 +203,10 @@ class Collage(object):
         else:
             self.display_params = display_params
         self._make_layout(fig, figsize, num_rows, bounding_rect=bounding_rect)
-        self._data_attached = False
+        if attach_image is not None:
+            self.attach(attach_image)
+        else:
+            self._data_attached = False
 
     def _make_layout(self,
                      fig,
