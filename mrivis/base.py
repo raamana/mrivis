@@ -135,7 +135,7 @@ class SlicePicker(object):
             else:
                 # additionally include which dim and which slice num
                 # not using extended option in get_axis, to avoid complicating unpacking
-                return dim, slice_num, multiple_slices
+                yield dim, slice_num, multiple_slices
 
     def __iter__(self):
         """Returns the next panel, and the associated dimension and slice number"""
