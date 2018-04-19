@@ -111,8 +111,9 @@ def color_mix(img_spec1=None,
               img_spec2=None,
               alpha_channels=None,
               color_space='rgb',
+              view_set=(0, 1, 2),
+              num_slices=(10,),
               num_rows=2,
-              num_cols=6,
               rescale_method='global',
               background_threshold=0.05,
               annot=None,
@@ -203,22 +204,17 @@ def color_mix(img_spec1=None,
         # not sure if we should make them sum to 1:  or not np.isclose(sum(alpha_channels), 1.0)
         raise ValueError('Alpha must be two elements')
 
-    mixer_params = dict(alpha_channels=alpha_channels,
-                        color_space=color_space)
-    fig = _compare(img_spec1,
-                   img_spec2,
-                   num_rows=num_rows,
-                   num_cols=num_cols,
-                   mixer='color_mix',
-                   annot=annot,
-                   padding=padding,
-                   rescale_method=rescale_method,
-                   bkground_thresh=background_threshold,
-                   output_path=output_path,
-                   figsize=figsize,
-                   **mixer_params)
+    mixer = partial(_mix_color,
+                    alpha_channels=alpha_channels,
+                    color_space=color_space)
 
-    return fig
+    collage = _compare(img_spec1, img_spec2,
+             view_set=view_set, num_slices=num_slices, num_rows=num_rows,
+             mixer=mixer, rescale_method=rescale_method,
+             annot=annot, padding=padding, bkground_thresh=background_threshold,
+             output_path=output_path, figsize=figsize)
+
+    return collage
 
 
 def voxelwise_diff(img_spec1=None,
@@ -312,16 +308,17 @@ def voxelwise_diff(img_spec1=None,
 
 def _compare(img_spec1,
              img_spec2,
+             view_set=(0, 1, 2),
+             num_slices=(10,),
              num_rows=2,
-             num_cols=6,
-             mixer='checker_board',
+             mixer=None,
              rescale_method='global',
              annot=None,
              padding=5,
              bkground_thresh=0.05,
              output_path=None,
              figsize=None,
-             **kwargs):
+             ):
     """
     Produces checkerboard comparison plot of two 3D images.
 
@@ -339,9 +336,7 @@ def _compare(img_spec1,
     num_cols : int
         number of panels (left to right) per row of each dimension.
 
-    mixer : str
-        type of mixer to produce the comparison figure.
-        Options: checker_board, color_mix, diff_abs,
+    mixer : callable
 
     rescale_method : bool or str or list or None
         Method to rescale the intensity values to.
@@ -373,57 +368,21 @@ def _compare(img_spec1,
 
     """
 
-    num_rows, num_cols, padding = check_params(num_rows, num_cols, padding)
+    img_one, img_two = _preprocess_images(img_spec1,
+                                          img_spec2,
+                                          rescale_method=rescale_method,
+                                          bkground_thresh=bkground_thresh,
+                                          padding=padding)
 
-    img1, img2 = check_images(img_spec1, img_spec2, bkground_thresh=bkground_thresh)
-    img1, img2 = crop_to_extents(img1, img2, padding)
+    display_params = dict(interpolation='none', aspect='auto', origin='lower',
+                          cmap='gray', vmin=0.0, vmax=1.0)
 
-    num_slices_per_view = num_rows * num_cols
-    slices = pick_slices(img2, num_slices_per_view)
+    collage = Collage(view_set=view_set, num_slices=num_slices, num_rows=num_rows,
+                      figsize=figsize, display_params=display_params)
+    collage.transform_and_attach((img_one, img_two), func=mixer)
+    collage.save(output_path=output_path, annot=annot)
 
-    rescale_images, img1, img2, min_value, max_value = check_rescaling(img1, img2, rescale_method)
-
-    plt.style.use('dark_background')
-
-    num_axes = 3
-    if figsize is None:
-        figsize = [3 * num_axes * num_rows, 3 * num_cols]
-    fig, ax = plt.subplots(num_axes * num_rows, num_cols, figsize=figsize)
-
-    # displaying some annotation text if provided
-    # good choice would be the location of the input images (for future refwhen image is shared or misplaced!)
-    if annot is not None:
-        fig.suptitle(annot, backgroundcolor='black', color='g')
-
-    display_params = dict(interpolation='none', aspect='equal', origin='lower')
-
-    ax = ax.flatten()
-    ax_counter = 0
-    for dim_index in range(3):
-        for slice_num in slices[dim_index]:
-            plt.sca(ax[ax_counter])
-            ax_counter = ax_counter + 1
-
-            slice1 = get_axis(img1, dim_index, slice_num)
-            slice2 = get_axis(img2, dim_index, slice_num)
-
-            mixed, mixer_spec_params = _generic_mixer(slice1, slice2, mixer, **kwargs)
-            display_params.update(mixer_spec_params)
-
-            plt.imshow(mixed, vmin=min_value, vmax=max_value, **display_params)
-
-            # adjustments for proper presentation
-            plt.axis('off')
-
-    fig.tight_layout()
-
-    if output_path is not None:
-        output_path = output_path.replace(' ', '_')
-        fig.savefig(output_path + '.png', bbox_inches='tight')
-
-    # plt.close()
-
-    return fig
+    return collage
 
 
 def _preprocess_images(img_spec1,
@@ -478,15 +437,13 @@ def _save_figure(fig, annot=None, output_path=None):
 
 def collage(img_spec,
             num_rows=2,
-            num_cols=6,
             rescale_method='global',
             cmap='gray',
             annot=None,
             padding=5,
             bkground_thresh=None,
             output_path=None,
-            figsize=None,
-            **kwargs):
+            figsize=None):
     "Produces a collage of various slices from different orientations in the given 3D image"
 
     num_rows, num_cols, padding = check_params(num_rows, num_cols, padding)
