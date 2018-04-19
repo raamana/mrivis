@@ -124,13 +124,13 @@ def test_slice_picker():
         for dim, sl_num, data in sp.get_slices(extended=True):
             print(dim, sl_num, data.shape)
     except:
-        raise ValueError('Attach does not work')
+        raise ValueError('get_slices() does not work')
 
     try:
         for d1, d2 in sp.get_slices_multi((img, img)):
             assert np.allclose(d1, d2)
     except:
-        raise ValueError('get_slices_multi does not work')
+        raise ValueError('get_slices_multi() does not work')
 
     try:
         print(sp)
@@ -138,8 +138,35 @@ def test_slice_picker():
         raise ValueError('repr implementation failed')
 
 
+    def density_over(img2d, min_density = 0.65):
+
+        return (np.count_nonzero(img2d.flatten())/img2d.size)<=min_density
+
+    print('testing different sampling strategies .. ')
+    for sname, sampler in zip(('linear', 'percent', 'callable'),
+                              ('linear', (5, 50, 95), density_over)):
+        sp = SlicePicker(img, sampler=sampler)
+        print(sname)
+        print(repr(sp))
+
+    for ns in np.random.randint(0, min(img.shape), 10):
+
+        sp_linear = SlicePicker(img, sampler='linear', num_slices=ns)
+        print(repr(sp_linear))
+        if 3*ns != len(sp_linear.get_slice_indices()):
+            raise ValueError('error in linear sampling')
+
+    perc_list = [5, 10, 45, 60, 87]
+    sp_perc = SlicePicker(img, sampler=perc_list)
+    print(repr(sp_perc))
+    if 3*len(perc_list) != len(sp_perc.get_slice_indices()):
+        raise ValueError('error in percentage sampling')
+
+    print()
+
+
 # test_checkerboard()
 # test_color_mix()
 # test_voxelwise_diff()
-test_collage_class()
+# test_collage_class()
 test_slice_picker()

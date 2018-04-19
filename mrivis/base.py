@@ -3,7 +3,7 @@ __all__ = ['SlicePicker', 'Collage']
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.image import AxesImage
-from mpl_toolkits.axes_grid1 import ImageGrid
+from collections import Iterable
 
 from mrivis.utils import check_num_slices, check_views
 
@@ -21,7 +21,8 @@ class SlicePicker(object):
     def __init__(self,
                  image_in,
                  view_set=(0, 1, 2),
-                 num_slices=(10,)):
+                 num_slices=(10,),
+                 sampler='linear'):
         """
         Class to pick non-empty slices along the various dimensions for a given image.
 
@@ -38,7 +39,25 @@ class SlicePicker(object):
         num_slices : int or iterable of size as view_set
             Number of slices to be selected in each view.
 
-        sampling
+        sampler : str or list or callable
+            selection strategy: to identify the type of sampling done to select the slices to return.
+            All sampling is done between the first and last non-empty slice in that view/dimension.
+
+            - if 'linear' : linearly spaced slices
+            - if list, it is treated as set of percentages at which slices to be sampled
+                (must be in the range of [1-100], not [0-1]).
+                This could be used to more/all slices in the middle e.g. range(40, 60, 5)
+                    or at the end e.g. [ 5, 10, 15, 85, 90, 95]
+            - if callable, it must take a 2D image of arbitray size, return True/False
+                to indicate whether to select that slice or not.
+                Only non-empty slices (atleas one non-zero voxel) are provided as input.
+                Simple examples for callable could be based on
+                1) percentage of non-zero voxels > x etc
+                2) presence of desired texture ?
+                3) certain properties of distribution (skewe: dark/bright, energy etc) etc
+
+                If the sampler returns more than requested `num_slices`,
+                    only the first num_slices will be selected.
 
         """
 
@@ -52,7 +71,37 @@ class SlicePicker(object):
         self.num_slices = check_num_slices(num_slices,
                                            img_shape=self._image_shape[self.view_set],
                                            num_dims=len(self.view_set))
+
+        self._verify_sampler(sampler)
         self._pick_slices()  # creates self._slices
+
+    def _verify_sampler(self, sampler):
+
+        if isinstance(sampler, str):
+            sampler = sampler.lower()
+            if sampler not in ['linear', ]:
+                raise ValueError('Sampling strategy: {} not implemented.'.format(sampler))
+            self._sampler = sampler
+            self._sampling_method = 'linear'
+        elif isinstance(sampler, Iterable):
+            if any([index < 0 or index > 100 for index in sampler]):
+                raise ValueError('sampling percentages must be in  [0-100]% range')
+            if len(sampler) > min(self.num_slices):
+                self.num_slices = np.maximum(self.num_slices, len(sampler))
+            self._sampler = np.array(sampler)
+            self._sampling_method = 'percentage'
+        elif callable(sampler):
+            # checking if the callable returns a bool
+            for view in self.view_set:
+                middle_slice = int(self._image_shape[view] / 2)
+                if not isinstance(sampler(self._get_axis(self._image, view, middle_slice)), bool):
+                    raise ValueError('sampler callable must return a boolean value (True/False)')
+
+            self._sampler = sampler
+            self._sampling_method = 'callable'
+        else:
+            raise NotImplementedError('Invalid choice for sampler! Choose one of: '
+                                      'linear, percentage or callable')
 
     def _pick_slices(self):
         """
@@ -60,32 +109,75 @@ class SlicePicker(object):
             skipping any empty slices (without any data at all).
         """
 
-        not_empty = lambda vu, sl: np.count_nonzero(
-            self._get_axis(self._image, vu, sl)) > 0
-
         self._slices = list()
-        for view, ns in zip(self.view_set, self.num_slices):
+        self._slices_by_dim = list()
+        for view, ns_in_view in zip(self.view_set, self.num_slices):
+            # discarding completely empty or almost empty slices.
             dim_size = self._image_shape[view]
-            non_empty_slices = np.array([sl for sl in range(dim_size)
-                                         if not_empty(view, sl)])
-            num_non_empty = len(non_empty_slices)
+            non_empty_slices = np.array([sl for sl in range(dim_size) if self._not_empty(view, sl)])
 
-            # trying to skip 5% slices at the tails (bottom clipping at 0)
-            skip_count = max(0, np.around(num_non_empty * 0.05).astype('int16'))
-            # only when possible
-            if skip_count > 0 and (num_non_empty - 2 * skip_count > ns):
-                non_empty_slices = non_empty_slices[skip_count: -skip_count]
-                num_non_empty = len(non_empty_slices)
+            # sampling according to the chosen strategy
+            slices_dim = self._sample_slices_in_dim(view, ns_in_view, non_empty_slices)
+            #  the following loop is needed to preserve order, while eliminating duplicates
+            # list comprehension over a set(slices_dim) wouldn't preserve order
+            uniq_slices = list()
+            for sn in slices_dim:
+                if sn >= 0 and sn < dim_size and sn not in uniq_slices:
+                    uniq_slices.append(sn)
 
-            # sampling non-empty slices only
-            sampled_indices = np.linspace(0, num_non_empty, num=min(num_non_empty, ns),
-                                          endpoint=False)
-            slices_in_dim = non_empty_slices[np.around(sampled_indices).astype('int64')]
+            self._slices_by_dim.append(slices_dim)
+            # adding view and slice # at the same time..
+            self._slices.extend([(view, sn) for sn in slices_dim])
 
-            # ensure you do not overshoot
-            slices_in_dim = [sn for sn in slices_in_dim if sn >= 0 or sn <= num_non_empty]
-            # adding view and slice # at the same time.
-            self._slices.extend([(view, slice) for slice in slices_in_dim])
+    def _not_empty(self, view, slice_, min_density=0.05):
+        """Checks if the density is too low. """
+
+        img2d = self._get_axis(self._image, view, slice_)
+        return (np.count_nonzero(img2d) / img2d.size) > min_density
+
+    def _sample_slices_in_dim(self, view, num_slices, non_empty_slices):
+        """Samples the slices in the given dimension according the chosen strategy."""
+
+        if self._sampling_method == 'linear':
+            return self._linear_selection(non_empty_slices=non_empty_slices, num_slices=num_slices)
+        elif self._sampling_method == 'percentage':
+            return self._percent_selection(non_empty_slices=non_empty_slices)
+        elif self._sampling_method == 'callable':
+            return self._selection_by_callable(view=view, non_empty_slices=non_empty_slices,
+                                               num_slices=num_slices)
+        else:
+            raise NotImplementedError('Invalid state for the class!')
+
+    def _linear_selection(self, non_empty_slices, num_slices):
+        """Selects linearly spaced slices in given"""
+
+        num_non_empty = len(non_empty_slices)
+
+        # # trying to skip 5% slices at the tails (bottom clipping at 0)
+        # skip_count = max(0, np.around(num_non_empty * 0.05).astype('int16'))
+        # # only when possible
+        # if skip_count > 0 and (num_non_empty - 2 * skip_count > num_slices):
+        #     non_empty_slices = non_empty_slices[skip_count: -skip_count]
+        #     num_non_empty = len(non_empty_slices)
+
+        sampled_indices = np.linspace(0, num_non_empty, num=min(num_non_empty, num_slices),
+                                      endpoint=False)
+        slices_in_dim = non_empty_slices[np.around(sampled_indices).astype('int64')]
+
+        return slices_in_dim
+
+    def _percent_selection(self, non_empty_slices):
+        """Chooses slices at a given percentage between the first and last non-empty slice."""
+
+        return np.around(self._sampler * len(non_empty_slices) / 100).astype('int64')
+
+    def _selection_by_callable(self, view, num_slices, non_empty_slices):
+        """Returns all the slices selected by the given callable."""
+
+        selected = [sl for sl in non_empty_slices
+                    if self._sampler(self._get_axis(self._image, view, sl))]
+
+        return selected[:num_slices]
 
     def _get_axis(self, array, axis, slice_num, extended=False):
         """Returns a fixed axis"""
@@ -147,20 +239,28 @@ class SlicePicker(object):
 
         return len(self._slices)
 
+    def __format__(self, format_spec='s'):
+        """various formats"""
+
+        if format_spec in ['s', 'simple']:
+            return self.__str__()
+        elif format_spec in ['f', 'full']:
+            return self.__repr__()
+        else:
+            return 'invalid format requsted!!'
+
     def __str__(self):
 
-        return 'views : {}\n#slices: {}'.format(self.view_set, self.num_slices)
+        return 'views : {}\n' \
+               '#slices: {}\n' \
+               'sampler: {}'.format(self.view_set, self.num_slices, self._sampling_method)
 
     def __repr__(self):
 
-        sv = [[] for _ in self.view_set]
-        for v, d in self._slices:
-            sv[v].append(d)
-
         dim_repr = list()
-        for v in self.view_set:
-            dim_repr.append('{} slices in dim {} : {}'.format(len(sv[v]), v, sv[v]))
-
+        for ix, vw in enumerate(self.view_set):
+            dim_repr.append('{} slices in dim {} : {}'.format(len(self._slices_by_dim[ix]), vw,
+                                                              self._slices_by_dim[ix]))
         return '\n'.join(dim_repr)
 
 
@@ -272,7 +372,6 @@ class Collage(object):
 
         return axes_in_grid
 
-
     @staticmethod
     def _compute_cell_extents_grid(bounding_rect=(0.03, 0.03, 0.97, 0.97),
                                    num_rows=2, num_cols=6,
@@ -292,10 +391,10 @@ class Collage(object):
         cell_width_padded = cell_width + axis_pad
 
         extents = list()
-        for row in range(num_rows-1, -1, -1):
+        for row in range(num_rows - 1, -1, -1):
             for col in range(num_cols):
-                extents.append((left  + col * cell_width_padded,
-                                bottom+ row * cell_height_padded,
+                extents.append((left + col * cell_width_padded,
+                                bottom + row * cell_height_padded,
                                 cell_width, cell_height))
 
         return extents
@@ -323,8 +422,8 @@ class Collage(object):
             raise ValueError('Image must be atleast 3D')
 
         slicer = SlicePicker(image_in=image_in,
-                                  view_set=self.view_set,
-                                  num_slices=self.num_slices)
+                             view_set=self.view_set,
+                             num_slices=self.num_slices)
 
         try:
             for img_obj, slice_data in zip(self.images, slicer.get_slices()):
@@ -387,8 +486,8 @@ class Collage(object):
                     raise ValueError('All images must be atleast 3D')
 
         slicer = SlicePicker(image_in=image_list[0],
-                                  view_set=self.view_set,
-                                  num_slices=self.num_slices)
+                             view_set=self.view_set,
+                             num_slices=self.num_slices)
 
         try:
             for img_obj, slice_list in zip(self.images,
