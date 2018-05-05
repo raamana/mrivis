@@ -6,7 +6,7 @@ from matplotlib.image import AxesImage
 from collections import Iterable
 
 from mrivis.utils import check_num_slices, check_views
-
+from mrivis import config as cfg
 
 class SlicePicker(object):
     """
@@ -20,9 +20,9 @@ class SlicePicker(object):
 
     def __init__(self,
                  image_in,
-                 view_set=(0, 1, 2),
-                 num_slices=(10,),
-                 sampler='linear'):
+                 view_set=cfg.view_set_default,
+                 num_slices=cfg.num_slices_default,
+                 sampler=cfg.sampler_default):
         """
         Class to pick non-empty slices along the various dimensions for a given image.
 
@@ -259,8 +259,9 @@ class SlicePicker(object):
 
         dim_repr = list()
         for ix, vw in enumerate(self.view_set):
-            dim_repr.append('{} slices in dim {} : {}'.format(len(self._slices_by_dim[ix]), vw,
-                                                              self._slices_by_dim[ix]))
+            dim_repr.append('{} slices in dim {} : '
+                            '{}'.format(len(self._slices_by_dim[ix]),
+                                        vw, self._slices_by_dim[ix]))
         return '\n'.join(dim_repr)
 
 
@@ -271,14 +272,14 @@ class Collage(object):
     """
 
     def __init__(self,
-                 view_set=(0, 1, 2),
-                 num_rows=2,
-                 num_slices=(12,),
+                 view_set=cfg.view_set_default,
+                 num_rows=cfg.num_rows_per_view_default,
+                 num_slices=cfg.num_slices_default,
                  attach_image=None,
                  display_params=None,
                  fig=None,
-                 figsize=(14, 10),
-                 bounding_rect=(0.02, 0.02, 0.98, 0.98),
+                 bounding_rect=cfg.bounding_rect_default,
+                 figsize=cfg.figsize_default,
                  ):
         """
         Class exhibiting multiple slices from a 3D image,
@@ -318,11 +319,11 @@ class Collage(object):
 
     def _make_layout(self,
                      fig,
-                     figsize=(14, 10),
-                     num_rows_per_view=2,
-                     bounding_rect=(0.03, 0.03, 0.97, 0.97),
-                     grid_pad=0.01,
-                     axis_pad=0.01,
+                     figsize=cfg.figsize_default,
+                     num_rows_per_view=cfg.num_rows_per_view_default,
+                     bounding_rect=cfg.bounding_rect_default,
+                     grid_pad=cfg.grid_pad_default,
+                     axis_pad=cfg.axis_pad_default,
                      **axis_kwargs):
 
         plt.style.use('dark_background')
@@ -346,7 +347,8 @@ class Collage(object):
             rect = (left, bottom + ix * effective_height_each_view,
                     width, height_each_view)
             ax_grid = self._make_grid_of_axes(bounding_rect=rect, axis_pad=axis_pad,
-                                              num_rows=num_rows_per_view, num_cols=num_cols_per_row,
+                                              num_rows=num_rows_per_view,
+                                              num_cols=num_cols_per_row,
                                               **axis_kwargs)
             self.grids.append(ax_grid)
 
@@ -355,16 +357,22 @@ class Collage(object):
         # create self.images with one image in each axis
         self._create_imshow_objects()
 
-    def _make_grid_of_axes(self, bounding_rect=(0.03, 0.03, 0.97, 0.97),
-                           num_rows=2, num_cols=6, axis_pad=0.01, commn_annot=None,
+    def _make_grid_of_axes(self,
+                           bounding_rect=cfg.bounding_rect_default,
+                           num_rows=cfg.num_rows_per_view_default,
+                           num_cols=cfg.num_cols_grid_default,
+                           axis_pad=cfg.axis_pad_default,
+                           commn_annot=None,
                            **axis_kwargs):
         """Creates a grid of axes bounded within a given rectangle."""
 
         axes_in_grid = list()
-        extents = self._compute_cell_extents_grid(bounding_rect=bounding_rect, num_cols=num_cols,
+        extents = self._compute_cell_extents_grid(bounding_rect=bounding_rect,
+                                                  num_cols=num_cols,
                                                   num_rows=num_rows, axis_pad=axis_pad)
         for cell_ext in extents:
-            ax_cell = self.fig.add_axes(cell_ext, frameon=False, visible=False, **axis_kwargs)
+            ax_cell = self.fig.add_axes(cell_ext, frameon=False, visible=False,
+                                        **axis_kwargs)
             if commn_annot is not None:
                 ax_cell.set_title(commn_annot)
             ax_cell.set_axis_off()
