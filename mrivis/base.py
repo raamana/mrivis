@@ -275,11 +275,12 @@ class Collage(object):
                  view_set=cfg.view_set_default,
                  num_rows=cfg.num_rows_per_view_default,
                  num_slices=cfg.num_slices_default,
+                 sampler=cfg.sampler_default,
                  attach_image=None,
-                 display_params=None,
-                 fig=None,
                  bounding_rect=cfg.bounding_rect_default,
+                 fig=None,
                  figsize=cfg.figsize_default,
+                 display_params=None,
                  ):
         """
         Class exhibiting multiple slices from a 3D image,
@@ -291,21 +292,62 @@ class Collage(object):
 
         Parameters
         ----------
-        view_set
-        num_rows
-        num_slices
-        attach_image : ndarray
-            The image to be attached to the collage, once it is created. Must be atleast 3d.
 
-        display_params
-        fig
-        figsize
-        bounding_rect
+        view_set : iterable
+            List of integers selecting the dimesnions to be sliced.
+
+        num_slices : int or iterable of size as view_set
+            Number of slices to be selected in each view.
+
+        num_rows : int
+            Number of rows per view.
+
+        sampler : str or list or callable
+            selection strategy to identify the type of sampling done
+            to select the slices to return. All sampling is done between
+            the first and last non-empty slice in that view/dimension.
+
+            - if 'linear' : linearly spaced slices
+            - if list, it is treated as set of percentages at which slices to be sampled
+                (must be in the range of [1-100], not [0-1]).
+                This could be used to more/all slices in the middle e.g. range(40, 60, 5)
+                    or at the end e.g. [ 5, 10, 15, 85, 90, 95]
+            - if callable, it must take a 2D image of arbitray size, return True/False
+                to indicate whether to select that slice or not.
+                Only non-empty slices (atleas one non-zero voxel) are provided as input.
+                Simple examples for callable could be based on
+                1) percentage of non-zero voxels > x etc
+                2) presence of desired texture ?
+                3) certain properties of distribution (skewe: dark/bright, energy etc) etc
+
+                If the sampler returns more than requested `num_slices`,
+                    only the first num_slices will be selected.
+
+        attach_image : ndarray
+            The image to be attached to the collage, once it is created.
+            Must be atleast 3d.
+
+        display_params : dict
+            dict of keyword parameters that can be passed to matplotlib's `Axes.imshow()`
+
+        fig : matplotlib.Figure
+            figure handle to create the collage in.
+            If not specified, creates a new figure.
+
+        figsize : tuple of 2
+            Figure size (width, height) in inches.
+
+        bounding_rect : tuple of 4
+            The rectangular area to bind the collage to (in normalized figure coordinates)
+
         """
 
         self.view_set = check_views(view_set, max_views=3)
         self.num_slices = check_num_slices(num_slices, img_shape=None,
                                            num_dims=len(self.view_set))
+        # TODO find a way to validate the input-- using utits.verify_sampler commonly?
+        self.sampler = sampler
+
         if display_params is None:
             self.display_params = dict(interpolation='none', origin='lower',
                                        aspect='equal', cmap='gray', vmin=0.0, vmax=1.0)
@@ -423,15 +465,25 @@ class Collage(object):
 
         self._set_visible(True, grid_index=grid)
 
-    def attach(self, image_in, show=True):
+    def attach(self,
+               image_in,
+               sampler=None,
+               show=True):
         """Attaches the relevant cross-sections to each axis"""
 
         if len(image_in.shape) < 3:
             raise ValueError('Image must be atleast 3D')
 
+        # allowing the choice of new sampling for different invocations.
+        if sampler is None:
+            temp_sampler = self.sampler
+        else:
+            temp_sampler = sampler
+
         slicer = SlicePicker(image_in=image_in,
                              view_set=self.view_set,
-                             num_slices=self.num_slices)
+                             num_slices=self.num_slices,
+                             sampler=temp_sampler)
 
         try:
             for img_obj, slice_data in zip(self.images, slicer.get_slices()):
