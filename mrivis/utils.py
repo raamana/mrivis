@@ -334,3 +334,35 @@ def scale_images_0to1(slice1, slice2):
     slice2 = (slice2 - min_value) / max_value
 
     return slice1, slice2
+
+
+def verify_sampler(sampler, image, image_shape, view_set, num_slices):
+    """verifies the sampler requested is valid."""
+
+    if isinstance(sampler, str):
+        sampler = sampler.lower()
+        if sampler not in ['linear', ]:
+            raise ValueError('Sampling strategy: {} not implemented.'.format(sampler))
+        out_sampler = sampler
+        out_sampling_method = 'linear'
+    elif isinstance(sampler, Iterable):
+        if any([index < 0 or index > 100 for index in sampler]):
+            raise ValueError('sampling percentages must be in  [0-100]% range')
+        if len(sampler) > min(num_slices):
+            num_slices = np.maximum(num_slices, len(sampler))
+        out_sampler = np.array(sampler)
+        out_sampling_method = 'percentage'
+    elif callable(sampler):
+        # checking if the callable returns a bool
+        for view in view_set:
+            middle_slice = int(image_shape[view] / 2)
+            if not isinstance(sampler(get_axis(image, view, middle_slice)), bool):
+                raise ValueError('sampler callable must return a boolean value (True/False)')
+
+        out_sampler = sampler
+        out_sampling_method = 'callable'
+    else:
+        raise NotImplementedError('Invalid choice for sampler! Choose one of: '
+                                  'linear, percentage or callable')
+
+    return out_sampler, out_sampling_method, num_slices
