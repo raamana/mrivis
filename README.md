@@ -1,7 +1,9 @@
 
 # mrivis
 
-Tools for comparison of registration and spatial similarity of 3d MRI scans (T1, T2, PET etc) using checkerboard plots.
+`mrivis` offers
+- tools for comparison of spatial similarity of 3d MRI scans (T1, T2, PET etc) using checkerboard plots and other comparison methods (see below).
+- classes to develop customizable collages of 3d images - [demo](https://nbviewer.jupyter.org/github/raamana/mrivis/blob/master/docs/example_notebooks/mrivis_demo_Collage_SlicePicker_classes.ipynb)
 
 
 ![](https://img.shields.io/pypi/v/mrivis.svg)
