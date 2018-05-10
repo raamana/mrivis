@@ -179,12 +179,16 @@ class SlicePicker(object):
 
         return selected[:num_slices]
 
-    def _get_axis(self, array, axis, slice_num, extended=False):
+    def _get_axis(self, array, axis, slice_num,
+                  extended=False,
+                  transpose=True):
         """Returns a fixed axis"""
 
         slice_list = [slice(None)] * array.ndim
         slice_list[axis] = slice_num
-        slice_data = array[slice_list].T  # transpose for proper orientation
+        if transpose:
+            # transpose for proper orientation
+            slice_data = array[slice_list].T
 
         if not extended:
             # return just the slice data
