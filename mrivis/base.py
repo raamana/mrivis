@@ -265,6 +265,18 @@ class SlicePicker(object):
         return '\n'.join(dim_repr)
 
 
+class MiddleSlicePicker(SlicePicker):
+    """Convenience class to select the classic one middle slice from all views."""
+
+    def __init__(self, image):
+        """Returns the middle slice from all views in the image."""
+
+        super().__init__(image_in=image,
+                         view_set=cfg.view_set_default,
+                         num_slices=1,
+                         sampler=(50,), )
+
+
 class Collage(object):
     """
     Class exhibiting multiple slices from a 3D image,
