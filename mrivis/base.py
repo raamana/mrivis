@@ -617,5 +617,40 @@ class Collage(object):
                 im_h.remove()
 
 
+class MidCollage(Collage):
+    """Convenience class to display the mid-slices from all the views."""
+
+    def __init__(self,
+                 image,
+                 bounding_rect=cfg.bounding_rect_default,
+                 fig=None,
+                 display_params=None,
+                 ):
+        """Display mid-slices from all the views.
+
+        image : ndarray
+            The image to be attached to the collage, once it is created.
+            Must be atleast 3d.
+
+        fig : matplotlib.Figure
+            figure handle to create the collage in.
+            If not specified, creates a new figure.
+
+        bounding_rect : tuple of 4
+            The rectangular area to bind the collage to (in normalized figure coordinates)
+
+        display_params : dict
+            dict of keyword parameters that can be passed to matplotlib's `Axes.imshow()`
+
+        """
+
+        super().__init__(view_set=cfg.view_set_default,
+                         num_rows=1, num_slices=1, sampler=(50, ),
+                         attach_image=image,
+                         fig=fig, bounding_rect=bounding_rect,
+                         display_params=display_params)
+
+
+
 if __name__ == '__main__':
     pass
