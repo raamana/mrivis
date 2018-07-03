@@ -3,6 +3,8 @@ view_set_default = (0, 1, 2)
 num_slices_default = (10,)
 sampler_default = 'linear'
 
+min_density_default = 0.01
+
 num_rows_per_view_default = 2
 
 figsize_default=(14, 10)

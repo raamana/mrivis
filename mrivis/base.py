@@ -22,7 +22,8 @@ class SlicePicker(object):
                  image_in,
                  view_set=cfg.view_set_default,
                  num_slices=cfg.num_slices_default,
-                 sampler=cfg.sampler_default):
+                 sampler=cfg.sampler_default,
+                 min_density=cfg.min_density_default):
         """
         Class to pick non-empty slices along the various dimensions for a given image.
 
@@ -59,12 +60,19 @@ class SlicePicker(object):
                 If the sampler returns more than requested `num_slices`,
                     only the first num_slices will be selected.
 
+        min_density : float or None
+            mininum density of non-zero voxels within a given slice to consider it non-empty
+            Default: 0.01 (1%).
+            if None, include all slices.
+
         """
 
         if len(image_in.shape) < 3:
             raise ValueError('Image must be atleast 3D')
         else:
             self._image = image_in
+
+        self._check_min_density(min_density)
 
         self._image_shape = np.array(self._image.shape)
         self.view_set = check_views(view_set, max_views=len(self._image_shape))
@@ -73,6 +81,7 @@ class SlicePicker(object):
                                            num_dims=len(self.view_set))
 
         self._verify_sampler(sampler)
+
         self._pick_slices()  # creates self._slices
 
     def _verify_sampler(self, sampler):
@@ -103,6 +112,16 @@ class SlicePicker(object):
             raise NotImplementedError('Invalid choice for sampler! Choose one of: '
                                       'linear, percentage or callable')
 
+    def _check_min_density(self, min_density):
+        """Validator to ensure proper usage."""
+
+        if min_density is None:
+            self._min_density = -np.Inf
+        elif ( isinstance(min_density, float) and (min_density>=0.0 and min_density<1.0)):
+            self._min_density = min_density
+        else:
+            raise ValueError('min_density must be float and be >=0.0 and < 1.0')
+
     def _pick_slices(self):
         """
         Picks the slices to display in each dimension/view,
@@ -129,11 +148,11 @@ class SlicePicker(object):
             # adding view and slice # at the same time..
             self._slices.extend([(view, sn) for sn in slices_dim])
 
-    def _not_empty(self, view, slice_, min_density=0.05):
+    def _not_empty(self, view, slice_):
         """Checks if the density is too low. """
 
         img2d = self._get_axis(self._image, view, slice_)
-        return (np.count_nonzero(img2d) / img2d.size) > min_density
+        return (np.count_nonzero(img2d) / img2d.size) > self._min_density
 
     def _sample_slices_in_dim(self, view, num_slices, non_empty_slices):
         """Samples the slices in the given dimension according the chosen strategy."""
