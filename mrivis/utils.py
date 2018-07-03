@@ -130,7 +130,7 @@ def read_image(img_spec, bkground_thresh):
 
     img = check_image_is_3d(img)
 
-    if not np.issubdtype(img.dtype, np.float):
+    if not np.issubdtype(img.dtype, np.floating):
         img = img.astype('float32')
 
     return threshold_image(img, bkground_thresh)
