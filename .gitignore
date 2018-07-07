@@ -3,6 +3,8 @@
 cmd2pkg
 docs/flyers.key
 mrivis/tests/
+docs/example_notebooks/.ipynb_checkpoints/
+.pytest_cache/
 
 __pycache__/
 *.py[cod]
