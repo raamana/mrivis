@@ -156,6 +156,25 @@ def check_image_is_3d(img):
     return img
 
 
+def check_image_is_4d(img, min_num_volumes=2):
+    """Ensures the image loaded is 3d and nothing else."""
+
+    if len(img.shape) < 4:
+        raise ValueError('Input volume must be 4D!')
+    elif len(img.shape) == 4:
+        for dim_size in img.shape[:3]:
+            if dim_size < 1:
+                raise ValueError('Atleast one slice must exist in each dimension')
+        if img.shape[3] < min_num_volumes:
+            raise ValueError('Input volume is 4D '
+                             'with less than {} volumes!'.format(min_num_volumes))
+    elif len(img.shape) > 4:
+        raise ValueError('Too many dimensions : more than 4.\n'
+                         'Invalid shape of image : {}'.format(img.shape))
+
+    return img
+
+
 def threshold_image(img, bkground_thresh, bkground_value=0.0):
     """
     Thresholds a given image at a value or percentile.
