@@ -772,5 +772,49 @@ class Carpet(object):
                            frame_on=False)
         self.ax_carpet.set_ylim(auto=True)
 
+
+    def _apply_mask(self, crop_mask, roi_set):
+        """Removes voxels outside the given mask or ROI set."""
+
+        if crop_mask is None and roi_set is None:
+            return
+
+        # TODO ensure compatible with input image
+        #   - must have < N dim and same size in moving dims.
+        rows_to_delete = list()
+        if crop_mask is not None:
+            # TODO should we check to ensure mask is binary and fully connected?
+            if isinstance(crop_mask, str) and crop_mask.lower() == 'auto':
+                rows_mask = np.where(~self.carpet.any(axis=1))[0]
+            else:
+                self._verify_shape_compatibility(crop_mask, 'mask')
+                rows_mask = np.where(crop_mask.flatten() == 0)
+
+            rows_to_delete.append(rows_mask)
+
+        if roi_set is not None:
+            self._verify_shape_compatibility(roi_set, 'ROI set')
+            rows_roi = np.where(roi_set.flatten() == 0)
+            rows_to_delete.append(rows_roi)
+            self.roi_list = np.unique(roi_set.flatten())
+
+        # only if there were determined to be outside both
+        all_masks = rows_to_delete[0] # 0 could be either crop mask or roi mask
+        # allowing for a series of masks to be ANDed'
+        # loop does not get executed if there is only 1 element (at 0)
+        for index in range(1,len(rows_to_delete)):
+            all_masks = np.logical_and(all_masks, rows_to_delete[index])
+
+        self.carpet = np.delete(self.carpet, all_masks, axis=0)
+
+    def _verify_shape_compatibility(self, img, img_type):
+        """Checks mask shape against input image shape."""
+
+        if self.input_image_shape[:-1] != img.shape:
+            raise ValueError('Shape of the {} ({}) is not compatible '
+                             'with input image shape: {} '
+                             ''.format(img_type, img.shape, self.input_image_shape[:-1]))
+
+
 if __name__ == '__main__':
     pass
