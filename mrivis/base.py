@@ -1,11 +1,13 @@
-__all__ = ['SlicePicker', 'Collage']
+__all__ = ['SlicePicker', 'Collage', 'Carpet']
 
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 from matplotlib.image import AxesImage
+from matplotlib.axis import Axis
 from collections import Iterable
 
-from mrivis.utils import check_num_slices, check_views
+from mrivis.utils import check_num_slices, check_views, row_wise_rescale
 from mrivis import config as cfg
 
 class SlicePicker(object):
@@ -670,6 +672,82 @@ class MidCollage(Collage):
                          display_params=display_params)
 
 
+class Carpet(object):
+    """Class to unroll the 4D or higher dimensional data into 2D images.
+
+    Typical examples include functional or diffusion MRI data.
+
+    """
+
+
+    def __init__(self, image_ND,
+                 fixed_dim=-1,
+                 crop_mask='auto',
+                 roi_set=None,
+                 rescale_data=True,
+                 cluster_data=None,
+                 num_clusters=None,
+                 grouping_labels=None,
+                 cluster_data_X=None,
+                 num_clusters_X=None,
+                 grouping_labels_X=None,
+                 num_frames_to_skip='auto',
+                 ):
+        """Class to unroll the 4D or higher dimensional data into 2D images.
+
+        Optionally,
+            - can cluster data (in both the dimensions being unrolled,
+                and the fixed dimension, which is typically time or gradient dimensions
+                    in functional and diffusion MRI respectively
+            - label the resulting clusters.
+
+        Parameters
+        ----------
+
+        image_ND : ndarray
+            input image from which the carpet needs to be made.
+
+        fixed_dim : int
+
+        crop_mask : ndarray or str or None
+            if an image of same size as the N-1 dim array,
+                it is interpreted to be a mask to be applied to each 3D/(N-1)D volume
+            If its 'auto', an auto background (zeros) mask is computed and removed
+            If its None, all the voxels in original image are retained
+
+        roi_set : ndarray or None
+
+        rescale_data : bool
+            Whether to rescale the input image over the chosen `fixed_dim`
+            Default is to rescale to maximize the contrast.
+
+        """
+
+        # TODO parameter check and validation
+        self.input_image_shape = image_ND.shape
+        self._make_carpet(image_ND, fixed_dim, rescale_data)
+        self._apply_mask(crop_mask, roi_set)
+
+        # TODO option to blur within ROIs, to improve contrast across ROIs?
+
+        # TODO reorder rows either using anatomical seg, or using clustering
+
+        # dropping alternating voxels if it gets too big
+        # to save on memory and avoid losing signal
+        if self.carpet.shape[1] > 600 and isinstance(num_frames_to_skip, int):
+            print('Too many frames (n={}) to display: '
+                  'keeping every {}th frame'.format(self.carpet.shape[1], num_frames_to_skip))
+            self.carpet = self.carpet[:, ::num_frames_to_skip]
+
+    def _make_carpet(self, image_ND, fixed_dim, rescale_data):
+        """Contruscts the carpet from the input image.
+
+        Optional rescaling of the data.
+        """
+
+        self.carpet = image_ND.reshape(-1, image_ND.shape[fixed_dim])
+        if rescale_data:
+            self.carpet = row_wise_rescale(self.carpet)
 
 if __name__ == '__main__':
     pass
