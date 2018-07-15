@@ -749,5 +749,28 @@ class Carpet(object):
         if rescale_data:
             self.carpet = row_wise_rescale(self.carpet)
 
+    def show(self, ax_carpet=None, label_x_axis='time point', label_y_axis='voxels/ROI'):
+        """Displays the carpet in the given axis"""
+
+        if ax_carpet is None:
+            self.ax_carpet = plt.gca()
+        else:
+            if not isinstance(ax_carpet, Axis):
+                raise ValueError('Input must be a valid axis!')
+            self.ax_carpet = ax_carpet
+
+        #   vmin/vmax are controlled, because we rescale all to [0, 1]
+        self.imshow_params_carpet = dict(interpolation='none', cmap='gray',
+                                         aspect='auto', origin='lower', zorder=1)
+        # should we control vmin=0.0, vmax=1.0 ??
+
+        self.carpet_handle = self.ax_carpet.imshow(self.carpet,
+                                                   **self.imshow_params_carpet)
+
+        # TODO decorating axes with labels
+        self.ax_carpet.set(xlabel=label_x_axis, ylabel=label_y_axis,
+                           frame_on=False)
+        self.ax_carpet.set_ylim(auto=True)
+
 if __name__ == '__main__':
     pass
