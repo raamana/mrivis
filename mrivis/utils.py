@@ -227,6 +227,34 @@ def scale_0to1(image_in,
     return image
 
 
+def row_wise_rescale(matrix):
+    """
+    For fMRI data (num_voxels x num_time_points),
+        this would translate to voxel-wise normalization over time.
+
+    Input matrix: typically a carpet of size num_voxels x num_4th_dim
+        4th_dim could be time points or gradients or other appropriate
+
+    """
+
+    if matrix.shape[0] <= matrix.shape[1]:
+        raise ValueError('Number of voxels is less than the number of time points!! '
+                      'Are you sure data is reshaped correctly?')
+
+    min_ = matrix.min(axis=1)
+    range_ = matrix.ptp(axis=1)  # ptp : peak to peak, max-min
+    min_tile = np.tile(min_, (matrix.shape[1], 1)).T
+    range_tile = np.tile(range_, (matrix.shape[1], 1)).T
+    # avoiding any numerical difficulties
+    range_tile[range_tile < np.finfo(np.float).eps] = 1.0
+
+    normed = (matrix - min_tile) / range_tile
+
+    del min_, range_, min_tile, range_tile
+
+    return normed
+
+
 def crop_to_seg_extents(img, seg, padding):
     """Crop the image (usually MRI) to fit within the bounding box of a segmentation (or set of seg)"""
 
