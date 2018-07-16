@@ -96,8 +96,9 @@ def test_collage_class():
     img_path = pjoin(base_dir, '3569_bl_PPMI.nii')
     img = read_image(img_path, None)
     scaled = scale_0to1(img)
-    c = Collage(num_slices=15, view_set=(0, 1), num_rows=3)
+    c1 = Collage(num_slices=1, view_set=(0, 1), num_rows=1, view_layout='horizontal')
 
+    c = Collage(num_slices=15, view_set=(0, 1), num_rows=3)
     try:
         c.attach(scaled)
     except:
@@ -145,20 +146,19 @@ def test_slice_picker():
     print('testing different sampling strategies .. ')
     for sname, sampler in zip(('linear', 'percent', 'callable'),
                               ('linear', (5, 50, 95), density_over)):
-        sp = SlicePicker(img, sampler=sampler)
-        print(sname)
-        print(repr(sp))
+        try:
+            sp = SlicePicker(img, sampler=sampler)
+        except:
+            raise ValueError(' {} sampling failed'.format(sname))
 
     for ns in np.random.randint(0, min(img.shape), 10):
 
         sp_linear = SlicePicker(img, sampler='linear', num_slices=ns)
-        print(repr(sp_linear))
         if 3*ns != len(sp_linear.get_slice_indices()):
             raise ValueError('error in linear sampling')
 
     perc_list = [5, 10, 45, 60, 87]
     sp_perc = SlicePicker(img, sampler=perc_list)
-    print(repr(sp_perc))
     if 3*len(perc_list) != len(sp_perc.get_slice_indices()):
         raise ValueError('error in percentage sampling')
 
@@ -168,5 +168,5 @@ def test_slice_picker():
 # test_checkerboard()
 # test_color_mix()
 # test_voxelwise_diff()
-# test_collage_class()
-test_slice_picker()
+test_collage_class()
+# test_slice_picker()
