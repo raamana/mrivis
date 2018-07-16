@@ -6,13 +6,14 @@ import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib as mpl
 
+
 def _diff_image(slice1, slice2,
                 abs_value=True,
                 cmap='gray',
                 **kwargs):
     """Computes the difference image"""
 
-    diff = slice1-slice2
+    diff = slice1 - slice2
 
     if abs_value:
         diff = np.abs(diff)
@@ -24,7 +25,7 @@ def diff_colormap():
     "Custom colormap to map low values to black or another color."
 
     # bottom = plt.cm.copper(np.linspace(0., 1, 6))
-    black  = np.atleast_2d([0., 0., 0., 1.])
+    black = np.atleast_2d([0., 0., 0., 1.])
     bottom = np.repeat(black, 6, axis=0)
     middle = plt.cm.copper(np.linspace(0, 1, 250))
     # remain = plt.cm.Reds(np.linspace(0, 1, 240))
@@ -54,7 +55,7 @@ def check_views(view_set, max_views=3):
     if len(view_set) > max_views:
         raise ValueError('Can only have {} views'.format(max_views))
 
-    return [ check_int(view, 'view', min_value=0, max_value=max_views-1) for view in view_set ]
+    return [check_int(view, 'view', min_value=0, max_value=max_views - 1) for view in view_set]
 
 
 def check_num_slices(num_slices, img_shape=None, num_dims=3):
@@ -69,7 +70,7 @@ def check_num_slices(num_slices, img_shape=None, num_dims=3):
     if img_shape is not None:
         if len(num_slices) != len(img_shape):
             raise ValueError('The number of dimensions requested is different from image.'
-                         ' Must be either 1 or equal to {}'.format(len(img_shape)+1))
+                             ' Must be either 1 or equal to {}'.format(len(img_shape) + 1))
         # upper bounding them to image shape
         num_slices = np.minimum(img_shape, num_slices)
 
@@ -170,7 +171,8 @@ def threshold_image(img, bkground_thresh, bkground_value=0.0):
         try:
             thresh_perc = float(bkground_thresh.replace('%', ''))
         except:
-            raise ValueError('percentile specified could not be parsed correctly - must be a string of the form "5%", "10%" etc')
+            raise ValueError(
+                'percentile specified could not be parsed correctly - must be a string of the form "5%", "10%" etc')
         else:
             thresh_value = np.percentile(img, thresh_perc)
     elif isinstance(bkground_thresh, (float, int)):
@@ -201,9 +203,9 @@ def scale_0to1(image_in,
 
     if exclude_outliers_above:
         perctl = float(exclude_outliers_above)
-        image[image > np.percentile(image, 100.0-perctl)] = max_value
+        image[image > np.percentile(image, 100.0 - perctl)] = max_value
 
-    image = (image - min_value) / (max_value-min_value)
+    image = (image - min_value) / (max_value - min_value)
 
     return image
 
@@ -242,9 +244,9 @@ def crop_image(img, padding=5):
 
     beg_coords, end_coords = crop_coords(img, padding)
 
-    if len(img.shape)==3:
+    if len(img.shape) == 3:
         img = crop_3dimage(img, beg_coords, end_coords)
-    elif len(img.shape)==2:
+    elif len(img.shape) == 2:
         img = crop_2dimage(img, beg_coords, end_coords)
     else:
         raise ValueError('Can only crop 2D or 3D images!')
@@ -302,19 +304,21 @@ def pick_slices(img, num_slices_per_view):
     slices = list()
     for view in range(len(img.shape)):
         dim_size = img.shape[view]
-        non_empty_slices = np.array([sl for sl in range(dim_size) if np.count_nonzero(get_axis(img, view, sl)) > 0])
+        non_empty_slices = np.array(
+            [sl for sl in range(dim_size) if np.count_nonzero(get_axis(img, view, sl)) > 0])
         num_non_empty = len(non_empty_slices)
 
         # trying to 5% slices at the tails (bottom clipping at 0)
-        skip_count = max(0, np.around(num_non_empty*0.05).astype('int16'))
+        skip_count = max(0, np.around(num_non_empty * 0.05).astype('int16'))
         # only when possible
-        if skip_count > 0 and (num_non_empty-2*skip_count>=num_slices_per_view):
-            non_empty_slices = non_empty_slices[skip_count : -skip_count]
+        if skip_count > 0 and (num_non_empty - 2 * skip_count >= num_slices_per_view):
+            non_empty_slices = non_empty_slices[skip_count: -skip_count]
             num_non_empty = len(non_empty_slices)
 
         # sampling non-empty slices only
-        sampled_indices = np.linspace(0, num_non_empty, num=min(num_non_empty, num_slices_per_view), endpoint=False)
-        slices_in_dim = non_empty_slices[ np.around(sampled_indices).astype('int64') ]
+        sampled_indices = np.linspace(0, num_non_empty, num=min(num_non_empty, num_slices_per_view),
+                                      endpoint=False)
+        slices_in_dim = non_empty_slices[np.around(sampled_indices).astype('int64')]
 
         # ensure you do not overshoot
         slices_in_dim = [sn for sn in slices_in_dim if sn >= 0 or sn <= num_non_empty]
