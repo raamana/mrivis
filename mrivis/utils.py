@@ -46,6 +46,30 @@ def get_axis(array, axis, slice_num):
     return slice_data
 
 
+def check_bounding_rect(rect_pos):
+    """Ensure the rect spec is valid."""
+
+    if not isinstance(rect_pos, Iterable):
+        raise ValueError('rectangle spect must be a tuple of floats '
+                         'specifying (left, right, width, height)')
+
+    left, bottom, width, height = rect_pos
+    for val, name in zip((left, bottom, width, height),
+                         ('left', 'bottom', 'width', 'height')):
+        if val < 0.0 or val > 1.0:
+            raise ValueError("{}'s value must be >=0 and <= 1.0. "
+                             "It is now {}".format(name, val))
+
+    if left + width > 1.0:
+        print('rect would extend beyond the width of figure/axis by {}'.format(left + width - 1.0))
+
+    if bottom + height > 1.0:
+        print('rect would extend beyond the height of figure/axis by {}'.format(
+            bottom + height - 1.0))
+
+    return rect_pos
+
+
 def check_views(view_set, max_views=3):
     """Ensures valid view/dimensions are selected."""
 
