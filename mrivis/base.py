@@ -7,7 +7,7 @@ from matplotlib.image import AxesImage
 from matplotlib.axis import Axis
 from collections import Iterable
 
-from mrivis.utils import check_num_slices, check_views, row_wise_rescale
+from mrivis.utils import check_num_slices, check_views, row_wise_rescale, read_image
 from mrivis import config as cfg
 
 class SlicePicker(object):
@@ -704,8 +704,8 @@ class Carpet(object):
         Parameters
         ----------
 
-        image_ND : ndarray
-            input image from which the carpet needs to be made.
+        image_ND : ndarray or str
+            input image, or a path to an image, from which the carpet needs to be made.
 
         fixed_dim : int
 
@@ -740,10 +740,12 @@ class Carpet(object):
             self.carpet = self.carpet[:, ::num_frames_to_skip]
 
     def _make_carpet(self, image_ND, fixed_dim, rescale_data):
-        """Contruscts the carpet from the input image.
+        """Constructs the carpet from the input image.
 
         Optional rescaling of the data.
         """
+
+        image_ND = read_image(image_ND, bkground_thresh=None)
 
         self.carpet = image_ND.reshape(-1, image_ND.shape[fixed_dim])
         if rescale_data:
