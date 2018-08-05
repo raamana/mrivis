@@ -4,7 +4,9 @@ tags:
   - visualization
   - neuroscience
   - alignment
-  - histogram
+  - neuroimaging
+  - multimodal
+  - development kit
 authors:
  - name: Pradeep Reddy Raamana
    orcid: 0000-0003-4662-0558
