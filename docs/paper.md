@@ -4,7 +4,9 @@ tags:
   - visualization
   - neuroscience
   - alignment
-  - histogram
+  - neuroimaging
+  - multimodal
+  - development kit
 authors:
  - name: Pradeep Reddy Raamana
    orcid: 0000-0003-4662-0558
@@ -30,3 +32,6 @@ mrivis provides easy ways to perform non-trivial medical image visualization tas
 
 It is based on matplotlib [@hunter2007matplotlib], nibabel [@brett2016nibabel] and numpy [@oliphant2007python], and is already serving visualqc [@raamana2018visualqc].
 
+## Acknowledgement
+
+Pradeep Reddy Raamana is grateful for the support of the Canadian Biomarker Integration Network for Depression (CAN-BIND) and Ontario Neurodegenerative Disease Research Initiative (ONDRI), two integrated discovery programs of the Ontario Brain Institute (OBI), Canada. 
