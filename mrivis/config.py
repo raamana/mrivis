@@ -13,3 +13,5 @@ bounding_rect_default=(0.02, 0.02, 0.98, 0.98)
 num_cols_grid_default = 6
 grid_pad_default = 0.01
 axis_pad_default = 0.01
+
+background_value = 0

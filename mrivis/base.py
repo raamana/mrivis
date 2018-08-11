@@ -790,13 +790,13 @@ class Carpet(object):
                 rows_mask = np.where(~self.carpet.any(axis=1))[0]
             else:
                 self._verify_shape_compatibility(crop_mask, 'mask')
-                rows_mask = np.where(crop_mask.flatten() == 0)
+                rows_mask = np.where(crop_mask.flatten() == cfg.background_value)
 
             rows_to_delete.append(rows_mask)
 
         if roi_set is not None:
             self._verify_shape_compatibility(roi_set, 'ROI set')
-            rows_roi = np.where(roi_set.flatten() == 0)
+            rows_roi = np.where(roi_set.flatten() == cfg.background_value)
             rows_to_delete.append(rows_roi)
             self.roi_list = np.unique(roi_set.flatten())
 
