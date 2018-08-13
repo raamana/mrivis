@@ -99,7 +99,6 @@ def test_collage_class():
     img_path = pjoin(base_dir, '3569_bl_PPMI.nii')
     img = read_image(img_path, None)
     scaled = scale_0to1(img)
-    c1 = Collage(num_slices=1, view_set=(0, 1), num_rows=1, view_layout='horizontal')
 
     c = Collage(num_slices=15, view_set=(0, 1), num_rows=3)
     try:
@@ -143,7 +142,6 @@ def test_slice_picker():
 
 
     def density_over(img2d, min_density = 0.65):
-
         return (np.count_nonzero(img2d.flatten())/img2d.size)<=min_density
 
     print('testing different sampling strategies .. ')
@@ -154,12 +152,14 @@ def test_slice_picker():
         except:
             raise ValueError(' {} sampling failed'.format(sname))
 
+    print('testing different number of slices')
     for ns in np.random.randint(0, min(img.shape), 10):
 
         sp_linear = SlicePicker(img, sampler='linear', num_slices=ns)
         if 3*ns != len(sp_linear.get_slice_indices()):
             raise ValueError('error in linear sampling')
 
+    print('testing different percentages to sample slices')
     perc_list = [5, 10, 45, 60, 87]
     sp_perc = SlicePicker(img, sampler=perc_list)
     if 3*len(perc_list) != len(sp_perc.get_slice_indices()):
