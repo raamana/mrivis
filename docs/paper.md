@@ -37,8 +37,8 @@ These classes together form an easy to use development kit to build even more cu
 
 `mrivis` is dependent on the following libraries: `matplotlib` [@hunter2007matplotlib], `nibabel` [@brett2016nibabel] and `numpy` [@oliphant2007python], and is already serving `visualqc` [@raamana2018visualqc].
 
+# Acknowledgement
+
+Pradeep Reddy Raamana is grateful for the support of the Canadian Biomarker Integration Network for Depression (CAN-BIND) and Ontario Neurodegenerative Disease Research Initiative (ONDRI), which are two integrated discovery programs of the Ontario Brain Institute (OBI), Canada. OBI is an independent non-profit corporation, funded partially by the Ontario government. The opinions, results, and conclusions are those of the authors and no endorsement by the OBI is intended or should be inferred. 
+
 # References
-
-## Acknowledgement
-
-Pradeep Reddy Raamana is grateful for the support of the Canadian Biomarker Integration Network for Depression (CAN-BIND) and Ontario Neurodegenerative Disease Research Initiative (ONDRI), two integrated discovery programs of the Ontario Brain Institute (OBI), Canada. 
