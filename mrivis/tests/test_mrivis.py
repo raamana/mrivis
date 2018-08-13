@@ -1,5 +1,8 @@
 
 import os
+import matplotlib
+# to avoid use of Xwindows backend on CI servers
+matplotlib.use('Agg')
 
 from matplotlib import pyplot as plt
 from os.path import join as pjoin, abspath, realpath, basename, dirname, exists as pexists
