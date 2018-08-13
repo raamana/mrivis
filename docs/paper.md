@@ -26,11 +26,18 @@ bibliography: paper.bib
 
 # Summary
 
-Neuroscience research routinely demands a variety of visualization tasks, ranging from a simple 2D image to custom-built composite stacks. While different laboratories attend to this need differently, among which the majority of users tend to use what's already available even if its not ideal. While few laboraries, when resources and skills permit, engage in in-house software development to temporarily solve it, they are not often either open source at all, or made with the intent to be distributed widely and to be reliable. We aim to address this need with fully-open-source and pure-python implementaion.
+Neuroscience research routinely demands a variety of visualization tasks, ranging from a simple 2D image to custom-built composite stacks. Different academic laboratories attend to this need differently, from being users of existing solutions to being developers of new software. The majority of them tend to be mostly users of what's already available, even though the current solutions are suboptimal or inefficient for the task at their hand. Some laboraries, when resources and skills permit, engage in in-house software development to try solve their problem. The resulting sofware are often either not open source at all, nor made with the intent to be reliable or distributed widely. We aim to address this need with a fully-open-source and pure-python visualization library.
 
-mrivis provides easy ways to perform non-trivial medical image visualization tasks, such as visual comparison of sptial alignment of neuroimaging data. In addition, we provide a base development kit containing carefully-deisgned python classes to traverse through 3D neuroimaging data (`SlicePicker`), produce customizable collages (`Collage`) and to flatten 4D or higher-dimensional MRI data into 2D images (`Carpet`). These classes together form a easy to use development kit to build even more customized visualizations, which is often needed for cutting-edge neuroscience research.
+`mrivis` provides easy ways to perform non-trivial medical image visualization tasks, such as visual comparison of sptial alignment of neuroimaging data. In addition, we provide a base development kit containing the following carefully-deisgned python classes 
+ - to traverse through 3D neuroimaging data (`SlicePicker`), 
+ - produce customizable collages (`Collage`) and 
+ - to flatten 4D or higher-dimensional MRI data into 2D images (`Carpet`). 
+  
+These classes together form an easy to use development kit to build even more customized visualizations, which is often needed for cutting-edge neuroscience research.
 
-It is based on matplotlib [@hunter2007matplotlib], nibabel [@brett2016nibabel] and numpy [@oliphant2007python], and is already serving visualqc [@raamana2018visualqc].
+`mrivis` is dependent on the following libraries: `matplotlib` [@hunter2007matplotlib], `nibabel` [@brett2016nibabel] and `numpy` [@oliphant2007python], and is already serving `visualqc` [@raamana2018visualqc].
+
+# References
 
 ## Acknowledgement
 
