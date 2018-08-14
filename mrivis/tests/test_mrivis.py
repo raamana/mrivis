@@ -136,6 +136,7 @@ def test_slice_picker():
         raise ValueError('get_slices_multi() does not work')
 
     try:
+        print('testing repr')
         print(sp)
     except:
         raise ValueError('repr implementation failed')
@@ -156,14 +157,18 @@ def test_slice_picker():
     for ns in np.random.randint(0, min(img.shape), 10):
 
         sp_linear = SlicePicker(img, sampler='linear', num_slices=ns)
-        if 3*ns != len(sp_linear.get_slice_indices()):
-            raise ValueError('error in linear sampling')
+        sl_indices = sp_linear.get_slice_indices()
+        if 3*ns != len(sl_indices):
+            raise ValueError('error in linear sampling: '
+                             'asked {}, got {}'.format(3*ns, len(sl_indices)))
 
     print('testing different percentages to sample slices')
     perc_list = [5, 10, 45, 60, 87]
     sp_perc = SlicePicker(img, sampler=perc_list)
-    if 3*len(perc_list) != len(sp_perc.get_slice_indices()):
-        raise ValueError('error in percentage sampling')
+    sl_indices = sp_perc.get_slice_indices()
+    if 3*len(perc_list) != len(sl_indices):
+        raise ValueError('error in percentage sampling:'
+                         'asked {}, got {}'.format(3*len(perc_list), len(sl_indices)))
 
     print()
 
@@ -171,5 +176,5 @@ def test_slice_picker():
 # test_checkerboard()
 # test_color_mix()
 # test_voxelwise_diff()
-test_collage_class()
-# test_slice_picker()
+# test_collage_class()
+test_slice_picker()
