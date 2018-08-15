@@ -788,32 +788,38 @@ class Carpet(object):
         self.ax_carpet.set_ylim(auto=True)
 
 
-    def _apply_mask(self, crop_mask, roi_set):
-        """Removes voxels outside the given mask or ROI set."""
+
+    def _set_roi_mask(self, roi_mask):
+        """Sets a new ROI mask."""
+
+        if roi_mask is not None:
+            self._verify_shape_compatibility(roi_mask, 'ROI set')
+            self.roi_mask = roi_mask
+
+            self.roi_list = np.unique(roi_mask.flatten())
+            np.setdiff1d(self.roi_list, cfg.background_value)
+        else:
+            self.roi_mask = np.ones(self.carpet.shape)
+            self.roi_list = None
+
 
     def _apply_mask(self, roi_mask):
         """Removes voxels outside the given mask or ROI set."""
 
         # TODO ensure compatible with input image
         #   - must have < N dim and same size in moving dims.
-        rows_to_delete = list()
+        rows_to_delete = list() # to allow for additional masks to be applied in the future
+        if roi_mask is not None:
+            self._set_roi_mask(roi_mask)
 
-            rows_to_delete.append(rows_mask)
+            rows_roi = np.where(roi_mask.flatten() == cfg.background_value)
 
-        if roi_set is not None:
-            self._verify_shape_compatibility(roi_set, 'ROI set')
-            rows_roi = np.where(roi_set.flatten() == cfg.background_value)
-            rows_to_delete.append(rows_roi)
-            self.roi_list = np.unique(roi_set.flatten())
+            # TODO below would cause differences in size/shape across mask and carpet!
+            self.carpet = np.delete(self.carpet, rows_roi, axis=0)
 
-        # only if there were determined to be outside both
-        all_masks = rows_to_delete[0] # 0 could be either crop mask or roi mask
-        # allowing for a series of masks to be ANDed'
-        # loop does not get executed if there is only 1 element (at 0)
-        for index in range(1,len(rows_to_delete)):
-            all_masks = np.logical_and(all_masks, rows_to_delete[index])
+        else:
+            self.roi_mask = np.ones(self.carpet.shape)
 
-        self.carpet = np.delete(self.carpet, all_masks, axis=0)
 
     def _verify_shape_compatibility(self, img, img_type):
         """Checks mask shape against input image shape."""
