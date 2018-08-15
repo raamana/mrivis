@@ -170,6 +170,20 @@ def test_slice_picker():
         raise ValueError('error in percentage sampling:'
                          'asked {}, got {}'.format(3*len(perc_list), len(sl_indices)))
 
+    print('testing ability to save to gif')
+    import tempfile
+    gif_path = tempfile.NamedTemporaryFile(suffix='.gif').name
+    print(gif_path)
+    sp.save_as_gif(gif_path)
+    if not pexists(gif_path):
+        raise IOError('Saving to GIF failed')
+
+    try:
+        import imageio
+        gif = imageio.mimread(gif_path, format='gif')
+    except:
+        raise ValueError('Saved GIF file could not be read properly!')
+
     print()
 
 
