@@ -796,6 +796,15 @@ class Carpet(object):
         self.ax_carpet.set_ylim(auto=True)
 
 
+    def cluster_roi(self, roi_mask=None, num_clusters_per_roi=10):
+        """Clusters the data over the the fixed dimension (usually 4th)."""
+
+        self.clustered_carpet = np.empty((self.roi_list.size, self.carpet.shape[-1]))
+        for index, label in enumerate(self.roi_list):
+            self.clustered_carpet[index,:] = self._summarize_carpet_in_roi(roi_mask==label)
+
+        print()
+
 
     def _set_roi_mask(self, roi_mask):
         """Sets a new ROI mask."""
