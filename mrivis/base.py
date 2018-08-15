@@ -252,6 +252,14 @@ class SlicePicker(object):
                 # not using extended option in get_axis, to avoid complicating unpacking
                 yield dim, slice_num, multiple_slices
 
+    def save_as_gif(self, gif_path, duration=0.25):
+        """Package the selected slices into a single GIF for easy sharing and display (on web etc)"""
+
+        import imageio
+        gif_data = [img for img in self.get_slices()]
+        # TODO deal with differing sizes of slices, padding with zeros or white??
+        imageio.mimsave(gif_path, gif_data, duration=duration)
+
     def __iter__(self):
         """Returns the next panel, and the associated dimension and slice number"""
 
