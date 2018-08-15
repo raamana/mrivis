@@ -843,6 +843,11 @@ class Carpet(object):
                              'with input image shape: {} '
                              ''.format(img_type, img.shape, self.input_image_shape[:-1]))
 
+    def __str__(self):
+        """Helpful repr"""
+
+        return "Carpet {}".format(self.carpet.shape)
+
 
 if __name__ == '__main__':
     pass
