@@ -254,7 +254,20 @@ class SlicePicker(object):
                 yield dim, slice_num, multiple_slices
 
     def save_as_gif(self, gif_path, duration=0.25):
-        """Package the selected slices into a single GIF for easy sharing and display (on web etc)"""
+        """Package the selected slices into a single GIF for easy sharing and display (on web etc).
+
+        Parameters
+        ----------
+
+        gif_path : str
+            Output path for the GIF image
+
+        duration : float
+            Duration of display of each frame in GIF, in sec.
+
+        You must install imageio module to use this feature.
+
+        """
 
         import imageio
         gif_data = [img for img in self.get_slices()]
