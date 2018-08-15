@@ -682,8 +682,7 @@ class Carpet(object):
 
     def __init__(self, image_ND,
                  fixed_dim=-1,
-                 crop_mask='auto',
-                 roi_set=None,
+                 roi_mask='auto',
                  rescale_data=True,
                  cluster_data=None,
                  num_clusters=None,
@@ -709,13 +708,11 @@ class Carpet(object):
 
         fixed_dim : int
 
-        crop_mask : ndarray or str or None
+        roi_mask : ndarray or str or None
             if an image of same size as the N-1 dim array,
                 it is interpreted to be a mask to be applied to each 3D/(N-1)D volume
             If its 'auto', an auto background (zeros) mask is computed and removed
             If its None, all the voxels in original image are retained
-
-        roi_set : ndarray or None
 
         rescale_data : bool
             Whether to rescale the input image over the chosen `fixed_dim`
@@ -725,9 +722,10 @@ class Carpet(object):
 
         # TODO parameter check and validation
         self.input_image_shape = image_ND.shape
-        self._make_carpet(image_ND, fixed_dim, rescale_data)
-        self._apply_mask(crop_mask, roi_set)
         self.add_fixed_dim(fixed_dim)
+        self._make_carpet(image_ND, rescale_data)
+        self._apply_mask(roi_mask)
+
 
         # TODO option to blur within ROIs, to improve contrast across ROIs?
 
@@ -793,19 +791,12 @@ class Carpet(object):
     def _apply_mask(self, crop_mask, roi_set):
         """Removes voxels outside the given mask or ROI set."""
 
-        if crop_mask is None and roi_set is None:
-            return
+    def _apply_mask(self, roi_mask):
+        """Removes voxels outside the given mask or ROI set."""
 
         # TODO ensure compatible with input image
         #   - must have < N dim and same size in moving dims.
         rows_to_delete = list()
-        if crop_mask is not None:
-            # TODO should we check to ensure mask is binary and fully connected?
-            if isinstance(crop_mask, str) and crop_mask.lower() == 'auto':
-                rows_mask = np.where(~self.carpet.any(axis=1))[0]
-            else:
-                self._verify_shape_compatibility(crop_mask, 'mask')
-                rows_mask = np.where(crop_mask.flatten() == cfg.background_value)
 
             rows_to_delete.append(rows_mask)
 
