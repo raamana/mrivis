@@ -111,7 +111,7 @@ def check_params(num_rows, num_cols, padding):
     return num_rows, num_cols, padding
 
 
-def read_image(img_spec, bkground_thresh):
+def read_image(img_spec, bkground_thresh, ensure_num_dim=3):
     """Image reader. Removes stray values close to zero (smaller than 5 %ile)."""
 
     if isinstance(img_spec, str):
@@ -128,7 +128,10 @@ def read_image(img_spec, bkground_thresh):
         raise ValueError('Invalid input specified! '
                          'Input either a path to image data, or provide 3d Matrix directly.')
 
-    img = check_image_is_3d(img)
+    if ensure_num_dim == 3:
+        img = check_image_is_3d(img)
+    elif ensure_num_dim == 4:
+        img = check_image_is_4d(img)
 
     if not np.issubdtype(img.dtype, np.floating):
         img = img.astype('float32')
