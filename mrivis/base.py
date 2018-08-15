@@ -760,7 +760,7 @@ class Carpet(object):
         Optional rescaling of the data.
         """
 
-        image_ND = read_image(image_ND, bkground_thresh=None)
+        image_ND = read_image(image_ND, bkground_thresh=None, ensure_num_dim=4)
 
         self.carpet = self._unroll_array(image_ND, self.fixed_dim)
         if rescale_data:
