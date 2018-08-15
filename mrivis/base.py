@@ -762,9 +762,15 @@ class Carpet(object):
 
         image_ND = read_image(image_ND, bkground_thresh=None)
 
-        self.carpet = image_ND.reshape(-1, image_ND.shape[fixed_dim])
+        self.carpet = self._unroll_array(image_ND, self.fixed_dim)
         if rescale_data:
             self.carpet = row_wise_rescale(self.carpet)
+
+    @staticmethod
+    def _unroll_array(array, fixed_dim):
+        """reshape a given ndarray fixing a chosen dimension (rest gets 'unrolled')."""
+
+        return array.reshape(-1, array.shape[fixed_dim])
 
     def show(self, ax_carpet=None, label_x_axis='time point', label_y_axis='voxels/ROI'):
         """Displays the carpet in the given axis"""
