@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.image import AxesImage
 from collections import Iterable
+import warnings
 
 from mrivis.utils import check_num_slices, check_views, check_bounding_rect
 from mrivis import config as cfg
@@ -257,8 +258,15 @@ class SlicePicker(object):
 
         import imageio
         gif_data = [img for img in self.get_slices()]
+        # using img.astype(np.uint32) is leaving noticable artefacts,
+        #   depending on imageio inner conversion, which is rescaling okay
+
         # TODO deal with differing sizes of slices, padding with zeros or white??
-        imageio.mimsave(gif_path, gif_data, duration=duration)
+
+        with warnings.catch_warnings():
+            # ignoring the warning for conversion to uint8
+            warnings.simplefilter('ignore')
+            imageio.mimsave(gif_path, gif_data, duration=duration)
 
     def __iter__(self):
         """Returns the next panel, and the associated dimension and slice number"""
