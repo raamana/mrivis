@@ -727,6 +727,7 @@ class Carpet(object):
         self.input_image_shape = image_ND.shape
         self._make_carpet(image_ND, fixed_dim, rescale_data)
         self._apply_mask(crop_mask, roi_set)
+        self.add_fixed_dim(fixed_dim)
 
         # TODO option to blur within ROIs, to improve contrast across ROIs?
 
@@ -740,6 +741,20 @@ class Carpet(object):
             self.carpet = self.carpet[:, ::num_frames_to_skip]
 
     def _make_carpet(self, image_ND, fixed_dim, rescale_data):
+    def add_fixed_dim(self, fixed_dim=-1):
+        """Makes note of which dimension needs to be fixed, defaulting to last."""
+
+        if fixed_dim in [-1, None]:
+            fixed_dim = len(self.input_image_shape)-1 # last dimension
+
+        if int(fixed_dim)!=fixed_dim or \
+            fixed_dim > len(self.input_image_shape) or \
+            fixed_dim < -1:
+            raise ValueError('invalid value for the dimension to be fixed!'
+                             'Must be integer in range [0, {}] inclusive'.format(len(self.input_image_shape)))
+
+        self.fixed_dim = int(fixed_dim)
+
         """Constructs the carpet from the input image.
 
         Optional rescaling of the data.
