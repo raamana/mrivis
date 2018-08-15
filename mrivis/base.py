@@ -740,7 +740,6 @@ class Carpet(object):
                   'keeping every {}th frame'.format(self.carpet.shape[1], num_frames_to_skip))
             self.carpet = self.carpet[:, ::num_frames_to_skip]
 
-    def _make_carpet(self, image_ND, fixed_dim, rescale_data):
     def add_fixed_dim(self, fixed_dim=-1):
         """Makes note of which dimension needs to be fixed, defaulting to last."""
 
@@ -755,6 +754,7 @@ class Carpet(object):
 
         self.fixed_dim = int(fixed_dim)
 
+    def _make_carpet(self, image_ND, rescale_data):
         """Constructs the carpet from the input image.
 
         Optional rescaling of the data.
