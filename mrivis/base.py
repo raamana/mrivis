@@ -726,6 +726,8 @@ class Carpet(object):
         self._make_carpet(image_ND, rescale_data)
         self._apply_mask(roi_mask)
 
+        # choosing mean over median to make it sensitive to outlier values, if any
+        self._summary_func = np.mean
 
         # TODO option to blur within ROIs, to improve contrast across ROIs?
 
@@ -801,6 +803,12 @@ class Carpet(object):
         else:
             self.roi_mask = np.ones(self.carpet.shape)
             self.roi_list = None
+
+
+    def _summarize_carpet_in_roi(self, label_mask):
+        """returns a single row summarizing (typically via mean) all rows in an ROI."""
+
+        return self._summary_func(self.carpet[label_mask,:], axis=0)
 
 
     def _apply_mask(self, roi_mask):
