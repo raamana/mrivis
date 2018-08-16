@@ -477,7 +477,7 @@ def _save_figure(fig, annot=None, output_path=None):
     try:
         fig.tight_layout()
     except:
-        pass
+        print('fig tight layout did not succeed - ignoring issues.')
 
     if output_path is not None:
         output_path = output_path.replace(' ', '_')
