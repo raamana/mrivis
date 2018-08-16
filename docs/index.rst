@@ -9,10 +9,11 @@ Contents:
    readme
    installation
    usage
-   modules
+   check_alignment
+   classes
+   API
    contributing
    authors
-   history
 
 Indices and tables
 ==================
