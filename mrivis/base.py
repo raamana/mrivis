@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib.image import AxesImage
 from collections import Iterable
 
-from mrivis.utils import check_num_slices, check_views
+from mrivis.utils import check_num_slices, check_views, check_bounding_rect
 from mrivis import config as cfg
 
 class SlicePicker(object):
@@ -380,6 +380,8 @@ class Collage(object):
         self.view_set = check_views(view_set, max_views=3)
         self.num_slices = check_num_slices(num_slices, img_shape=None,
                                            num_dims=len(self.view_set))
+        bounding_rect = check_bounding_rect(bounding_rect)
+
         # TODO find a way to validate the input-- using utits.verify_sampler commonly?
         self.sampler = sampler
 
