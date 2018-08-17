@@ -9,7 +9,7 @@ API Reference for Classes
 ----------------------------
 
 .. automodule:: mrivis
-   :members: SlicePicker, Collage, Carpet
+   :members: SlicePicker, MiddleSlicePicker, Collage, MidCollage, Carpet
    :undoc-members:
    :show-inheritance:
 

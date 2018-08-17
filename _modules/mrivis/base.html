@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>mrivis.base &mdash; mrivis 0.3.2 documentation</title>
+  <title>mrivis.base &mdash; mrivis 0.3.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="mrivis 0.3.2 documentation" href="../../index.html"/>
+    <link rel="top" title="mrivis 0.3.3 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.3.2
+                0.3.3
               </div>
             
           
@@ -95,9 +95,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../readme.html">mrivis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../check_alignment.html">Alignment check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../alignment_usage.html">Alignment check - usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../alignment_API.html">Alignment check - API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../classes.html">Visualization Classes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../API.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
 </ul>
@@ -182,6 +182,7 @@
 <span class="sd">        towards which this class is designed for.</span>
 <span class="sd">        However there are no explicit restrictions placed on dicing N=4+ array</span>
 <span class="sd">        and receiving a n-1 dim array.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -191,7 +192,7 @@
                  <span class="n">sampler</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">sampler_default</span><span class="p">,</span>
                  <span class="n">min_density</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">min_density_default</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Class to pick non-empty slices along the various dimensions for a given image.</span>
+<span class="sd">        Constructor: class to pick non-empty slices along the various dimensions for a given image.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -456,16 +457,25 @@
         <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dim_repr</span><span class="p">)</span></div>
 
 
-<span class="k">class</span> <span class="nc">MiddleSlicePicker</span><span class="p">(</span><span class="n">SlicePicker</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Convenience class to select the classic one middle slice from all views.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="MiddleSlicePicker"><a class="viewcode-back" href="../../classes.html#mrivis.MiddleSlicePicker">[docs]</a><span class="k">class</span> <span class="nc">MiddleSlicePicker</span><span class="p">(</span><span class="n">SlicePicker</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convenience class (derived from ``SlicePicker``) to select the classic one middle slice from all views.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the middle slice from all views in the image.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns the middle slice from all views in the image.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        image_in : ndarray</span>
+<span class="sd">            3D array to be sliced.</span>
+<span class="sd">            there are no explicit restrictions placed on number of dimensions for image_in,</span>
+<span class="sd">             to get a n-1 dim array, but appropriate reshaping may need to be performed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">image_in</span><span class="o">=</span><span class="n">image</span><span class="p">,</span>
                          <span class="n">view_set</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">view_set_default</span><span class="p">,</span>
                          <span class="n">num_slices</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                         <span class="n">sampler</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,),</span> <span class="p">)</span>
+                         <span class="n">sampler</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,),</span> <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Collage"><a class="viewcode-back" href="../../classes.html#mrivis.Collage">[docs]</a><span class="k">class</span> <span class="nc">Collage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -486,7 +496,7 @@
                  <span class="n">display_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Class exhibiting multiple slices from a 3D image,</span>
+<span class="sd">        Constructor: Class exhibiting multiple slices from a 3D image,</span>
 <span class="sd">        with convenience routines handling all the cross-sections as a single set.</span>
 
 <span class="sd">        Once created with certain `display_params` (containing vmin and vmax),</span>
@@ -806,8 +816,8 @@
                 <span class="n">im_h</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">MidCollage</span><span class="p">(</span><span class="n">Collage</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Convenience class to display the mid-slices from all the views.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="MidCollage"><a class="viewcode-back" href="../../classes.html#mrivis.MidCollage">[docs]</a><span class="k">class</span> <span class="nc">MidCollage</span><span class="p">(</span><span class="n">Collage</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convenience class (derived from ``Collage``) to display the mid-slices from all the views.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">image</span><span class="p">,</span>
@@ -837,7 +847,7 @@
                          <span class="n">num_rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_slices</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="p">),</span>
                          <span class="n">attach_image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span>
                          <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">bounding_rect</span><span class="o">=</span><span class="n">bounding_rect</span><span class="p">,</span>
-                         <span class="n">display_params</span><span class="o">=</span><span class="n">display_params</span><span class="p">)</span>
+                         <span class="n">display_params</span><span class="o">=</span><span class="n">display_params</span><span class="p">)</span></div>
 
 
 
@@ -879,7 +889,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.2',
+            VERSION:'0.3.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

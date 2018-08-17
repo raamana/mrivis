@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Visualization Classes &mdash; mrivis 0.3.2 documentation</title>
+  <title>Visualization Classes &mdash; mrivis 0.3.3 documentation</title>
   
 
   
@@ -37,9 +37,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="mrivis 0.3.2 documentation" href="index.html"/>
-        <link rel="next" title="API Reference" href="API.html"/>
-        <link rel="prev" title="Alignment check" href="check_alignment.html"/> 
+    <link rel="top" title="mrivis 0.3.3 documentation" href="index.html"/>
+        <link rel="next" title="Contributing" href="contributing.html"/>
+        <link rel="prev" title="Alignment check - API" href="alignment_API.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.3.2
+                0.3.3
               </div>
             
           
@@ -96,12 +96,12 @@
 <li class="toctree-l1"><a class="reference internal" href="readme.html">mrivis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="check_alignment.html">Alignment check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alignment_usage.html">Alignment check - usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alignment_API.html">Alignment check - API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Visualization Classes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#api-reference-for-classes">API Reference for Classes</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="API.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a></li>
 </ul>
@@ -185,6 +185,73 @@ However there are no explicit restrictions placed on dicing N=4+ array
 and receiving a n-1 dim array.</dd>
 </dl>
 <p class="rubric">Methods</p>
+<p>Constructor: class to pick non-empty slices along the various dimensions for a given image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image_in</strong> : ndarray</p>
+<blockquote>
+<div><p>3D array to be sliced.
+there are no explicit restrictions placed on number of dimensions for image_in,</p>
+<blockquote>
+<div><p>to get a n-1 dim array, but appropriate reshaping may need to be performed.</p>
+</div></blockquote>
+</div></blockquote>
+<p><strong>view_set</strong> : iterable</p>
+<blockquote>
+<div><p>List of integers selecting the dimesnions to be sliced.</p>
+</div></blockquote>
+<p><strong>num_slices</strong> : int or iterable of size as view_set</p>
+<blockquote>
+<div><p>Number of slices to be selected in each view.</p>
+</div></blockquote>
+<p><strong>sampler</strong> : str or list or callable</p>
+<blockquote>
+<div><p>selection strategy: to identify the type of sampling done to select the slices to return.
+All sampling is done between the first and last non-empty slice in that view/dimension.</p>
+<ul>
+<li><p class="first">if ‘linear’ : linearly spaced slices</p>
+</li>
+<li><dl class="first docutils">
+<dt>if list, it is treated as set of percentages at which slices to be sampled</dt>
+<dd><p class="first">(must be in the range of [1-100], not [0-1]).
+This could be used to more/all slices in the middle e.g. range(40, 60, 5)</p>
+<blockquote class="last">
+<div><p>or at the end e.g. [ 5, 10, 15, 85, 90, 95]</p>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>if callable, it must take a 2D image of arbitray size, return True/False</dt>
+<dd><p class="first">to indicate whether to select that slice or not.
+Only non-empty slices (atleas one non-zero voxel) are provided as input.
+Simple examples for callable could be based on
+1) percentage of non-zero voxels &gt; x etc
+2) presence of desired texture ?
+3) certain properties of distribution (skewe: dark/bright, energy etc) etc</p>
+<dl class="last docutils">
+<dt>If the sampler returns more than requested <cite>num_slices</cite>,</dt>
+<dd><p class="first last">only the first num_slices will be selected.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p><strong>min_density</strong> : float or None</p>
+<blockquote class="last">
+<div><p>mininum density of non-zero voxels within a given slice to consider it non-empty
+Default: 0.01 (1%).
+if None, include all slices.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="mrivis.SlicePicker.get_slice_indices">
 <code class="descname">get_slice_indices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#SlicePicker.get_slice_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.SlicePicker.get_slice_indices" title="Permalink to this definition">¶</a></dt>
@@ -211,6 +278,32 @@ and receiving a n-1 dim array.</dd>
 </dd></dl>
 
 <dl class="class">
+<dt id="mrivis.MiddleSlicePicker">
+<em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">MiddleSlicePicker</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#MiddleSlicePicker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.MiddleSlicePicker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">mrivis.base.SlicePicker</span></code></p>
+<p>Convenience class (derived from <code class="docutils literal"><span class="pre">SlicePicker</span></code>) to select the classic one middle slice from all views.</p>
+<p class="rubric">Methods</p>
+<p>Returns the middle slice from all views in the image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image_in</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>3D array to be sliced.
+there are no explicit restrictions placed on number of dimensions for image_in,</p>
+<blockquote>
+<div><p>to get a n-1 dim array, but appropriate reshaping may need to be performed.</p>
+</div></blockquote>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="mrivis.Collage">
 <em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">Collage</code><span class="sig-paren">(</span><em>view_set=(0</em>, <em>1</em>, <em>2)</em>, <em>num_rows=2</em>, <em>num_slices=(10</em>, <em>)</em>, <em>sampler='linear'</em>, <em>attach_image=None</em>, <em>bounding_rect=(0.02</em>, <em>0.02</em>, <em>0.98</em>, <em>0.98)</em>, <em>fig=None</em>, <em>figsize=(14</em>, <em>10)</em>, <em>display_params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
@@ -218,6 +311,92 @@ and receiving a n-1 dim array.</dd>
 <dt>Class exhibiting multiple slices from a 3D image,</dt>
 <dd>with convenience routines handling all the cross-sections as a single set.</dd>
 </dl>
+<p class="rubric">Methods</p>
+<p>Constructor: Class exhibiting multiple slices from a 3D image,
+with convenience routines handling all the cross-sections as a single set.</p>
+<dl class="docutils">
+<dt>Once created with certain <cite>display_params</cite> (containing vmin and vmax),</dt>
+<dd>this class does NOT automatically rescale the data, as you attach different images.
+Ensure the input images are rescaled to [0, 1] BEFORE attaching.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>view_set</strong> : iterable</p>
+<blockquote>
+<div><p>List of integers selecting the dimesnions to be sliced.</p>
+</div></blockquote>
+<p><strong>num_slices</strong> : int or iterable of size as view_set</p>
+<blockquote>
+<div><p>Number of slices to be selected in each view.</p>
+</div></blockquote>
+<p><strong>num_rows</strong> : int</p>
+<blockquote>
+<div><p>Number of rows per view.</p>
+</div></blockquote>
+<p><strong>sampler</strong> : str or list or callable</p>
+<blockquote>
+<div><p>selection strategy to identify the type of sampling done
+to select the slices to return. All sampling is done between
+the first and last non-empty slice in that view/dimension.</p>
+<ul>
+<li><p class="first">if ‘linear’ : linearly spaced slices</p>
+</li>
+<li><dl class="first docutils">
+<dt>if list, it is treated as set of percentages at which slices to be sampled</dt>
+<dd><p class="first">(must be in the range of [1-100], not [0-1]).
+This could be used to more/all slices in the middle e.g. range(40, 60, 5)</p>
+<blockquote class="last">
+<div><p>or at the end e.g. [ 5, 10, 15, 85, 90, 95]</p>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>if callable, it must take a 2D image of arbitray size, return True/False</dt>
+<dd><p class="first">to indicate whether to select that slice or not.
+Only non-empty slices (atleas one non-zero voxel) are provided as input.
+Simple examples for callable could be based on
+1) percentage of non-zero voxels &gt; x etc
+2) presence of desired texture ?
+3) certain properties of distribution (skewe: dark/bright, energy etc) etc</p>
+<dl class="last docutils">
+<dt>If the sampler returns more than requested <cite>num_slices</cite>,</dt>
+<dd><p class="first last">only the first num_slices will be selected.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p><strong>attach_image</strong> : ndarray</p>
+<blockquote>
+<div><p>The image to be attached to the collage, once it is created.
+Must be atleast 3d.</p>
+</div></blockquote>
+<p><strong>display_params</strong> : dict</p>
+<blockquote>
+<div><p>dict of keyword parameters that can be passed to matplotlib’s <cite>Axes.imshow()</cite></p>
+</div></blockquote>
+<p><strong>fig</strong> : matplotlib.Figure</p>
+<blockquote>
+<div><p>figure handle to create the collage in.
+If not specified, creates a new figure.</p>
+</div></blockquote>
+<p><strong>figsize</strong> : tuple of 2</p>
+<blockquote>
+<div><p>Figure size (width, height) in inches.</p>
+</div></blockquote>
+<p><strong>bounding_rect</strong> : tuple of 4</p>
+<blockquote class="last">
+<div><p>The rectangular area to bind the collage to (in normalized figure coordinates)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">Methods</p>
 <dl class="method">
 <dt id="mrivis.Collage.attach">
@@ -296,6 +475,28 @@ use functools.partial to obtain a new callable that takes in just the slices.</d
 
 </dd></dl>
 
+<dl class="class">
+<dt id="mrivis.MidCollage">
+<em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">MidCollage</code><span class="sig-paren">(</span><em>image</em>, <em>bounding_rect=(0.02</em>, <em>0.02</em>, <em>0.98</em>, <em>0.98)</em>, <em>fig=None</em>, <em>display_params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#MidCollage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.MidCollage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">mrivis.base.Collage</span></code></p>
+<p>Convenience class (derived from <code class="docutils literal"><span class="pre">Collage</span></code>) to display the mid-slices from all the views.</p>
+<p class="rubric">Methods</p>
+<p>Display mid-slices from all the views.</p>
+<dl class="docutils">
+<dt>image <span class="classifier-delimiter">:</span> <span class="classifier">ndarray</span></dt>
+<dd>The image to be attached to the collage, once it is created.
+Must be atleast 3d.</dd>
+<dt>fig <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib.Figure</span></dt>
+<dd>figure handle to create the collage in.
+If not specified, creates a new figure.</dd>
+<dt>bounding_rect <span class="classifier-delimiter">:</span> <span class="classifier">tuple of 4</span></dt>
+<dd>The rectangular area to bind the collage to (in normalized figure coordinates)</dd>
+<dt>display_params <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd>dict of keyword parameters that can be passed to matplotlib’s <cite>Axes.imshow()</cite></dd>
+</dl>
+<p class="rubric">Methods</p>
+</dd></dl>
+
 </div>
 </div>
 
@@ -309,10 +510,10 @@ use functools.partial to obtain a new callable that takes in just the slices.</d
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="API.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="check_alignment.html" class="btn btn-neutral" title="Alignment check" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="alignment_API.html" class="btn btn-neutral" title="Alignment check - API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -343,7 +544,7 @@ use functools.partial to obtain a new callable that takes in just the slices.</d
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.3.2',
+            VERSION:'0.3.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

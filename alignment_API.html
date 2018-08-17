@@ -1,0 +1,513 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Alignment check - API &mdash; mrivis 0.3.3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="mrivis 0.3.3 documentation" href="index.html"/>
+        <link rel="next" title="Visualization Classes" href="classes.html"/>
+        <link rel="prev" title="Alignment check - usage" href="alignment_usage.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> mrivis
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="readme.html">mrivis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alignment_usage.html">Alignment check - usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Alignment check - API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classes.html">Visualization Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">mrivis</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Alignment check - API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/alignment_API.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="alignment-check-api">
+<h1>Alignment check - API<a class="headerlink" href="#alignment-check-api" title="Permalink to this headline">¶</a></h1>
+<p>A tutorial-like presentation is available at <a class="reference internal" href="alignment_usage.html"><span class="doc">Alignment check - usage</span></a>, using the following API:</p>
+<span class="target" id="module-mrivis"></span><p>Top-level package for mrivis.</p>
+<dl class="function">
+<dt id="mrivis.checkerboard">
+<code class="descclassname">mrivis.</code><code class="descname">checkerboard</code><span class="sig-paren">(</span><em>img_spec1=None</em>, <em>img_spec2=None</em>, <em>patch_size=10</em>, <em>view_set=(0</em>, <em>1</em>, <em>2)</em>, <em>num_slices=(10</em>, <em>)</em>, <em>num_rows=2</em>, <em>rescale_method='global'</em>, <em>background_threshold=0.05</em>, <em>annot=None</em>, <em>padding=5</em>, <em>output_path=None</em>, <em>figsize=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/workflow.html#checkerboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.checkerboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checkerboard mixer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>img_spec1</strong> : str or nibabel image-like object</p>
+<blockquote>
+<div><p>MR image (or path to one) to be visualized</p>
+</div></blockquote>
+<p><strong>img_spec2</strong> : str or nibabel image-like object</p>
+<blockquote>
+<div><p>MR image (or path to one) to be visualized</p>
+</div></blockquote>
+<p><strong>patch_size</strong> : int or list or (int, int) or None</p>
+<blockquote>
+<div><p>size of checker patch (either square or rectangular)
+If None, number of voxels/patch are chosen such that,</p>
+<blockquote>
+<div><p>there will be 7 patches through the width/height.</p>
+</div></blockquote>
+</div></blockquote>
+<p><strong>view_set</strong> : iterable</p>
+<blockquote>
+<div><p>Integers specifying the dimensions to be visualized.
+Choices: one or more of (0, 1, 2) for a 3D image</p>
+</div></blockquote>
+<p><strong>num_slices</strong> : int or iterable of size as view_set</p>
+<blockquote>
+<div><p>number of slices to be selected for each view
+Must be of the same length as view_set,</p>
+<blockquote>
+<div><p>each element specifying the number of slices for each dimension.
+If only one number is given, same number will be chosen for all dimensions.</p>
+</div></blockquote>
+</div></blockquote>
+<p><strong>num_rows</strong> : int</p>
+<blockquote>
+<div><p>number of rows (top to bottom) per each of 3 dimensions</p>
+</div></blockquote>
+<p><strong>rescale_method</strong> : bool or str or list or None</p>
+<blockquote>
+<div><p>Range to rescale the intensity values to
+Default: ‘global’, min and max values computed based on ranges from both images.
+If false or None, no rescaling is done (does not work yet).</p>
+</div></blockquote>
+<p><strong>background_threshold</strong> : float or str</p>
+<blockquote>
+<div><p>A threshold value below which all the background voxels will be set to zero.
+Default : 0.05. Other option is a string specifying a percentile: ‘5%’, ‘10%’.
+Specify None if you don’t want any thresholding.</p>
+</div></blockquote>
+<p><strong>annot</strong> : str</p>
+<blockquote>
+<div><p>Text to display to annotate the visualization</p>
+</div></blockquote>
+<p><strong>padding</strong> : int</p>
+<blockquote>
+<div><p>number of voxels to pad around each panel.</p>
+</div></blockquote>
+<p><strong>output_path</strong> : str</p>
+<blockquote>
+<div><p>path to save the generate collage to.</p>
+</div></blockquote>
+<p><strong>figsize</strong> : list</p>
+<blockquote>
+<div><p>Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> : figure handle</p>
+<blockquote class="last">
+<div><p>handle to the collage figure generated.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mrivis.voxelwise_diff">
+<code class="descclassname">mrivis.</code><code class="descname">voxelwise_diff</code><span class="sig-paren">(</span><em>img_spec1=None</em>, <em>img_spec2=None</em>, <em>abs_value=True</em>, <em>cmap='gray'</em>, <em>overlay_image=False</em>, <em>overlay_alpha=0.8</em>, <em>num_rows=2</em>, <em>num_cols=6</em>, <em>rescale_method='global'</em>, <em>background_threshold=0.05</em>, <em>annot=None</em>, <em>padding=5</em>, <em>output_path=None</em>, <em>figsize=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/workflow.html#voxelwise_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.voxelwise_diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Voxel-wise difference map.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>img_spec1</strong> : str or nibabel image-like object</p>
+<blockquote>
+<div><p>MR image (or path to one) to be visualized</p>
+</div></blockquote>
+<p><strong>img_spec2</strong> : str or nibabel image-like object</p>
+<blockquote>
+<div><p>MR image (or path to one) to be visualized</p>
+</div></blockquote>
+<p><strong>abs_value</strong> : bool</p>
+<blockquote>
+<div><p>Flag indicating whether to take the absolute value of the diffenence or not.
+Default: True, display absolute differences only (so order of images does not matter)</p>
+<p>Colormap to show the difference values.</p>
+</div></blockquote>
+<p><strong>num_rows</strong> : int</p>
+<blockquote>
+<div><p>number of rows (top to bottom) per each of 3 dimensions</p>
+</div></blockquote>
+<p><strong>num_cols</strong> : int</p>
+<blockquote>
+<div><p>number of panels (left to right) per row of each dimension.</p>
+</div></blockquote>
+<p><strong>rescale_method</strong> : bool or str or list or None</p>
+<blockquote>
+<div><p>Range to rescale the intensity values to
+Default: ‘global’, min and max values computed based on ranges from both images.
+If false or None, no rescaling is done (does not work yet).</p>
+</div></blockquote>
+<p><strong>background_threshold</strong> : float or str</p>
+<blockquote>
+<div><p>A threshold value below which all the background voxels will be set to zero.
+Default : 0.05. Other option is a string specifying a percentile: ‘5%’, ‘10%’.
+Specify None if you don’t want any thresholding.</p>
+</div></blockquote>
+<p><strong>annot</strong> : str</p>
+<blockquote>
+<div><p>Text to display to annotate the visualization</p>
+</div></blockquote>
+<p><strong>padding</strong> : int</p>
+<blockquote>
+<div><p>number of voxels to pad around each panel.</p>
+</div></blockquote>
+<p><strong>output_path</strong> : str</p>
+<blockquote>
+<div><p>path to save the generate collage to.</p>
+</div></blockquote>
+<p><strong>figsize</strong> : list</p>
+<blockquote>
+<div><p>Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> : figure handle</p>
+<blockquote class="last">
+<div><p>handle to the collage figure generated.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mrivis.color_mix">
+<code class="descclassname">mrivis.</code><code class="descname">color_mix</code><span class="sig-paren">(</span><em>img_spec1=None</em>, <em>img_spec2=None</em>, <em>alpha_channels=None</em>, <em>color_space='rgb'</em>, <em>view_set=(0</em>, <em>1</em>, <em>2)</em>, <em>num_slices=(10</em>, <em>)</em>, <em>num_rows=2</em>, <em>rescale_method='global'</em>, <em>background_threshold=0.05</em>, <em>annot=None</em>, <em>padding=5</em>, <em>output_path=None</em>, <em>figsize=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/workflow.html#color_mix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.color_mix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Color mixer, where each image is represented with a different color (default: red and green) in color channels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>img_spec1</strong> : str or nibabel image-like object</p>
+<blockquote>
+<div><p>MR image (or path to one) to be visualized</p>
+</div></blockquote>
+<p><strong>img_spec2</strong> : str or nibabel image-like object</p>
+<blockquote>
+<div><p>MR image (or path to one) to be visualized</p>
+</div></blockquote>
+<p><strong>alpha_channels</strong> : (float, float)</p>
+<blockquote>
+<div><p>weights for red and green channels in the composite image.
+Default: [1, 1]</p>
+</div></blockquote>
+<p><strong>cmap</strong> : str or matplotlib.cm.cmap</p>
+<blockquote>
+<div><p>Colormap to show the difference values.</p>
+</div></blockquote>
+<p><strong>overlay_image</strong> : bool</p>
+<blockquote>
+<div><p>Flag to specify whether to overlay the first image under the difference map.</p>
+</div></blockquote>
+<p><strong>overlay_alpha</strong> : float</p>
+<blockquote>
+<div><p>Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).</p>
+</div></blockquote>
+<p><strong>cmap</strong> : str or matplotlib.cm.cmap</p>
+<blockquote>
+<div><p>Colormap to show the difference values.</p>
+</div></blockquote>
+<p><strong>overlay_image</strong> : bool</p>
+<blockquote>
+<div><p>Flag to specify whether to overlay the first image under the difference map.</p>
+</div></blockquote>
+<p><strong>overlay_alpha</strong> : float</p>
+<blockquote>
+<div><p>Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).</p>
+</div></blockquote>
+<p><strong>cmap</strong> : str or matplotlib.cm.cmap</p>
+<blockquote>
+<div><p>Colormap to show the difference values.</p>
+</div></blockquote>
+<p><strong>overlay_image</strong> : bool</p>
+<blockquote>
+<div><p>Flag to specify whether to overlay the first image under the difference map.</p>
+</div></blockquote>
+<p><strong>overlay_alpha</strong> : float</p>
+<blockquote>
+<div><p>Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).</p>
+</div></blockquote>
+<p><strong>view_set</strong> : iterable</p>
+<blockquote>
+<div><p>Integers specifying the dimensions to be visualized.
+Choices: one or more of (0, 1, 2) for a 3D image</p>
+</div></blockquote>
+<p><strong>num_slices</strong> : int or iterable of size as view_set</p>
+<blockquote>
+<div><p>number of slices to be selected for each view
+Must be of the same length as view_set,</p>
+<blockquote>
+<div><p>each element specifying the number of slices for each dimension.
+If only one number is given, same number will be chosen for all dimensions.</p>
+</div></blockquote>
+</div></blockquote>
+<p><strong>num_rows</strong> : int</p>
+<blockquote>
+<div><p>number of rows (top to bottom) per each of 3 dimensions</p>
+</div></blockquote>
+<p><strong>rescale_method</strong> : bool or str or list or None</p>
+<blockquote>
+<div><p>Range to rescale the intensity values to
+Default: ‘global’, min and max values computed based on ranges from both images.
+If false or None, no rescaling is done (does not work yet).</p>
+</div></blockquote>
+<p><strong>background_threshold</strong> : float or str</p>
+<blockquote>
+<div><p>A threshold value below which all the background voxels will be set to zero.
+Default : 0.05. Other option is a string specifying a percentile: ‘5%’, ‘10%’.
+Specify None if you don’t want any thresholding.</p>
+</div></blockquote>
+<p><strong>annot</strong> : str</p>
+<blockquote>
+<div><p>Text to display to annotate the visualization</p>
+</div></blockquote>
+<p><strong>padding</strong> : int</p>
+<blockquote>
+<div><p>number of voxels to pad around each panel.</p>
+</div></blockquote>
+<p><strong>output_path</strong> : str</p>
+<blockquote>
+<div><p>path to save the generate collage to.</p>
+</div></blockquote>
+<p><strong>figsize</strong> : list</p>
+<blockquote>
+<div><p>Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> : figure handle</p>
+<blockquote class="last">
+<div><p>handle to the collage figure generated.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classes.html" class="btn btn-neutral float-right" title="Visualization Classes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="alignment_usage.html" class="btn btn-neutral" title="Alignment check - usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Pradeep Reddy Raamana.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.3.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
