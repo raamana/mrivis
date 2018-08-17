@@ -1,6 +1,6 @@
----------------
-Alignment check
----------------
+-----------------------
+Alignment check - usage
+-----------------------
 
 Usage of the different methods are shown below:
 

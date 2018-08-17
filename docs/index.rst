@@ -9,9 +9,9 @@ Contents:
    readme
    installation
    usage
-   check_alignment
+   alignment_usage
+   alignment_API
    classes
-   API
    contributing
    authors
 

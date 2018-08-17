@@ -8,11 +8,11 @@ mrivis
 
 `mrivis` offers:
 
- - tools for comparison of spatial alignment of two 3D MRI scans (T1, T2, PET etc) using checkerboard plots and other comparison methods: :doc:`check_alignment`
+ - tools for comparison of spatial alignment of two 3D MRI scans (T1, T2, PET etc) using checkerboard plots and other comparison methods: :doc:`alignment_usage`
  - classes to develop customizable visualizations of 3D and 4D images - `demo <https://nbviewer.jupyter.org/github/raamana/mrivis/blob/master/docs/example_notebooks/mrivis_demo_Collage_SlicePicker_classes.ipynb>`_
 
 
-
+A sample gallery of different ways to check alignment is shown below:
 
 .. image:: flyer_option_matrix.png
 
