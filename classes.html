@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Visualization Classes &mdash; mrivis 0.3.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="mrivis 0.3.2 documentation" href="index.html"/>
+        <link rel="next" title="API Reference" href="API.html"/>
+        <link rel="prev" title="Alignment check" href="check_alignment.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> mrivis
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="readme.html">mrivis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="check_alignment.html">Alignment check</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Visualization Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api-reference-for-classes">API Reference for Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">mrivis</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Visualization Classes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/classes.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="visualization-classes">
+<h1>Visualization Classes<a class="headerlink" href="#visualization-classes" title="Permalink to this headline">¶</a></h1>
+<p>A detailed usage illustration is available in the following <a class="reference external" href="https://nbviewer.jupyter.org/github/raamana/mrivis/blob/master/docs/example_notebooks/mrivis_demo_Collage_SlicePicker_classes.ipynb">demo notebook</a></p>
+<div class="section" id="api-reference-for-classes">
+<h2>API Reference for Classes<a class="headerlink" href="#api-reference-for-classes" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-mrivis"></span><p>Top-level package for mrivis.</p>
+<dl class="class">
+<dt id="mrivis.SlicePicker">
+<em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">SlicePicker</code><span class="sig-paren">(</span><em>image_in</em>, <em>view_set=(0</em>, <em>1</em>, <em>2)</em>, <em>num_slices=(10</em>, <em>)</em>, <em>sampler='linear'</em>, <em>min_density=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#SlicePicker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.SlicePicker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class to pick non-empty slices along the various dimensions for a given image.</p>
+<dl class="docutils">
+<dt>The term <cite>slice</cite> here refers to one cross-section in a 3D image,</dt>
+<dd>towards which this class is designed for.
+However there are no explicit restrictions placed on dicing N=4+ array
+and receiving a n-1 dim array.</dd>
+</dl>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="mrivis.SlicePicker.get_slice_indices">
+<code class="descname">get_slice_indices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#SlicePicker.get_slice_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.SlicePicker.get_slice_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns indices for the slices selected (each a tuple : (dim, slice_num))</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.SlicePicker.get_slices">
+<code class="descname">get_slices</code><span class="sig-paren">(</span><em>extended=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#SlicePicker.get_slices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.SlicePicker.get_slices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator over all the slices selected, each time returning a cross-section.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.SlicePicker.get_slices_multi">
+<code class="descname">get_slices_multi</code><span class="sig-paren">(</span><em>image_list</em>, <em>extended=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#SlicePicker.get_slices_multi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.SlicePicker.get_slices_multi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the same cross-section from the multiple images supplied.</p>
+<p>All images must be of the same shape as the original image defining this object.</p>
+<dl class="docutils">
+<dt>image_list <span class="classifier-delimiter">:</span> <span class="classifier">Iterable</span></dt>
+<dd>containing atleast 2 images</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="mrivis.Collage">
+<em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">Collage</code><span class="sig-paren">(</span><em>view_set=(0</em>, <em>1</em>, <em>2)</em>, <em>num_rows=2</em>, <em>num_slices=(10</em>, <em>)</em>, <em>sampler='linear'</em>, <em>attach_image=None</em>, <em>bounding_rect=(0.02</em>, <em>0.02</em>, <em>0.98</em>, <em>0.98)</em>, <em>fig=None</em>, <em>figsize=(14</em>, <em>10)</em>, <em>display_params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="docutils">
+<dt>Class exhibiting multiple slices from a 3D image,</dt>
+<dd>with convenience routines handling all the cross-sections as a single set.</dd>
+</dl>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="mrivis.Collage.attach">
+<code class="descname">attach</code><span class="sig-paren">(</span><em>image_in</em>, <em>sampler=None</em>, <em>show=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage.attach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attaches the relevant cross-sections to each axis</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Collage.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears all the axes to start fresh.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Collage.hide">
+<code class="descname">hide</code><span class="sig-paren">(</span><em>grid=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage.hide"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage.hide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the collage from view.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Collage.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>annot=None</em>, <em>output_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the collage to disk as an image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Collage.show">
+<code class="descname">show</code><span class="sig-paren">(</span><em>grid=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes the collage visible.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Collage.transform_and_attach">
+<code class="descname">transform_and_attach</code><span class="sig-paren">(</span><em>image_list</em>, <em>func</em>, <em>show=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage.transform_and_attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage.transform_and_attach" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Displays the transformed (combined) version of the cross-sections from each image,</dt>
+<dd><p class="first">(same slice and dimension). So if you input n&gt;=1 images, n slices are obtained
+from each image, which are passed to the func (callable) provided, and the
+result will be displayed in the corresponding cell of the collage.
+Useful applications:
+- input two images, a function to overlay edges of one image on the other
+- input two images, a function to mix them in a checkerboard pattern
+- input one image, a function to saturate the upper half of intensities</p>
+<blockquote class="last">
+<div>(to increase contrast and reveal any subtle ghosting in slices)</div></blockquote>
+</dd>
+<dt>func must be able to receive as many arguments as many elements in image_list.</dt>
+<dd>if your func needs additional parameters, make them keyword arguments, and
+use functools.partial to obtain a new callable that takes in just the slices.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image_list</strong> : list or ndarray</p>
+<blockquote>
+<div><p>list of images or a single ndarray</p>
+</div></blockquote>
+<p><strong>func</strong> : callable</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>function to be applied on the input images (their slices)</dt>
+<dd><p class="first last">to produce a single slice to be displayed.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>show</strong> : bool</p>
+<blockquote class="last">
+<div><p>flag to indicate whether make the collage visible.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="API.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="check_alignment.html" class="btn btn-neutral" title="Alignment check" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Pradeep Reddy Raamana.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.3.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
