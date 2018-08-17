@@ -8,11 +8,10 @@ mrivis
 
 `mrivis` offers:
 
- - tools for comparison of spatial alignment of two 3D MRI scans (T1, T2, PET etc) using checkerboard plots and other comparison methods: :doc:`alignment_usage`
- - classes to develop customizable visualizations of 3D and 4D images - `demo <https://nbviewer.jupyter.org/github/raamana/mrivis/blob/master/docs/example_notebooks/mrivis_demo_Collage_SlicePicker_classes.ipynb>`_
+ - tools for comparison of spatial alignment of two 3D MRI scans (T1, T2, PET etc) using checkerboard plots and other comparison methods
+ - classes to develop customizable visualizations of 3D and 4D images
 
-
-Full documentation: https://raamana.github.io/mrivis/readme.html
+Full documentation https://raamana.github.io/mrivis/readme.html
 
 
 A sample gallery of different ways to check alignment is shown below:
@@ -21,10 +20,10 @@ A sample gallery of different ways to check alignment is shown below:
 
 
 
-Full documentation: https://raamana.github.io/mrivis/readme.html
+Full documentation https://raamana.github.io/mrivis/readme.html
 
 
-Installation:
+Installation
 
 .. code-block:: console
 
