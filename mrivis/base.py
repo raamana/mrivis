@@ -167,7 +167,8 @@ class SlicePicker(object):
         else:
             raise NotImplementedError('Invalid state for the class!')
 
-    def _linear_selection(self, non_empty_slices, num_slices):
+    @staticmethod
+    def _linear_selection(non_empty_slices, num_slices):
         """Selects linearly spaced slices in given"""
 
         num_non_empty = len(non_empty_slices)
