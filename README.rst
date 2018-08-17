@@ -12,20 +12,9 @@ mrivis
  - classes to develop customizable visualizations of 3D and 4D images - `demo <https://nbviewer.jupyter.org/github/raamana/mrivis/blob/master/docs/example_notebooks/mrivis_demo_Collage_SlicePicker_classes.ipynb>`_
 
 
-Full documentation: https://raamana.github.io/mrivis/readme.html
-
-
 A sample gallery of different ways to check alignment is shown below:
 
 .. image:: flyer_option_matrix.png
 
 
 
-Full documentation: https://raamana.github.io/mrivis/readme.html
-
-
-Installation:
-
-.. code-block:: console
-
-    $ pip install mrivis
