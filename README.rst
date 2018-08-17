@@ -16,7 +16,7 @@ Full documentation https://raamana.github.io/mrivis/readme.html
 
 A sample gallery of different ways to check alignment is shown below:
 
-.. image:: flyer_option_matrix.png
+.. image:: docs/flyer_option_matrix.png
 
 
 
