@@ -3,7 +3,8 @@ mrivis
 ------
 
 .. image:: https://img.shields.io/pypi/v/mrivis.svg
-.. image:: https://api.codacy.com/project/badge/Grade/370b1b78383b40b99eb15ae0490cfbdb    :target: https://www.codacy.com/app/raamana/mrivis?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=raamana/mrivis&amp;utm_campaign=Badge_Grade
+.. image:: https://api.codacy.com/project/badge/Grade/370b1b78383b40b99eb15ae0490cfbdb
+    :target: https://www.codacy.com/app/raamana/mrivis?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=raamana/mrivis&amp;utm_campaign=Badge_Grade
 
 `mrivis` offers:
 
