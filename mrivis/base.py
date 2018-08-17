@@ -198,7 +198,8 @@ class SlicePicker(object):
 
         return selected[:num_slices]
 
-    def _get_axis(self, array, axis, slice_num,
+    @staticmethod
+    def _get_axis(array, axis, slice_num,
                   extended=False,
                   transpose=True):
         """Returns a fixed axis"""
