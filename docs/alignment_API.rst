@@ -1,6 +1,6 @@
 
 ----------------------
-Alignment Check - API
+Alignment check - API
 ----------------------
 
 A tutorial-like presentation is available at :doc:`alignment_usage`, using the following API:
