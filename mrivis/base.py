@@ -16,6 +16,7 @@ class SlicePicker(object):
         towards which this class is designed for.
         However there are no explicit restrictions placed on dicing N=4+ array
         and receiving a n-1 dim array.
+
     """
 
     def __init__(self,
@@ -25,7 +26,7 @@ class SlicePicker(object):
                  sampler=cfg.sampler_default,
                  min_density=cfg.min_density_default):
         """
-        Class to pick non-empty slices along the various dimensions for a given image.
+        Constructor: class to pick non-empty slices along the various dimensions for a given image.
 
         Parameters
         ----------
@@ -291,10 +292,19 @@ class SlicePicker(object):
 
 
 class MiddleSlicePicker(SlicePicker):
-    """Convenience class to select the classic one middle slice from all views."""
+    """Convenience class (derived from ``SlicePicker``) to select the classic one middle slice from all views."""
 
     def __init__(self, image):
-        """Returns the middle slice from all views in the image."""
+        """Returns the middle slice from all views in the image.
+
+        Parameters
+        ----------
+        image_in : ndarray
+            3D array to be sliced.
+            there are no explicit restrictions placed on number of dimensions for image_in,
+             to get a n-1 dim array, but appropriate reshaping may need to be performed.
+
+        """
 
         super().__init__(image_in=image,
                          view_set=cfg.view_set_default,
@@ -320,7 +330,7 @@ class Collage(object):
                  display_params=None,
                  ):
         """
-        Class exhibiting multiple slices from a 3D image,
+        Constructor: Class exhibiting multiple slices from a 3D image,
         with convenience routines handling all the cross-sections as a single set.
 
         Once created with certain `display_params` (containing vmin and vmax),
@@ -641,7 +651,7 @@ class Collage(object):
 
 
 class MidCollage(Collage):
-    """Convenience class to display the mid-slices from all the views."""
+    """Convenience class (derived from ``Collage``) to display the mid-slices from all the views."""
 
     def __init__(self,
                  image,
