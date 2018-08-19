@@ -926,10 +926,32 @@ class Carpet(object):
             self.roi_list = None
 
 
-    def _summarize_carpet_in_roi(self, label_mask):
+    def _summarize_in_roi(self, label_mask, num_clusters_per_roi=1, metric='minkowski'):
         """returns a single row summarizing (typically via mean) all rows in an ROI."""
 
-        return self._summary_func(self.carpet[label_mask,:], axis=0)
+        this_label = self.carpet[label_mask.flatten(), :]
+        if num_clusters_per_roi == 1:
+            out_matrix = self._summary_func(this_label, axis=0)
+        else:
+            out_matrix = self._make_clusters(this_label, num_clusters_per_roi, metric)
+
+        return out_matrix
+
+
+    def _make_clusters(self, matrix, num_clusters_per_roi, metric):
+        """clusters a given matrix by into specified number of clusters according to given metric"""
+
+        from scipy.cluster.hierarchy import fclusterdata
+
+        # maxclust needed to ensure t is interpreted as # clusters in heirarchical clustering
+        group_ids = fclusterdata(matrix, metric=metric, t=num_clusters_per_roi,
+                                 criterion='maxclust')
+        group_set = np.unique(group_ids)
+        clusters = [
+            self._summary_func(matrix[group_ids == group, :], axis=0, keepdims=True)
+            for group in group_set]
+
+        return np.vstack(clusters).squeeze()
 
 
     def _apply_mask(self, roi_mask):
