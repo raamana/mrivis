@@ -209,9 +209,9 @@ class SlicePicker(object):
 
         slice_list = [slice(None)] * array.ndim
         slice_list[axis] = slice_num
-        if transpose:
-            # transpose for proper orientation
-            slice_data = array[slice_list].T
+        slice_data = array[slice_list]
+        if transpose:  # for proper orientation
+            slice_data = slice_data.T
 
         if not extended:
             # return just the slice data
