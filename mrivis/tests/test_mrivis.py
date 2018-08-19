@@ -1,10 +1,8 @@
 
 import os
-import matplotlib
-# to avoid use of Xwindows backend on CI servers
-matplotlib.use('Agg')
 
-from os.path import join as pjoin, realpath, basename, dirname, exists as pexists
+from matplotlib import pyplot as plt
+from os.path import join as pjoin, abspath, realpath, basename, dirname, exists as pexists
 from mrivis import checkerboard, color_mix, voxelwise_diff
 from mrivis.utils import scale_0to1, read_image
 import numpy as np
@@ -98,8 +96,8 @@ def test_collage_class():
     img_path = pjoin(base_dir, '3569_bl_PPMI.nii')
     img = read_image(img_path, None)
     scaled = scale_0to1(img)
-
     c = Collage(num_slices=15, view_set=(0, 1), num_rows=3)
+
     try:
         c.attach(scaled)
     except:
@@ -135,53 +133,36 @@ def test_slice_picker():
         raise ValueError('get_slices_multi() does not work')
 
     try:
-        print('testing repr')
         print(sp)
     except:
         raise ValueError('repr implementation failed')
 
 
     def density_over(img2d, min_density = 0.65):
+
         return (np.count_nonzero(img2d.flatten())/img2d.size)<=min_density
 
     print('testing different sampling strategies .. ')
     for sname, sampler in zip(('linear', 'percent', 'callable'),
                               ('linear', (5, 50, 95), density_over)):
-        try:
-            sp = SlicePicker(img, sampler=sampler)
-        except:
-            raise ValueError(' {} sampling failed'.format(sname))
+        sp = SlicePicker(img, sampler=sampler)
+        print(sname)
+        print(repr(sp))
 
-    print('testing different number of slices')
+    print('testing linear sampling')
     for ns in np.random.randint(0, min(img.shape), 10):
 
         sp_linear = SlicePicker(img, sampler='linear', num_slices=ns)
-        sl_indices = sp_linear.get_slice_indices()
-        if 3*ns != len(sl_indices):
-            raise ValueError('error in linear sampling: '
-                             'asked {}, got {}'.format(3*ns, len(sl_indices)))
+        print(repr(sp_linear))
+        if 3*ns != len(sp_linear.get_slice_indices()):
+            raise ValueError('error in linear sampling')
 
-    print('testing different percentages to sample slices')
+    print('testing percentage sampling')
     perc_list = [5, 10, 45, 60, 87]
     sp_perc = SlicePicker(img, sampler=perc_list)
-    sl_indices = sp_perc.get_slice_indices()
-    if 3*len(perc_list) != len(sl_indices):
-        raise ValueError('error in percentage sampling:'
-                         'asked {}, got {}'.format(3*len(perc_list), len(sl_indices)))
-
-    print('testing ability to save to gif')
-    import tempfile
-    gif_path = tempfile.NamedTemporaryFile(suffix='.gif').name
-    print(gif_path)
-    sp.save_as_gif(gif_path)
-    if not pexists(gif_path):
-        raise IOError('Saving to GIF failed')
-
-    try:
-        import imageio
-        gif = imageio.mimread(gif_path, format='gif')
-    except:
-        raise ValueError('Saved GIF file could not be read properly!')
+    print(repr(sp_perc))
+    if 3*len(perc_list) != len(sp_perc.get_slice_indices()):
+        raise ValueError('error in percentage sampling')
 
     print()
 
