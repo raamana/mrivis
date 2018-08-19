@@ -149,6 +149,7 @@ def test_slice_picker():
         print(sname)
         print(repr(sp))
 
+    print('testing linear sampling')
     for ns in np.random.randint(0, min(img.shape), 10):
 
         sp_linear = SlicePicker(img, sampler='linear', num_slices=ns)
@@ -156,6 +157,7 @@ def test_slice_picker():
         if 3*ns != len(sp_linear.get_slice_indices()):
             raise ValueError('error in linear sampling')
 
+    print('testing percentage sampling')
     perc_list = [5, 10, 45, 60, 87]
     sp_perc = SlicePicker(img, sampler=perc_list)
     print(repr(sp_perc))
