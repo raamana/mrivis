@@ -860,14 +860,56 @@ class Carpet(object):
 
         return self.ax_carpet
 
-    def cluster_roi(self, roi_mask=None, num_clusters_per_roi=10):
-        """Clusters the data over the the fixed dimension (usually 4th)."""
 
-        self.clustered_carpet = np.empty((self.roi_list.size, self.carpet.shape[-1]))
-        for index, label in enumerate(self.roi_list):
-            self.clustered_carpet[index,:] = self._summarize_carpet_in_roi(roi_mask==label)
 
         print()
+    def cluster_rows_in_roi(self,
+                            roi_mask=None,
+                            num_clusters_per_roi=5,
+                            metric='minkowski'):
+        """Clusters the data within all the ROIs specified in a mask.
+
+        Parameters
+        ----------
+
+        roi_mask : ndarray or None
+            volumetric mask defining the list of ROIs, with a label for each voxel.
+            This must be the same size in all dimensions except the fixed_dim
+            i.e. if you were making a Carpet from an fMRI image of size 125x125x90x400
+            fixing the 4th dimension (of size 400), then roi_mask must be of size 125x125x90.
+
+        num_clusters_per_roi : int
+            number of clusters (n) to form each ROI specified in the roi_mask
+            if n (say 20) is less than number of voxels per a given ROI (say 2000),
+            then data from approx. 2000/20=100 voxels would summarized (averaged by default),
+            into a single cluster. So if the ROI mask had m ROIs (say 10), then the final clustered carpet
+            would have m*n rows (200), regardless of the number of voxels in the 3D image.
+
+        metric : str
+            distance metric for the hierarchical clustering algorithm;
+            default : 'minkowski'
+            Options: anything accepted by `scipy.spatial.distance.pdist`, which can be:
+            ‘braycurtis’, ‘canberra’, ‘chebyshev’, ‘cityblock’, ‘correlation’,
+            ‘cosine’, ‘dice’, ‘euclidean’, ‘hamming’, ‘jaccard’, ‘kulsinski’,
+            ‘mahalanobis’, ‘matching’, ‘minkowski’, ‘rogerstanimoto’, ‘russellrao’,
+            ‘seuclidean’, ‘sokalmichener’, ‘sokalsneath’, ‘sqeuclidean’, ‘yule’.
+
+
+        """
+
+        self._set_roi_mask(roi_mask)
+
+        try:
+            clusters = [self._summarize_in_roi(self.roi_mask == label,
+                                               num_clusters_per_roi,
+                                               metric=metric) for label in self.roi_list]
+            self.clustered_carpet = np.vstack(clusters)
+        except:
+            print('unable to produce the clustered carpet - exception:')
+            traceback.print_exc()
+            self._carpet_clustered = False
+        else:
+            self._carpet_clustered = True
 
 
     def _set_roi_mask(self, roi_mask):
