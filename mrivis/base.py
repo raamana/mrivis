@@ -830,12 +830,16 @@ class Carpet(object):
             print('You must run .cluster_rows_in_roi() '
                   'before being able to show clustered carpet!')
             return
+
         if ax_carpet is None:
             self.ax_carpet = plt.gca()
         else:
-            if not isinstance(ax_carpet, Axis):
-                raise ValueError('Input must be a valid axis!')
+            if not isinstance(ax_carpet, Axes):
+                raise ValueError('Input must be a valid matplotlib Axis!')
             self.ax_carpet = ax_carpet
+
+        plt.sca(self.ax_carpet)
+        self.fig = plt.gcf()
 
         #   vmin/vmax are controlled, because we rescale all to [0, 1]
         self.imshow_params_carpet = dict(interpolation='none', cmap='gray',
@@ -850,6 +854,7 @@ class Carpet(object):
                            frame_on=False)
         self.ax_carpet.set_ylim(auto=True)
 
+        return self.ax_carpet
 
     def cluster_roi(self, roi_mask=None, num_clusters_per_roi=10):
         """Clusters the data over the the fixed dimension (usually 4th)."""
