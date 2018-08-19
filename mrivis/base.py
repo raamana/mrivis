@@ -915,7 +915,8 @@ class Carpet(object):
     def _set_roi_mask(self, roi_mask):
         """Sets a new ROI mask."""
 
-        if roi_mask is not None:
+        if isinstance(roi_mask,
+                      np.ndarray):  # not (roi_mask is None or roi_mask=='auto'):
             self._verify_shape_compatibility(roi_mask, 'ROI set')
             self.roi_mask = roi_mask
 
@@ -960,10 +961,11 @@ class Carpet(object):
         # TODO ensure compatible with input image
         #   - must have < N dim and same size in moving dims.
         rows_to_delete = list() # to allow for additional masks to be applied in the future
-        if roi_mask is not None:
+        if isinstance(roi_mask,
+                      np.ndarray):  # not (roi_mask is None or roi_mask=='auto'):
             self._set_roi_mask(roi_mask)
 
-            rows_roi = np.where(roi_mask.flatten() == cfg.background_value)
+            rows_roi = np.where(self.roi_mask.flatten() == cfg.background_value)
 
             # TODO below would cause differences in size/shape across mask and carpet!
             self.carpet = np.delete(self.carpet, rows_roi, axis=0)
