@@ -740,6 +740,18 @@ class Carpet(object):
             self.carpet = self.carpet[:, ::num_frames_to_skip]
 
     def add_fixed_dim(self, fixed_dim=-1):
+    def _check_image(self, image_nD):
+        """Sanity checks on the image data"""
+
+        self.input_image = load_image_from_disk(image_nD)
+
+        if len(self.input_image.shape) < 3:
+            raise ValueError('Input image must be atleast 3D')
+
+        if np.count_nonzero(self.input_image) == 0:
+            raise ValueError('Input image is completely filled with zeros! '
+                             'Must be non-empty')
+
         """Makes note of which dimension needs to be fixed, defaulting to last."""
 
         if fixed_dim in [-1, None]:
