@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.image import AxesImage
 from collections import Iterable
+import warnings
 
 from mrivis.utils import check_num_slices, check_views, check_bounding_rect
 from mrivis import config as cfg
@@ -254,6 +255,34 @@ class SlicePicker(object):
                 # additionally include which dim and which slice num
                 # not using extended option in get_axis, to avoid complicating unpacking
                 yield dim, slice_num, multiple_slices
+
+    def save_as_gif(self, gif_path, duration=0.25):
+        """Package the selected slices into a single GIF for easy sharing and display (on web etc).
+
+        Parameters
+        ----------
+
+        gif_path : str
+            Output path for the GIF image
+
+        duration : float
+            Duration of display of each frame in GIF, in sec.
+
+        You must install imageio module to use this feature.
+
+        """
+
+        import imageio
+        gif_data = [img for img in self.get_slices()]
+        # using img.astype(np.uint32) is leaving noticable artefacts,
+        #   depending on imageio inner conversion, which is rescaling okay
+
+        # TODO deal with differing sizes of slices, padding with zeros or white??
+
+        with warnings.catch_warnings():
+            # ignoring the warning for conversion to uint8
+            warnings.simplefilter('ignore')
+            imageio.mimsave(gif_path, gif_data, duration=duration)
 
     def __iter__(self):
         """Returns the next panel, and the associated dimension and slice number"""
