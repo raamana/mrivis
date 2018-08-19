@@ -1008,5 +1008,11 @@ class Carpet(object):
         return "Carpet {}".format(self.carpet.shape)
 
 
+    def __repr__(self):
+
+        return "Orig image: {}\n" \
+               "Carpet {}".format(self.input_image.shape, self.carpet.shape)
+
+
 if __name__ == '__main__':
     pass
