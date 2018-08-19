@@ -416,3 +416,19 @@ def verify_sampler(sampler, image, image_shape, view_set, num_slices):
                                   'linear, percentage or callable')
 
     return out_sampler, out_sampling_method, num_slices
+
+
+def save_figure(fig, annot=None, output_path=None):
+
+    if annot is not None:
+        fig.suptitle(annot, backgroundcolor='black', color='g')
+
+    try:
+        fig.tight_layout()
+    except:
+        pass
+
+    if output_path is not None:
+        # output_path = output_path.replace(' ', '_')
+        # fig.savefig(output_path + '.png', bbox_inches='tight', dpi=200)
+        fig.savefig(output_path, bbox_inches='tight', dpi=200)

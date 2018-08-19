@@ -469,21 +469,6 @@ def _open_figure(slicer, num_rows_per_view, figsize=(15, 11)):
     return fig, axes
 
 
-def _save_figure(fig, annot=None, output_path=None):
-
-    if annot is not None:
-        fig.suptitle(annot, backgroundcolor='black', color='g')
-
-    try:
-        fig.tight_layout()
-    except:
-        pass
-
-    if output_path is not None:
-        output_path = output_path.replace(' ', '_')
-        fig.savefig(output_path + '.png', bbox_inches='tight', dpi=200)
-
-
 def collage(img_spec,
             num_rows=2,
             num_cols=6,
