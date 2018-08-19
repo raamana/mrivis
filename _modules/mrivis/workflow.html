@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>mrivis.workflow &mdash; mrivis 0.3.3 documentation</title>
+  <title>mrivis.workflow &mdash; mrivis 0.3.2+65.g843feb6 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="mrivis 0.3.3 documentation" href="../../index.html"/>
+    <link rel="top" title="mrivis 0.3.2+65.g843feb6 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.3.3
+                0.3.2+65.g843feb6
               </div>
             
           
@@ -635,21 +635,6 @@
     <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span>
 
 
-<span class="k">def</span> <span class="nf">_save_figure</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
-    <span class="k">if</span> <span class="n">annot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">annot</span><span class="p">,</span> <span class="n">backgroundcolor</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;fig tight layout did not succeed - ignoring issues.&#39;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">output_path</span> <span class="o">=</span> <span class="n">output_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">output_path</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
-
-
 <span class="k">def</span> <span class="nf">collage</span><span class="p">(</span><span class="n">img_spec</span><span class="p">,</span>
             <span class="n">num_rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="n">num_cols</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
@@ -1048,7 +1033,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.3',
+            VERSION:'0.3.2+65.g843feb6',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

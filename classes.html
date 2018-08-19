@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Visualization Classes &mdash; mrivis 0.3.3 documentation</title>
+  <title>Visualization Classes &mdash; mrivis 0.3.2+65.g843feb6 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="mrivis 0.3.3 documentation" href="index.html"/>
+    <link rel="top" title="mrivis 0.3.2+65.g843feb6 documentation" href="index.html"/>
         <link rel="next" title="Contributing" href="contributing.html"/>
         <link rel="prev" title="Alignment check - API" href="alignment_API.html"/> 
 
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.3.3
+                0.3.2+65.g843feb6
               </div>
             
           
@@ -99,7 +99,11 @@
 <li class="toctree-l1"><a class="reference internal" href="alignment_usage.html">Alignment check - usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="alignment_API.html">Alignment check - API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Visualization Classes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#api-reference-for-classes">API Reference for Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#slicepicker-api">SlicePicker API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#middleslicepicker-api">MiddleSlicePicker API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#collage-api">Collage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#midcollage-api">MidCollage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#carpet-api">Carpet API</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
@@ -170,9 +174,8 @@
   <div class="section" id="visualization-classes">
 <h1>Visualization Classes<a class="headerlink" href="#visualization-classes" title="Permalink to this headline">¶</a></h1>
 <p>A detailed usage illustration is available in the following <a class="reference external" href="https://nbviewer.jupyter.org/github/raamana/mrivis/blob/master/docs/example_notebooks/mrivis_demo_Collage_SlicePicker_classes.ipynb">demo notebook</a></p>
-<div class="section" id="api-reference-for-classes">
-<h2>API Reference for Classes<a class="headerlink" href="#api-reference-for-classes" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-mrivis"></span><p>Top-level package for mrivis.</p>
+<div class="section" id="slicepicker-api">
+<h2>SlicePicker API<a class="headerlink" href="#slicepicker-api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="mrivis.SlicePicker">
 <em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">SlicePicker</code><span class="sig-paren">(</span><em>image_in</em>, <em>view_set=(0</em>, <em>1</em>, <em>2)</em>, <em>num_slices=(10</em>, <em>)</em>, <em>sampler='linear'</em>, <em>min_density=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#SlicePicker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.SlicePicker" title="Permalink to this definition">¶</a></dt>
@@ -277,6 +280,9 @@ if None, include all slices.</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="middleslicepicker-api">
+<h2>MiddleSlicePicker API<a class="headerlink" href="#middleslicepicker-api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="mrivis.MiddleSlicePicker">
 <em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">MiddleSlicePicker</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#MiddleSlicePicker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.MiddleSlicePicker" title="Permalink to this definition">¶</a></dt>
@@ -303,6 +309,9 @@ there are no explicit restrictions placed on number of dimensions for image_in,<
 <p class="rubric">Methods</p>
 </dd></dl>
 
+</div>
+<div class="section" id="collage-api">
+<h2>Collage API<a class="headerlink" href="#collage-api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="mrivis.Collage">
 <em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">Collage</code><span class="sig-paren">(</span><em>view_set=(0</em>, <em>1</em>, <em>2)</em>, <em>num_rows=2</em>, <em>num_slices=(10</em>, <em>)</em>, <em>sampler='linear'</em>, <em>attach_image=None</em>, <em>bounding_rect=(0.02</em>, <em>0.02</em>, <em>0.98</em>, <em>0.98)</em>, <em>fig=None</em>, <em>figsize=(14</em>, <em>10)</em>, <em>display_params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage" title="Permalink to this definition">¶</a></dt>
@@ -475,6 +484,9 @@ use functools.partial to obtain a new callable that takes in just the slices.</d
 
 </dd></dl>
 
+</div>
+<div class="section" id="midcollage-api">
+<h2>MidCollage API<a class="headerlink" href="#midcollage-api" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="mrivis.MidCollage">
 <em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">MidCollage</code><span class="sig-paren">(</span><em>image</em>, <em>bounding_rect=(0.02</em>, <em>0.02</em>, <em>0.98</em>, <em>0.98)</em>, <em>fig=None</em>, <em>display_params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#MidCollage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.MidCollage" title="Permalink to this definition">¶</a></dt>
@@ -495,6 +507,152 @@ If not specified, creates a new figure.</dd>
 <dd>dict of keyword parameters that can be passed to matplotlib’s <cite>Axes.imshow()</cite></dd>
 </dl>
 <p class="rubric">Methods</p>
+</dd></dl>
+
+</div>
+<div class="section" id="carpet-api">
+<h2>Carpet API<a class="headerlink" href="#carpet-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mrivis.Carpet">
+<em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">Carpet</code><span class="sig-paren">(</span><em>image_nD</em>, <em>fixed_dim=-1</em>, <em>roi_mask='auto'</em>, <em>rescale_data=True</em>, <em>num_frames_to_skip='auto'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Carpet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Carpet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class to unroll the 4D or higher dimensional data into 2D images.</p>
+<p>Typical examples include functional or diffusion MRI data.</p>
+<p class="rubric">Methods</p>
+<p>Constructor</p>
+<p>This class can optionally,</p>
+<blockquote>
+<div><ul class="simple">
+<li>can cluster data in the fixed dimension (typically time/gradient dimensions in functional/diffusion MR imaging data)</li>
+<li>label the resulting clusters.</li>
+</ul>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image_nD</strong> : ndarray or str</p>
+<blockquote>
+<div><p>input image, or a path to an image, from which the carpet needs to be made.</p>
+</div></blockquote>
+<p><strong>fixed_dim</strong> : int</p>
+<blockquote>
+<div><p>the dimension to be fixed while unrolling the rest. Default: last as indicated by -1</p>
+</div></blockquote>
+<p><strong>roi_mask</strong> : ndarray or str or None</p>
+<blockquote>
+<div><p>if an image of same size as the N-1 dim array, it is interpreted to be a mask to be applied to each 3D/(N-1)D volume
+If its ‘auto’, an auto background (zeros) mask is computed and removed
+If its None, all the voxels in original image are retained</p>
+</div></blockquote>
+<p><strong>rescale_data</strong> : bool</p>
+<blockquote class="last">
+<div><p>Whether to rescale the input image over the chosen <cite>fixed_dim</cite>
+Default is to rescale to maximize the contrast.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="mrivis.Carpet.cluster_rows_in_roi">
+<code class="descname">cluster_rows_in_roi</code><span class="sig-paren">(</span><em>roi_mask=None</em>, <em>num_clusters_per_roi=5</em>, <em>metric='minkowski'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Carpet.cluster_rows_in_roi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Carpet.cluster_rows_in_roi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clusters the data within all the ROIs specified in a mask.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>roi_mask</strong> : ndarray or None</p>
+<blockquote>
+<div><p>volumetric mask defining the list of ROIs, with a label for each voxel.
+This must be the same size in all dimensions except the fixed_dim
+i.e. if you were making a Carpet from an fMRI image of size 125x125x90x400
+fixing the 4th dimension (of size 400), then roi_mask must be of size 125x125x90.</p>
+</div></blockquote>
+<p><strong>num_clusters_per_roi</strong> : int</p>
+<blockquote>
+<div><p>number of clusters (n) to form each ROI specified in the roi_mask
+if n (say 20) is less than number of voxels per a given ROI (say 2000),
+then data from approx. 2000/20=100 voxels would summarized (averaged by default),
+into a single cluster. So if the ROI mask had m ROIs (say 10), then the final clustered carpet
+would have m*n rows (200), regardless of the number of voxels in the 3D image.</p>
+</div></blockquote>
+<p><strong>metric</strong> : str</p>
+<blockquote class="last">
+<div><p>distance metric for the hierarchical clustering algorithm;
+default : ‘minkowski’
+Options: anything accepted by <cite>scipy.spatial.distance.pdist</cite>, which can be:
+‘braycurtis’, ‘canberra’, ‘chebyshev’, ‘cityblock’, ‘correlation’,
+‘cosine’, ‘dice’, ‘euclidean’, ‘hamming’, ‘jaccard’, ‘kulsinski’,
+‘mahalanobis’, ‘matching’, ‘minkowski’, ‘rogerstanimoto’, ‘russellrao’,
+‘seuclidean’, ‘sokalmichener’, ‘sokalsneath’, ‘sqeuclidean’, ‘yule’.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Carpet.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>output_path=None</em>, <em>title=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Carpet.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Carpet.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the current figure with carpet visualization to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>output_path</strong> : str</p>
+<blockquote>
+<div><p>Path to where the figure needs to be saved to.</p>
+</div></blockquote>
+<p><strong>title</strong> : str</p>
+<blockquote class="last">
+<div><p>text to overlay and annotate the visualization (done via plt.suptitle())</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Carpet.show">
+<code class="descname">show</code><span class="sig-paren">(</span><em>clustered=False</em>, <em>ax_carpet=None</em>, <em>label_x_axis='time point'</em>, <em>label_y_axis='voxels/ROI'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Carpet.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Carpet.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays the carpet in the given axis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>clustered</strong> : bool, optional</p>
+<blockquote>
+<div><p>Flag to indicate whether to show the clustered/reduced carpet or the original.
+You must run .cluster_rows_in_roi() before trying to show clustered carpet.</p>
+</div></blockquote>
+<p><strong>ax_carpet</strong> : Axis, optional</p>
+<blockquote>
+<div><p>handle to a valid matplotlib Axis</p>
+</div></blockquote>
+<p><strong>label_x_axis</strong> : str</p>
+<blockquote>
+<div><p>String label for the x-axis of the carpet</p>
+</div></blockquote>
+<p><strong>label_y_axis</strong> : str</p>
+<blockquote>
+<div><p>String label for the y-axis of the carpet</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ax_carpet</strong> : Axis</p>
+<blockquote class="last">
+<div><p>handle to axis where carpet is shown</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -544,7 +702,7 @@ If not specified, creates a new figure.</dd>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.3.3',
+            VERSION:'0.3.2+65.g843feb6',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
