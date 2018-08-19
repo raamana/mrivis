@@ -862,8 +862,27 @@ class Carpet(object):
         return self.ax_carpet
 
 
+    def save(self, output_path=None, title=None):
+        """Saves the current figure with carpet visualization to disk.
 
-        print()
+        Parameters
+        ----------
+
+        output_path : str
+            Path to where the figure needs to be saved to.
+
+        title : str
+            text to overlay and annotate the visualization (done via plt.suptitle())
+
+        """
+
+        try:
+            save_figure(self.fig, output_path=output_path, annot=title)
+        except:
+            print('Unable to save the figure to disk! \nException: ')
+            traceback.print_exc()
+
+
     def cluster_rows_in_roi(self,
                             roi_mask=None,
                             num_clusters_per_roi=5,
