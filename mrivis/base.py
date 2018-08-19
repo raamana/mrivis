@@ -739,7 +739,7 @@ class Carpet(object):
                   'keeping every {}th frame'.format(self.carpet.shape[1], num_frames_to_skip))
             self.carpet = self.carpet[:, ::num_frames_to_skip]
 
-    def add_fixed_dim(self, fixed_dim=-1):
+
     def _check_image(self, image_nD):
         """Sanity checks on the image data"""
 
@@ -752,16 +752,26 @@ class Carpet(object):
             raise ValueError('Input image is completely filled with zeros! '
                              'Must be non-empty')
 
+
+    def _add_fixed_dim(self, fixed_dim=-1):
         """Makes note of which dimension needs to be fixed, defaulting to last."""
 
-        if fixed_dim in [-1, None]:
-            fixed_dim = len(self.input_image_shape)-1 # last dimension
+        if fixed_dim in [-1, None, 'last']:
+            fixed_dim = len(self.input_image.shape) - 1  # last dimension
 
         if int(fixed_dim)!=fixed_dim or \
-            fixed_dim > len(self.input_image_shape) or \
+            fixed_dim > len(self.input_image.shape) or \
             fixed_dim < -1:
             raise ValueError('invalid value for the dimension to be fixed!'
-                             'Must be integer in range [0, {}] inclusive'.format(len(self.input_image_shape)))
+                             'Must be an integer in range [0, {}] inclusive'
+                             ''.format(len(self.input_image.shape)))
+
+        if self.input_image.shape[fixed_dim] < 2:
+            raise ValueError('Input image must have atleast two samples '
+                             'in the fixed dimension. It has {}. '
+                             'Full image shape: {} '
+                             ''.format(self.input_image.shape[fixed_dim],
+                                       self.input_image.shape))
 
         self.fixed_dim = int(fixed_dim)
 
