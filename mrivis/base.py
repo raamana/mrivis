@@ -846,8 +846,12 @@ class Carpet(object):
                                          aspect='auto', origin='lower', zorder=1)
         # should we control vmin=0.0, vmax=1.0 ??
 
-        self.carpet_handle = self.ax_carpet.imshow(self.carpet,
+        if not clustered:
+            self.carpet_handle = self.ax_carpet.imshow(self.carpet,
                                                    **self.imshow_params_carpet)
+        else:
+            self.carpet_handle = self.ax_carpet.imshow(self.clustered_carpet,
+                                                       **self.imshow_params_carpet)
 
         # TODO decorating axes with labels
         self.ax_carpet.set(xlabel=label_x_axis, ylabel=label_y_axis,
