@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib.axes import Axes
 from mrivis.base import Carpet
 from os.path import dirname, join as pjoin, realpath, exists as pexists
