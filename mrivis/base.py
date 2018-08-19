@@ -1,14 +1,16 @@
 __all__ = ['SlicePicker', 'Collage', 'Carpet']
 
-import numpy as np
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from matplotlib.image import AxesImage
-from matplotlib.axis import Axis
+import traceback
 from collections import Iterable
 
-from mrivis.utils import check_num_slices, check_views, row_wise_rescale, read_image
+import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
+from matplotlib.image import AxesImage
 from mrivis import config as cfg
+from mrivis.utils import check_num_slices, check_views, load_image_from_disk, \
+    row_wise_rescale, save_figure
+
 
 class SlicePicker(object):
     """
@@ -119,7 +121,7 @@ class SlicePicker(object):
 
         if min_density is None:
             self._min_density = -np.Inf
-        elif ( isinstance(min_density, float) and (min_density>=0.0 and min_density<1.0)):
+        elif (isinstance(min_density, float) and (0.0 <= min_density < 1.0)):
             self._min_density = min_density
         else:
             raise ValueError('min_density must be float and be >=0.0 and < 1.0')
@@ -143,7 +145,7 @@ class SlicePicker(object):
             # list comprehension over a set(slices_dim) wouldn't preserve order
             uniq_slices = list()
             for sn in slices_dim:
-                if sn >= 0 and sn < dim_size and sn not in uniq_slices:
+                if (0 <= sn < dim_size) and sn not in uniq_slices:
                     uniq_slices.append(sn)
 
             self._slices_by_dim.append(slices_dim)
