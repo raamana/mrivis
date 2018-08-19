@@ -775,15 +775,15 @@ class Carpet(object):
 
         self.fixed_dim = int(fixed_dim)
 
-    def _make_carpet(self, image_ND, rescale_data):
-        """Constructs the carpet from the input image.
+
+    def _make_carpet(self, rescale_data):
+        """
+        Constructs the carpet from the input image.
 
         Optional rescaling of the data.
         """
 
-        image_ND = read_image(image_ND, bkground_thresh=None, ensure_num_dim=4)
-
-        self.carpet = self._unroll_array(image_ND, self.fixed_dim)
+        self.carpet = self._unroll_array(self.input_image, self.fixed_dim)
         if rescale_data:
             self.carpet = row_wise_rescale(self.carpet)
 
