@@ -1,12 +1,16 @@
-__all__ = ['SlicePicker', 'Collage']
+__all__ = ['SlicePicker', 'Collage', 'Carpet']
 
-import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib.image import AxesImage
+import traceback
 from collections import Iterable
 
-from mrivis.utils import check_num_slices, check_views, check_bounding_rect
+import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
+from matplotlib.image import AxesImage
 from mrivis import config as cfg
+from mrivis.utils import check_num_slices, check_views, load_image_from_disk, \
+    row_wise_rescale, save_figure
+
 
 class SlicePicker(object):
     """
@@ -118,7 +122,7 @@ class SlicePicker(object):
 
         if min_density is None:
             self._min_density = -np.Inf
-        elif ( isinstance(min_density, float) and (min_density>=0.0 and min_density<1.0)):
+        elif (isinstance(min_density, float) and (0.0 <= min_density < 1.0)):
             self._min_density = min_density
         else:
             raise ValueError('min_density must be float and be >=0.0 and < 1.0')
@@ -142,7 +146,7 @@ class SlicePicker(object):
             # list comprehension over a set(slices_dim) wouldn't preserve order
             uniq_slices = list()
             for sn in slices_dim:
-                if sn >= 0 and sn < dim_size and sn not in uniq_slices:
+                if (0 <= sn < dim_size) and sn not in uniq_slices:
                     uniq_slices.append(sn)
 
             self._slices_by_dim.append(slices_dim)
@@ -168,8 +172,7 @@ class SlicePicker(object):
         else:
             raise NotImplementedError('Invalid state for the class!')
 
-    @staticmethod
-    def _linear_selection(non_empty_slices, num_slices):
+    def _linear_selection(self, non_empty_slices, num_slices):
         """Selects linearly spaced slices in given"""
 
         num_non_empty = len(non_empty_slices)
@@ -200,17 +203,16 @@ class SlicePicker(object):
 
         return selected[:num_slices]
 
-    @staticmethod
-    def _get_axis(array, axis, slice_num,
+    def _get_axis(self, array, axis, slice_num,
                   extended=False,
                   transpose=True):
         """Returns a fixed axis"""
 
         slice_list = [slice(None)] * array.ndim
         slice_list[axis] = slice_num
-        if transpose:
-            # transpose for proper orientation
-            slice_data = array[slice_list].T
+        slice_data = array[slice_list]
+        if transpose:  # for proper orientation
+            slice_data = slice_data.T
 
         if not extended:
             # return just the slice data
@@ -392,8 +394,6 @@ class Collage(object):
         self.view_set = check_views(view_set, max_views=3)
         self.num_slices = check_num_slices(num_slices, img_shape=None,
                                            num_dims=len(self.view_set))
-        bounding_rect = check_bounding_rect(bounding_rect)
-
         # TODO find a way to validate the input-- using utits.verify_sampler commonly?
         self.sampler = sampler
 
@@ -683,6 +683,345 @@ class MidCollage(Collage):
                          fig=fig, bounding_rect=bounding_rect,
                          display_params=display_params)
 
+
+class Carpet(object):
+    """Class to unroll the 4D or higher dimensional data into 2D images.
+
+    Typical examples include functional or diffusion MRI data.
+
+    """
+
+
+    def __init__(self,
+                 image_nD,
+                 fixed_dim=-1,
+                 roi_mask='auto',
+                 rescale_data=True,
+                 num_frames_to_skip='auto',
+                 ):
+        """
+        Constructor
+
+        This class can optionally,
+
+
+            - can cluster data in the fixed dimension (typically time/gradient dimensions in functional/diffusion MR imaging data)
+            - label the resulting clusters.
+
+        Parameters
+        ----------
+
+        image_nD : ndarray or str
+            input image, or a path to an image, from which the carpet needs to be made.
+
+        fixed_dim : int
+            the dimension to be fixed while unrolling the rest. Default: last as indicated by -1
+
+        roi_mask : ndarray or str or None
+            if an image of same size as the N-1 dim array, it is interpreted to be a mask to be applied to each 3D/(N-1)D volume
+            If its 'auto', an auto background (zeros) mask is computed and removed
+            If its None, all the voxels in original image are retained
+
+        rescale_data : bool
+            Whether to rescale the input image over the chosen `fixed_dim`
+            Default is to rescale to maximize the contrast.
+
+        """
+
+        self._check_image(image_nD)
+        self._add_fixed_dim(fixed_dim)
+        self._make_carpet(rescale_data)
+        self._apply_mask(roi_mask)
+
+        # choosing mean over median to make it sensitive to outlier values, if any
+        self._summary_func = np.mean
+        self._carpet_clustered = False
+
+        # TODO option to blur within ROIs, to improve contrast across ROIs?
+        #   blurring/additional image processing must be left to classes inheriting from this
+
+        # TODO reorder rows either using anatomical seg, or using clustering
+
+        # dropping alternating voxels if it gets too big
+        # to save on memory and avoid losing signal
+        if self.carpet.shape[1] > 600 and isinstance(num_frames_to_skip, int):
+            print('Too many frames (n={}) to display: '
+                  'keeping every {}th frame'
+                  ''.format(self.carpet.shape[1], num_frames_to_skip))
+            self.carpet = self.carpet[:, ::num_frames_to_skip]
+
+
+    def _check_image(self, image_nD):
+        """Sanity checks on the image data"""
+
+        self.input_image = load_image_from_disk(image_nD)
+
+        if len(self.input_image.shape) < 3:
+            raise ValueError('Input image must be atleast 3D')
+
+        if np.count_nonzero(self.input_image) == 0:
+            raise ValueError('Input image is completely filled with zeros! '
+                             'Must be non-empty')
+
+
+    def _add_fixed_dim(self, fixed_dim=-1):
+        """Makes note of which dimension needs to be fixed, defaulting to last."""
+
+        if fixed_dim in [-1, None, 'last']:
+            fixed_dim = len(self.input_image.shape) - 1  # last dimension
+
+        if int(fixed_dim)!=fixed_dim or \
+            fixed_dim > len(self.input_image.shape) or \
+            fixed_dim < -1:
+            raise ValueError('invalid value for the dimension to be fixed!'
+                             'Must be an integer in range [0, {}] inclusive'
+                             ''.format(len(self.input_image.shape)))
+
+        if self.input_image.shape[fixed_dim] < 2:
+            raise ValueError('Input image must have atleast two samples '
+                             'in the fixed dimension. It has {}. '
+                             'Full image shape: {} '
+                             ''.format(self.input_image.shape[fixed_dim],
+                                       self.input_image.shape))
+
+        self.fixed_dim = int(fixed_dim)
+
+
+    def _make_carpet(self, rescale_data):
+        """
+        Constructs the carpet from the input image.
+
+        Optional rescaling of the data.
+        """
+
+        self.carpet = self._unroll_array(self.input_image, self.fixed_dim)
+        if rescale_data:
+            self.carpet = row_wise_rescale(self.carpet)
+
+    @staticmethod
+    def _unroll_array(array, fixed_dim):
+        """reshape a given ndarray fixing a chosen dimension (rest gets 'unrolled')."""
+
+        return array.reshape(-1, array.shape[fixed_dim])
+
+
+    def show(self,
+             clustered=False,
+             ax_carpet=None,
+             label_x_axis='time point',
+             label_y_axis='voxels/ROI'):
+        """
+        Displays the carpet in the given axis.
+
+        Parameters
+        ----------
+
+        clustered : bool, optional
+            Flag to indicate whether to show the clustered/reduced carpet or the original.
+            You must run .cluster_rows_in_roi() before trying to show clustered carpet.
+
+        ax_carpet : Axis, optional
+            handle to a valid matplotlib Axis
+
+        label_x_axis : str
+            String label for the x-axis of the carpet
+
+        label_y_axis : str
+            String label for the y-axis of the carpet
+
+        Returns
+        -------
+
+        ax_carpet : Axis
+            handle to axis where carpet is shown
+
+        """
+
+        if clustered is True and self._carpet_clustered is False:
+            print('You must run .cluster_rows_in_roi() '
+                  'before being able to show clustered carpet!')
+            return
+
+        if ax_carpet is None:
+            self.ax_carpet = plt.gca()
+        else:
+            if not isinstance(ax_carpet, Axes):
+                raise ValueError('Input must be a valid matplotlib Axis!')
+            self.ax_carpet = ax_carpet
+
+        plt.sca(self.ax_carpet)
+        self.fig = plt.gcf()
+
+        #   vmin/vmax are controlled, because we rescale all to [0, 1]
+        self.imshow_params_carpet = dict(interpolation='none', cmap='gray',
+                                         aspect='auto', origin='lower', zorder=1)
+        # should we control vmin=0.0, vmax=1.0 ??
+
+        if not clustered:
+            self.carpet_handle = self.ax_carpet.imshow(self.carpet,
+                                                   **self.imshow_params_carpet)
+        else:
+            self.carpet_handle = self.ax_carpet.imshow(self.clustered_carpet,
+                                                       **self.imshow_params_carpet)
+
+        # TODO decorating axes with labels
+        self.ax_carpet.set(xlabel=label_x_axis, ylabel=label_y_axis,
+                           frame_on=False)
+        self.ax_carpet.set_ylim(auto=True)
+
+        return self.ax_carpet
+
+
+    def save(self, output_path=None, title=None):
+        """Saves the current figure with carpet visualization to disk.
+
+        Parameters
+        ----------
+
+        output_path : str
+            Path to where the figure needs to be saved to.
+
+        title : str
+            text to overlay and annotate the visualization (done via plt.suptitle())
+
+        """
+
+        try:
+            save_figure(self.fig, output_path=output_path, annot=title)
+        except:
+            print('Unable to save the figure to disk! \nException: ')
+            traceback.print_exc()
+
+
+    def cluster_rows_in_roi(self,
+                            roi_mask=None,
+                            num_clusters_per_roi=5,
+                            metric='minkowski'):
+        """Clusters the data within all the ROIs specified in a mask.
+
+        Parameters
+        ----------
+
+        roi_mask : ndarray or None
+            volumetric mask defining the list of ROIs, with a label for each voxel.
+            This must be the same size in all dimensions except the fixed_dim
+            i.e. if you were making a Carpet from an fMRI image of size 125x125x90x400
+            fixing the 4th dimension (of size 400), then roi_mask must be of size 125x125x90.
+
+        num_clusters_per_roi : int
+            number of clusters (n) to form each ROI specified in the roi_mask
+            if n (say 20) is less than number of voxels per a given ROI (say 2000),
+            then data from approx. 2000/20=100 voxels would summarized (averaged by default),
+            into a single cluster. So if the ROI mask had m ROIs (say 10), then the final clustered carpet
+            would have m*n rows (200), regardless of the number of voxels in the 3D image.
+
+        metric : str
+            distance metric for the hierarchical clustering algorithm;
+            default : 'minkowski'
+            Options: anything accepted by `scipy.spatial.distance.pdist`, which can be:
+            ‘braycurtis’, ‘canberra’, ‘chebyshev’, ‘cityblock’, ‘correlation’,
+            ‘cosine’, ‘dice’, ‘euclidean’, ‘hamming’, ‘jaccard’, ‘kulsinski’,
+            ‘mahalanobis’, ‘matching’, ‘minkowski’, ‘rogerstanimoto’, ‘russellrao’,
+            ‘seuclidean’, ‘sokalmichener’, ‘sokalsneath’, ‘sqeuclidean’, ‘yule’.
+
+
+        """
+
+        self._set_roi_mask(roi_mask)
+
+        try:
+            clusters = [self._summarize_in_roi(self.roi_mask == label,
+                                               num_clusters_per_roi,
+                                               metric=metric) for label in self.roi_list]
+            self.clustered_carpet = np.vstack(clusters)
+        except:
+            print('unable to produce the clustered carpet - exception:')
+            traceback.print_exc()
+            self._carpet_clustered = False
+        else:
+            self._carpet_clustered = True
+
+
+    def _set_roi_mask(self, roi_mask):
+        """Sets a new ROI mask."""
+
+        if isinstance(roi_mask,
+                      np.ndarray):  # not (roi_mask is None or roi_mask=='auto'):
+            self._verify_shape_compatibility(roi_mask, 'ROI set')
+            self.roi_mask = roi_mask
+
+            self.roi_list = np.unique(roi_mask.flatten())
+            np.setdiff1d(self.roi_list, cfg.background_value)
+        else:
+            self.roi_mask = np.ones(self.carpet.shape)
+            self.roi_list = None
+
+
+    def _summarize_in_roi(self, label_mask, num_clusters_per_roi=1, metric='minkowski'):
+        """returns a single row summarizing (typically via mean) all rows in an ROI."""
+
+        this_label = self.carpet[label_mask.flatten(), :]
+        if num_clusters_per_roi == 1:
+            out_matrix = self._summary_func(this_label, axis=0)
+        else:
+            out_matrix = self._make_clusters(this_label, num_clusters_per_roi, metric)
+
+        return out_matrix
+
+
+    def _make_clusters(self, matrix, num_clusters_per_roi, metric):
+        """clusters a given matrix by into specified number of clusters according to given metric"""
+
+        from scipy.cluster.hierarchy import fclusterdata
+
+        # maxclust needed to ensure t is interpreted as # clusters in heirarchical clustering
+        group_ids = fclusterdata(matrix, metric=metric, t=num_clusters_per_roi,
+                                 criterion='maxclust')
+        group_set = np.unique(group_ids)
+        clusters = [
+            self._summary_func(matrix[group_ids == group, :], axis=0, keepdims=True)
+            for group in group_set]
+
+        return np.vstack(clusters).squeeze()
+
+
+    def _apply_mask(self, roi_mask):
+        """Removes voxels outside the given mask or ROI set."""
+
+        # TODO ensure compatible with input image
+        #   - must have < N dim and same size in moving dims.
+        rows_to_delete = list() # to allow for additional masks to be applied in the future
+        if isinstance(roi_mask,
+                      np.ndarray):  # not (roi_mask is None or roi_mask=='auto'):
+            self._set_roi_mask(roi_mask)
+
+            rows_roi = np.where(self.roi_mask.flatten() == cfg.background_value)
+
+            # TODO below would cause differences in size/shape across mask and carpet!
+            self.carpet = np.delete(self.carpet, rows_roi, axis=0)
+
+        else:
+            self.roi_mask = np.ones(self.carpet.shape)
+
+
+    def _verify_shape_compatibility(self, img, img_type):
+        """Checks mask shape against input image shape."""
+
+        if self.input_image.shape[:-1] != img.shape:
+            raise ValueError('Shape of the {} ({}) is not compatible '
+                             'with input image shape: {} '
+                             ''.format(img_type, img.shape, self.input_image.shape[:-1]))
+
+    def __str__(self):
+        """Helpful repr"""
+
+        return "Carpet {}".format(self.carpet.shape)
+
+
+    def __repr__(self):
+
+        return "Orig image: {}\n" \
+               "Carpet {}".format(self.input_image.shape, self.carpet.shape)
 
 
 if __name__ == '__main__':

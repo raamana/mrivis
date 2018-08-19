@@ -136,8 +136,26 @@ def check_params(num_rows, num_cols, padding):
     return num_rows, num_cols, padding
 
 
-def read_image(img_spec, bkground_thresh):
-    """Image reader. Removes stray values close to zero (smaller than 5 %ile)."""
+def read_image(img_spec, bkground_thresh, ensure_num_dim=3):
+    """Image reader, with additional checks on size.
+
+    Can optionally remove stray values close to zero (smaller than 5 %ile)."""
+
+    img = load_image_from_disk(img_spec)
+
+    if not np.issubdtype(img.dtype, np.floating):
+        img = img.astype('float32')
+
+    if ensure_num_dim == 3:
+        img = check_image_is_3d(img)
+    elif ensure_num_dim == 4:
+        img = check_image_is_4d(img)
+
+    return threshold_image(img, bkground_thresh)
+
+
+def load_image_from_disk(img_spec):
+    """Vanilla image loader."""
 
     if isinstance(img_spec, str):
         if pexists(realpath(img_spec)):
@@ -153,12 +171,7 @@ def read_image(img_spec, bkground_thresh):
         raise ValueError('Invalid input specified! '
                          'Input either a path to image data, or provide 3d Matrix directly.')
 
-    img = check_image_is_3d(img)
-
-    if not np.issubdtype(img.dtype, np.floating):
-        img = img.astype('float32')
-
-    return threshold_image(img, bkground_thresh)
+    return img
 
 
 def check_image_is_3d(img):
@@ -177,6 +190,25 @@ def check_image_is_3d(img):
             img = np.squeeze(img, axis=3)
     elif len(img.shape) > 4:
         raise ValueError('Invalid shape of image : {}'.format(img.shape))
+
+    return img
+
+
+def check_image_is_4d(img, min_num_volumes=2):
+    """Ensures the image loaded is 3d and nothing else."""
+
+    if len(img.shape) < 4:
+        raise ValueError('Input volume must be 4D!')
+    elif len(img.shape) == 4:
+        for dim_size in img.shape[:3]:
+            if dim_size < 1:
+                raise ValueError('Atleast one slice must exist in each dimension')
+        if img.shape[3] < min_num_volumes:
+            raise ValueError('Input volume is 4D '
+                             'with less than {} volumes!'.format(min_num_volumes))
+    elif len(img.shape) > 4:
+        raise ValueError('Too many dimensions : more than 4.\n'
+                         'Invalid shape of image : {}'.format(img.shape))
 
     return img
 
@@ -232,6 +264,34 @@ def scale_0to1(image_in,
     image = (image - min_value) / (max_value - min_value)
 
     return image
+
+
+def row_wise_rescale(matrix):
+    """
+    For fMRI data (num_voxels x num_time_points),
+        this would translate to voxel-wise normalization over time.
+
+    Input matrix: typically a carpet of size num_voxels x num_4th_dim
+        4th_dim could be time points or gradients or other appropriate
+
+    """
+
+    if matrix.shape[0] <= matrix.shape[1]:
+        raise ValueError('Number of voxels is less than the number of time points!! '
+                      'Are you sure data is reshaped correctly?')
+
+    min_ = matrix.min(axis=1)
+    range_ = matrix.ptp(axis=1)  # ptp : peak to peak, max-min
+    min_tile = np.tile(min_, (matrix.shape[1], 1)).T
+    range_tile = np.tile(range_, (matrix.shape[1], 1)).T
+    # avoiding any numerical difficulties
+    range_tile[range_tile < np.finfo(np.float).eps] = 1.0
+
+    normed = (matrix - min_tile) / range_tile
+
+    del min_, range_, min_tile, range_tile
+
+    return normed
 
 
 def crop_to_seg_extents(img, seg, padding):
@@ -394,3 +454,19 @@ def verify_sampler(sampler, image, image_shape, view_set, num_slices):
                                   'linear, percentage or callable')
 
     return out_sampler, out_sampling_method, num_slices
+
+
+def save_figure(fig, annot=None, output_path=None):
+
+    if annot is not None:
+        fig.suptitle(annot, backgroundcolor='black', color='g')
+
+    try:
+        fig.tight_layout()
+    except:
+        pass
+
+    if output_path is not None:
+        # output_path = output_path.replace(' ', '_')
+        # fig.savefig(output_path + '.png', bbox_inches='tight', dpi=200)
+        fig.savefig(output_path, bbox_inches='tight', dpi=200)
