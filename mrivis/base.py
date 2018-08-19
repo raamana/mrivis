@@ -682,37 +682,33 @@ class Carpet(object):
     """
 
 
-    def __init__(self, image_ND,
+    def __init__(self,
+                 image_nD,
                  fixed_dim=-1,
                  roi_mask='auto',
                  rescale_data=True,
-                 cluster_data=None,
-                 num_clusters=None,
-                 grouping_labels=None,
-                 cluster_data_X=None,
-                 num_clusters_X=None,
-                 grouping_labels_X=None,
                  num_frames_to_skip='auto',
                  ):
-        """Class to unroll the 4D or higher dimensional data into 2D images.
+        """
+        Constructor
 
-        Optionally,
-            - can cluster data (in both the dimensions being unrolled,
-                and the fixed dimension, which is typically time or gradient dimensions
-                    in functional and diffusion MRI respectively
+        This class can optionally,
+
+
+            - can cluster data in the fixed dimension (typically time/gradient dimensions in functional/diffusion MR imaging data)
             - label the resulting clusters.
 
         Parameters
         ----------
 
-        image_ND : ndarray or str
+        image_nD : ndarray or str
             input image, or a path to an image, from which the carpet needs to be made.
 
         fixed_dim : int
+            the dimension to be fixed while unrolling the rest. Default: last as indicated by -1
 
         roi_mask : ndarray or str or None
-            if an image of same size as the N-1 dim array,
-                it is interpreted to be a mask to be applied to each 3D/(N-1)D volume
+            if an image of same size as the N-1 dim array, it is interpreted to be a mask to be applied to each 3D/(N-1)D volume
             If its 'auto', an auto background (zeros) mask is computed and removed
             If its None, all the voxels in original image are retained
 
