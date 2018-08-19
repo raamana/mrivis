@@ -736,7 +736,8 @@ class Carpet(object):
         # to save on memory and avoid losing signal
         if self.carpet.shape[1] > 600 and isinstance(num_frames_to_skip, int):
             print('Too many frames (n={}) to display: '
-                  'keeping every {}th frame'.format(self.carpet.shape[1], num_frames_to_skip))
+                  'keeping every {}th frame'
+                  ''.format(self.carpet.shape[1], num_frames_to_skip))
             self.carpet = self.carpet[:, ::num_frames_to_skip]
 
 
@@ -977,10 +978,10 @@ class Carpet(object):
     def _verify_shape_compatibility(self, img, img_type):
         """Checks mask shape against input image shape."""
 
-        if self.input_image_shape[:-1] != img.shape:
+        if self.input_image.shape[:-1] != img.shape:
             raise ValueError('Shape of the {} ({}) is not compatible '
                              'with input image shape: {} '
-                             ''.format(img_type, img.shape, self.input_image_shape[:-1]))
+                             ''.format(img_type, img.shape, self.input_image.shape[:-1]))
 
     def __str__(self):
         """Helpful repr"""
