@@ -793,8 +793,38 @@ class Carpet(object):
 
         return array.reshape(-1, array.shape[fixed_dim])
 
-    def show(self, ax_carpet=None, label_x_axis='time point', label_y_axis='voxels/ROI'):
-        """Displays the carpet in the given axis"""
+
+    def show(self,
+             clustered=False,
+             ax_carpet=None,
+             label_x_axis='time point',
+             label_y_axis='voxels/ROI'):
+        """
+        Displays the carpet in the given axis.
+
+        Parameters
+        ----------
+
+        clustered : bool, optional
+            Flag to indicate whether to show the clustered/reduced carpet or the original.
+            You must run .cluster_rows_in_roi() before trying to show clustered carpet.
+
+        ax_carpet : Axis, optional
+            handle to a valid matplotlib Axis
+
+        label_x_axis : str
+            String label for the x-axis of the carpet
+
+        label_y_axis : str
+            String label for the y-axis of the carpet
+
+        Returns
+        -------
+
+        ax_carpet : Axis
+            handle to axis where carpet is shown
+
+        """
 
         if ax_carpet is None:
             self.ax_carpet = plt.gca()
