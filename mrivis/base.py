@@ -718,16 +718,17 @@ class Carpet(object):
 
         """
 
-        # TODO parameter check and validation
-        self.input_image_shape = image_ND.shape
-        self.add_fixed_dim(fixed_dim)
-        self._make_carpet(image_ND, rescale_data)
+        self._check_image(image_nD)
+        self._add_fixed_dim(fixed_dim)
+        self._make_carpet(rescale_data)
         self._apply_mask(roi_mask)
 
         # choosing mean over median to make it sensitive to outlier values, if any
         self._summary_func = np.mean
+        self._carpet_clustered = False
 
         # TODO option to blur within ROIs, to improve contrast across ROIs?
+        #   blurring/additional image processing must be left to classes inheriting from this
 
         # TODO reorder rows either using anatomical seg, or using clustering
 
