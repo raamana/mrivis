@@ -826,6 +826,10 @@ class Carpet(object):
 
         """
 
+        if clustered is True and self._carpet_clustered is False:
+            print('You must run .cluster_rows_in_roi() '
+                  'before being able to show clustered carpet!')
+            return
         if ax_carpet is None:
             self.ax_carpet = plt.gca()
         else:
