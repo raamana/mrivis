@@ -23,8 +23,11 @@ A sample gallery of different ways to check alignment is shown below:
 Full documentation https://raamana.github.io/mrivis/readme.html
 
 
-Installation
+**Installation**
 
 .. code-block:: console
 
     $ pip install mrivis
+
+
+If you would like to use the export to GIF from ``SlicePicker``, then install the ``imageio`` package as well via ``pip install imageio``
