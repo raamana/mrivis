@@ -226,7 +226,22 @@ class SlicePicker(object):
         return self._slices
 
     def get_slices(self, extended=False):
-        """Generator over all the slices selected, each time returning a cross-section."""
+        """Generator over all the slices selected, each time returning a cross-section.
+
+        Parameters
+        ----------
+
+        extended : bool
+            Flag to return just slice data (default, extended=False), or
+                return a tuple of axis, slice_num, slice_data (extended=True)
+
+        Returns
+        -------
+
+        slice_data : an image (just slice data, default, with extended=False), or
+                a tuple of axis, slice_num, slice_data (extended=True)
+
+        """
 
         for dim, slice_num in self._slices:
             yield self._get_axis(self._image, dim, slice_num, extended=extended)
@@ -236,8 +251,23 @@ class SlicePicker(object):
 
         All images must be of the same shape as the original image defining this object.
 
+        Parameters
+        ----------
+
         image_list : Iterable
             containing atleast 2 images
+
+        extended : bool
+            Flag to return just slice data (default, extended=False), or
+                return a tuple of axis, slice_num, slice_data (extended=True)
+
+        Returns
+        -------
+
+        tuple_slice_data : tuple of one slice from each image in the input image list
+                            Let's denote it by as TSL.
+                        if extended=True, returns tuple(axis, slice_num, TSL)
+
         """
 
         # ensure all the images have the same shape
@@ -296,7 +326,16 @@ class MiddleSlicePicker(SlicePicker):
     """Convenience class to select the classic one middle slice from all views."""
 
     def __init__(self, image):
-        """Returns the middle slice from all views in the image."""
+        """Returns the middle slice from all views in the image.
+
+        Parameters
+        -----------
+
+        attach_image : ndarray
+            The image to be attached to the collage, once it is created.
+            Must be atleast 3d.
+
+        """
 
         super().__init__(image_in=image,
                          view_set=cfg.view_set_default,
@@ -500,7 +539,15 @@ class Collage(object):
             self.images[ix] = ax.imshow(random_image, **self.display_params)
 
     def show(self, grid=None):
-        """Makes the collage visible."""
+        """Makes the collage visible.
+
+        Parameters
+        ----------
+
+        grid : int or None
+            index (into original ``view_set``) to which grid/view needs to be hidden
+
+        """
 
         self._set_visible(True, grid_index=grid)
 
@@ -508,7 +555,39 @@ class Collage(object):
                image_in,
                sampler=None,
                show=True):
-        """Attaches the relevant cross-sections to each axis"""
+        """Attaches the relevant cross-sections to each axis.
+
+        Parameters
+        ----------
+
+        attach_image : ndarray
+            The image to be attached to the collage, once it is created.
+            Must be atleast 3d.
+
+        sampler : str or list or callable
+            selection strategy: to identify the type of sampling done to select the slices to return.
+            All sampling is done between the first and last non-empty slice in that view/dimension.
+
+            - if 'linear' : linearly spaced slices
+            - if list, it is treated as set of percentages at which slices to be sampled
+                (must be in the range of [1-100], not [0-1]).
+                This could be used to more/all slices in the middle e.g. range(40, 60, 5)
+                    or at the end e.g. [ 5, 10, 15, 85, 90, 95]
+            - if callable, it must take a 2D image of arbitray size, return True/False
+                to indicate whether to select that slice or not.
+                Only non-empty slices (atleas one non-zero voxel) are provided as input.
+                Simple examples for callable could be based on
+                1) percentage of non-zero voxels > x etc
+                2) presence of desired texture ?
+                3) certain properties of distribution (skewe: dark/bright, energy etc) etc
+
+                If the sampler returns more than requested `num_slices`,
+                    only the first num_slices will be selected.
+
+        show : bool
+            Flag to request immediate display of collage
+
+        """
 
         if len(image_in.shape) < 3:
             raise ValueError('Image must be atleast 3D')
@@ -603,7 +682,15 @@ class Collage(object):
             self.show()
 
     def hide(self, grid=None):
-        """Removes the collage from view."""
+        """Removes the collage from view.
+
+        Parameters
+        ----------
+
+        grid : int or None
+            index (into original ``view_set``) to which grid/view needs to be hidden
+
+        """
 
         self._set_visible(False, grid_index=grid)
 
@@ -620,7 +707,19 @@ class Collage(object):
                 ax.set_visible(visibility)
 
     def save(self, annot=None, output_path=None):
-        """Saves the collage to disk as an image."""
+        """Saves the collage to disk as an image.
+
+        Parameters
+        -----------
+
+        annot : str
+            text to annotate the figure with a super title
+
+        output_path : str
+            path to save the figure to.
+            Note: any spaces in the filename will be replace with ``_``
+
+        """
 
         if annot is not None:
             self.fig.suptitle(annot, backgroundcolor='black', color='g')
