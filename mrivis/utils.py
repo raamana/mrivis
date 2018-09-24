@@ -41,7 +41,7 @@ def get_axis(array, axis, slice_num):
 
     slice_list = [slice(None)] * array.ndim
     slice_list[axis] = slice_num
-    slice_data = array[slice_list].T  # transpose for proper orientation
+    slice_data = array[tuple(slice_list)].T  # transpose for proper orientation
 
     return slice_data
 
