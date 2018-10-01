@@ -1,7 +1,8 @@
 # Byte-compiled / optimized / DLL files
-
+example_datasets/epi_func.nii
 cmd2pkg
 docs/flyers.key
+mrivis/tests
 docs/example_notebooks/.ipynb_checkpoints/
 .pytest_cache/
 

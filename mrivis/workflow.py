@@ -135,23 +135,10 @@ def color_mix(img_spec1=None,
         weights for red and green channels in the composite image.
         Default: [1, 1]
 
-    cmap : str or matplotlib.cm.cmap
-        Colormap to show the difference values.
-
-    overlay_image : bool
-        Flag to specify whether to overlay the first image under the difference map.
-
-    overlay_alpha : float
-        Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).
-
-    cmap : str or matplotlib.cm.cmap
-        Colormap to show the difference values.
-
-    overlay_image : bool
-        Flag to specify whether to overlay the first image under the difference map.
-
-    overlay_alpha : float
-        Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).
+    color_space : str
+        type of color space to mix the images in.
+        Currently supports 'rgb' only.
+        Support for 'hsv' coming later.
 
     cmap : str or matplotlib.cm.cmap
         Colormap to show the difference values.
@@ -259,6 +246,11 @@ def voxelwise_diff(img_spec1=None,
         Default: True, display absolute differences only (so order of images does not matter)
 
         Colormap to show the difference values.
+
+    overlay_image : bool
+        Flag to specify whether to overlay the difference values on the original image.
+        .. note: This feature is not reliable and supported well yet.
+
     num_rows : int
         number of rows (top to bottom) per each of 3 dimensions
 

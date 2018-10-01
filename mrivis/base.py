@@ -786,7 +786,7 @@ class Carpet(object):
                  fixed_dim=-1,
                  roi_mask='auto',
                  rescale_data=True,
-                 num_frames_to_skip='auto',
+                 num_frames_to_skip=2,
                  ):
         """
         Constructor
@@ -814,6 +814,11 @@ class Carpet(object):
         rescale_data : bool
             Whether to rescale the input image over the chosen `fixed_dim`
             Default is to rescale to maximize the contrast.
+
+        num_frames_to_skip : int
+            number of frames to skip displaying to avoid pixel decimation on screen.
+            Choose a number such that to get a total ~600-1000 vertical lines to display.
+
 
         """
 

@@ -10,6 +10,7 @@ mrivis
 
  - tools for comparison of spatial alignment of two 3D MRI scans (T1, T2, PET etc) using checkerboard plots and other comparison methods
  - classes to develop customizable visualizations of 3D and 4D images
+ - additional helper, convenience and utility scripts related to visualization
 
 Full documentation https://raamana.github.io/mrivis/readme.html
 
