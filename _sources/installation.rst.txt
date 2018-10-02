@@ -14,7 +14,12 @@ To install mrivis, run this command in your terminal:
 
     $ pip install mrivis
 
-This is the preferred method to install mrivis, as it will always install the most recent stable release. 
+This is the preferred method to install mrivis, as it will always install the most recent stable release.
+
+.. note::
+
+    If you would like to use the export to GIF from ``SlicePicker``, then install the ``imageio`` package as well via ``pip install imageio``
+
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.

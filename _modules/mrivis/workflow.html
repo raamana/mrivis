@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>mrivis.workflow &mdash; mrivis 0.3.2+65.g843feb6 documentation</title>
+  <title>mrivis.workflow &mdash; mrivis 0.3.2+85.g0a5b0a2 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="mrivis 0.3.2+65.g843feb6 documentation" href="../../index.html"/>
+    <link rel="top" title="mrivis 0.3.2+85.g0a5b0a2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.3.2+65.g843feb6
+                0.3.2+85.g0a5b0a2
               </div>
             
           
@@ -97,7 +97,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../alignment_usage.html">Alignment check - usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../alignment_API.html">Alignment check - API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../classes.html">Visualization Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vis_classes_usage.html">Visualization Classes - Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vis_classes_api.html">Visualization Classes - API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
 </ul>
@@ -301,23 +302,10 @@
 <span class="sd">        weights for red and green channels in the composite image.</span>
 <span class="sd">        Default: [1, 1]</span>
 
-<span class="sd">    cmap : str or matplotlib.cm.cmap</span>
-<span class="sd">        Colormap to show the difference values.</span>
-
-<span class="sd">    overlay_image : bool</span>
-<span class="sd">        Flag to specify whether to overlay the first image under the difference map.</span>
-
-<span class="sd">    overlay_alpha : float</span>
-<span class="sd">        Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).</span>
-
-<span class="sd">    cmap : str or matplotlib.cm.cmap</span>
-<span class="sd">        Colormap to show the difference values.</span>
-
-<span class="sd">    overlay_image : bool</span>
-<span class="sd">        Flag to specify whether to overlay the first image under the difference map.</span>
-
-<span class="sd">    overlay_alpha : float</span>
-<span class="sd">        Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).</span>
+<span class="sd">    color_space : str</span>
+<span class="sd">        type of color space to mix the images in.</span>
+<span class="sd">        Currently supports &#39;rgb&#39; only.</span>
+<span class="sd">        Support for &#39;hsv&#39; coming later.</span>
 
 <span class="sd">    cmap : str or matplotlib.cm.cmap</span>
 <span class="sd">        Colormap to show the difference values.</span>
@@ -425,6 +413,11 @@
 <span class="sd">        Default: True, display absolute differences only (so order of images does not matter)</span>
 
 <span class="sd">        Colormap to show the difference values.</span>
+
+<span class="sd">    overlay_image : bool</span>
+<span class="sd">        Flag to specify whether to overlay the difference values on the original image.</span>
+<span class="sd">        .. note: This feature is not reliable and supported well yet.</span>
+
 <span class="sd">    num_rows : int</span>
 <span class="sd">        number of rows (top to bottom) per each of 3 dimensions</span>
 
@@ -1033,7 +1026,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.2+65.g843feb6',
+            VERSION:'0.3.2+85.g0a5b0a2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -1,0 +1,899 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Visualization Classes - API &mdash; mrivis 0.3.2+85.g0a5b0a2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="mrivis 0.3.2+85.g0a5b0a2 documentation" href="index.html"/>
+        <link rel="next" title="Contributing" href="contributing.html"/>
+        <link rel="prev" title="Visualization Classes - Usage" href="vis_classes_usage.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> mrivis
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.2+85.g0a5b0a2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="readme.html">mrivis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alignment_usage.html">Alignment check - usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alignment_API.html">Alignment check - API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vis_classes_usage.html">Visualization Classes - Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Visualization Classes - API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#slicepicker-api">SlicePicker API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#middleslicepicker-api">MiddleSlicePicker API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#collage-api">Collage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#midcollage-api">MidCollage API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#carpet-api">Carpet API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">mrivis</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Visualization Classes - API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/vis_classes_api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="visualization-classes-api">
+<h1>Visualization Classes - API<a class="headerlink" href="#visualization-classes-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="slicepicker-api">
+<h2>SlicePicker API<a class="headerlink" href="#slicepicker-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mrivis.SlicePicker">
+<em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">SlicePicker</code><span class="sig-paren">(</span><em>image_in</em>, <em>view_set=(0</em>, <em>1</em>, <em>2)</em>, <em>num_slices=(10</em>, <em>)</em>, <em>sampler='linear'</em>, <em>min_density=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#SlicePicker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.SlicePicker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class to pick non-empty slices along the various dimensions for a given image.</p>
+<dl class="docutils">
+<dt>The term <cite>slice</cite> here refers to one cross-section in a 3D image,</dt>
+<dd>towards which this class is designed for.
+However there are no explicit restrictions placed on dicing N=4+ array
+and receiving a n-1 dim array.</dd>
+</dl>
+<p class="rubric">Methods</p>
+<p>Class to pick non-empty slices along the various dimensions for a given image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image_in</strong> : ndarray</p>
+<blockquote>
+<div><p>3D array to be sliced.
+there are no explicit restrictions placed on number of dimensions for image_in,</p>
+<blockquote>
+<div><p>to get a n-1 dim array, but appropriate reshaping may need to be performed.</p>
+</div></blockquote>
+</div></blockquote>
+<p><strong>view_set</strong> : iterable</p>
+<blockquote>
+<div><p>List of integers selecting the dimesnions to be sliced.</p>
+</div></blockquote>
+<p><strong>num_slices</strong> : int or iterable of size as view_set</p>
+<blockquote>
+<div><p>Number of slices to be selected in each view.</p>
+</div></blockquote>
+<p><strong>sampler</strong> : str or list or callable</p>
+<blockquote>
+<div><p>selection strategy: to identify the type of sampling done to select the slices to return.
+All sampling is done between the first and last non-empty slice in that view/dimension.</p>
+<ul>
+<li><p class="first">if ‘linear’ : linearly spaced slices</p>
+</li>
+<li><dl class="first docutils">
+<dt>if list, it is treated as set of percentages at which slices to be sampled</dt>
+<dd><p class="first">(must be in the range of [1-100], not [0-1]).
+This could be used to more/all slices in the middle e.g. range(40, 60, 5)</p>
+<blockquote class="last">
+<div><p>or at the end e.g. [ 5, 10, 15, 85, 90, 95]</p>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>if callable, it must take a 2D image of arbitray size, return True/False</dt>
+<dd><p class="first">to indicate whether to select that slice or not.
+Only non-empty slices (atleas one non-zero voxel) are provided as input.
+Simple examples for callable could be based on
+1) percentage of non-zero voxels &gt; x etc
+2) presence of desired texture ?
+3) certain properties of distribution (skewe: dark/bright, energy etc) etc</p>
+<dl class="last docutils">
+<dt>If the sampler returns more than requested <cite>num_slices</cite>,</dt>
+<dd><p class="first last">only the first num_slices will be selected.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p><strong>min_density</strong> : float or None</p>
+<blockquote class="last">
+<div><p>mininum density of non-zero voxels within a given slice to consider it non-empty
+Default: 0.01 (1%).
+if None, include all slices.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="mrivis.SlicePicker.get_slice_indices">
+<code class="descname">get_slice_indices</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#SlicePicker.get_slice_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.SlicePicker.get_slice_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns indices for the slices selected (each a tuple : (dim, slice_num))</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.SlicePicker.get_slices">
+<code class="descname">get_slices</code><span class="sig-paren">(</span><em>extended=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#SlicePicker.get_slices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.SlicePicker.get_slices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator over all the slices selected, each time returning a cross-section.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>extended</strong> : bool</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Flag to return just slice data (default, extended=False), or</dt>
+<dd><p class="first last">return a tuple of axis, slice_num, slice_data (extended=True)</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>slice_data</strong> : an image (just slice data, default, with extended=False), or</p>
+<blockquote class="last">
+<div><p>a tuple of axis, slice_num, slice_data (extended=True)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.SlicePicker.get_slices_multi">
+<code class="descname">get_slices_multi</code><span class="sig-paren">(</span><em>image_list</em>, <em>extended=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#SlicePicker.get_slices_multi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.SlicePicker.get_slices_multi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the same cross-section from the multiple images supplied.</p>
+<p>All images must be of the same shape as the original image defining this object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image_list</strong> : Iterable</p>
+<blockquote>
+<div><p>containing atleast 2 images</p>
+</div></blockquote>
+<p><strong>extended</strong> : bool</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Flag to return just slice data (default, extended=False), or</dt>
+<dd><p class="first last">return a tuple of axis, slice_num, slice_data (extended=True)</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>tuple_slice_data</strong> : tuple of one slice from each image in the input image list</p>
+<blockquote class="last">
+<div><blockquote>
+<div><p>Let’s denote it by as TSL.</p>
+</div></blockquote>
+<p>if extended=True, returns tuple(axis, slice_num, TSL)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.SlicePicker.save_as_gif">
+<code class="descname">save_as_gif</code><span class="sig-paren">(</span><em>gif_path</em>, <em>duration=0.25</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#SlicePicker.save_as_gif"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.SlicePicker.save_as_gif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Package the selected slices into a single GIF for easy sharing and display (on web etc).</p>
+<p>You must install imageio module separately to use this feature.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>gif_path</strong> : str</p>
+<blockquote>
+<div><p>Output path for the GIF image</p>
+</div></blockquote>
+<p><strong>duration</strong> : float</p>
+<blockquote class="last">
+<div><p>Duration of display of each frame in GIF, in sec.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="middleslicepicker-api">
+<h2>MiddleSlicePicker API<a class="headerlink" href="#middleslicepicker-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mrivis.MiddleSlicePicker">
+<em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">MiddleSlicePicker</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#MiddleSlicePicker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.MiddleSlicePicker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">mrivis.base.SlicePicker</span></code></p>
+<p>Convenience class to select the classic one middle slice from all views.</p>
+<p class="rubric">Methods</p>
+<p>Returns the middle slice from all views in the image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>attach_image</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>The image to be attached to the collage, once it is created.
+Must be atleast 3d.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+</div>
+<div class="section" id="collage-api">
+<h2>Collage API<a class="headerlink" href="#collage-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mrivis.Collage">
+<em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">Collage</code><span class="sig-paren">(</span><em>view_set=(0</em>, <em>1</em>, <em>2)</em>, <em>num_rows=2</em>, <em>num_slices=(10</em>, <em>)</em>, <em>sampler='linear'</em>, <em>attach_image=None</em>, <em>bounding_rect=(0.02</em>, <em>0.02</em>, <em>0.98</em>, <em>0.98)</em>, <em>fig=None</em>, <em>figsize=(14</em>, <em>10)</em>, <em>display_params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="docutils">
+<dt>Class exhibiting multiple slices from a 3D image,</dt>
+<dd>with convenience routines handling all the cross-sections as a single set.</dd>
+</dl>
+<p class="rubric">Methods</p>
+<p>Class exhibiting multiple slices from a 3D image,
+with convenience routines handling all the cross-sections as a single set.</p>
+<dl class="docutils">
+<dt>Once created with certain <cite>display_params</cite> (containing vmin and vmax),</dt>
+<dd>this class does NOT automatically rescale the data, as you attach different images.
+Ensure the input images are rescaled to [0, 1] BEFORE attaching.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>view_set</strong> : iterable</p>
+<blockquote>
+<div><p>List of integers selecting the dimesnions to be sliced.</p>
+</div></blockquote>
+<p><strong>num_slices</strong> : int or iterable of size as view_set</p>
+<blockquote>
+<div><p>Number of slices to be selected in each view.</p>
+</div></blockquote>
+<p><strong>num_rows</strong> : int</p>
+<blockquote>
+<div><p>Number of rows per view.</p>
+</div></blockquote>
+<p><strong>sampler</strong> : str or list or callable</p>
+<blockquote>
+<div><p>selection strategy to identify the type of sampling done
+to select the slices to return. All sampling is done between
+the first and last non-empty slice in that view/dimension.</p>
+<ul>
+<li><p class="first">if ‘linear’ : linearly spaced slices</p>
+</li>
+<li><dl class="first docutils">
+<dt>if list, it is treated as set of percentages at which slices to be sampled</dt>
+<dd><p class="first">(must be in the range of [1-100], not [0-1]).
+This could be used to more/all slices in the middle e.g. range(40, 60, 5)</p>
+<blockquote class="last">
+<div><p>or at the end e.g. [ 5, 10, 15, 85, 90, 95]</p>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>if callable, it must take a 2D image of arbitray size, return True/False</dt>
+<dd><p class="first">to indicate whether to select that slice or not.
+Only non-empty slices (atleas one non-zero voxel) are provided as input.
+Simple examples for callable could be based on
+1) percentage of non-zero voxels &gt; x etc
+2) presence of desired texture ?
+3) certain properties of distribution (skewe: dark/bright, energy etc) etc</p>
+<dl class="last docutils">
+<dt>If the sampler returns more than requested <cite>num_slices</cite>,</dt>
+<dd><p class="first last">only the first num_slices will be selected.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p><strong>attach_image</strong> : ndarray</p>
+<blockquote>
+<div><p>The image to be attached to the collage, once it is created.
+Must be atleast 3d.</p>
+</div></blockquote>
+<p><strong>display_params</strong> : dict</p>
+<blockquote>
+<div><p>dict of keyword parameters that can be passed to matplotlib’s <cite>Axes.imshow()</cite></p>
+</div></blockquote>
+<p><strong>fig</strong> : matplotlib.Figure</p>
+<blockquote>
+<div><p>figure handle to create the collage in.
+If not specified, creates a new figure.</p>
+</div></blockquote>
+<p><strong>figsize</strong> : tuple of 2</p>
+<blockquote>
+<div><p>Figure size (width, height) in inches.</p>
+</div></blockquote>
+<p><strong>bounding_rect</strong> : tuple of 4</p>
+<blockquote class="last">
+<div><p>The rectangular area to bind the collage to (in normalized figure coordinates)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="mrivis.Collage.attach">
+<code class="descname">attach</code><span class="sig-paren">(</span><em>image_in</em>, <em>sampler=None</em>, <em>show=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage.attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage.attach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attaches the relevant cross-sections to each axis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>attach_image</strong> : ndarray</p>
+<blockquote>
+<div><p>The image to be attached to the collage, once it is created.
+Must be atleast 3d.</p>
+</div></blockquote>
+<p><strong>sampler</strong> : str or list or callable</p>
+<blockquote>
+<div><p>selection strategy: to identify the type of sampling done to select the slices to return.
+All sampling is done between the first and last non-empty slice in that view/dimension.</p>
+<ul>
+<li><p class="first">if ‘linear’ : linearly spaced slices</p>
+</li>
+<li><dl class="first docutils">
+<dt>if list, it is treated as set of percentages at which slices to be sampled</dt>
+<dd><p class="first">(must be in the range of [1-100], not [0-1]).
+This could be used to more/all slices in the middle e.g. range(40, 60, 5)</p>
+<blockquote class="last">
+<div><p>or at the end e.g. [ 5, 10, 15, 85, 90, 95]</p>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>if callable, it must take a 2D image of arbitray size, return True/False</dt>
+<dd><p class="first">to indicate whether to select that slice or not.
+Only non-empty slices (atleas one non-zero voxel) are provided as input.
+Simple examples for callable could be based on
+1) percentage of non-zero voxels &gt; x etc
+2) presence of desired texture ?
+3) certain properties of distribution (skewe: dark/bright, energy etc) etc</p>
+<dl class="last docutils">
+<dt>If the sampler returns more than requested <cite>num_slices</cite>,</dt>
+<dd><p class="first last">only the first num_slices will be selected.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p><strong>show</strong> : bool</p>
+<blockquote class="last">
+<div><p>Flag to request immediate display of collage</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Collage.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears all the axes to start fresh.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Collage.hide">
+<code class="descname">hide</code><span class="sig-paren">(</span><em>grid=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage.hide"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage.hide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the collage from view.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>grid</strong> : int or None</p>
+<blockquote class="last">
+<div><p>index (into original <code class="docutils literal"><span class="pre">view_set</span></code>) to which grid/view needs to be hidden</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Collage.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>annot=None</em>, <em>output_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the collage to disk as an image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>annot</strong> : str</p>
+<blockquote>
+<div><p>text to annotate the figure with a super title</p>
+</div></blockquote>
+<p><strong>output_path</strong> : str</p>
+<blockquote class="last">
+<div><p>path to save the figure to.
+Note: any spaces in the filename will be replace with <code class="docutils literal"><span class="pre">_</span></code></p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Collage.show">
+<code class="descname">show</code><span class="sig-paren">(</span><em>grid=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes the collage visible.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>grid</strong> : int or None</p>
+<blockquote class="last">
+<div><p>index (into original <code class="docutils literal"><span class="pre">view_set</span></code>) to which grid/view needs to be hidden</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Collage.transform_and_attach">
+<code class="descname">transform_and_attach</code><span class="sig-paren">(</span><em>image_list</em>, <em>func</em>, <em>show=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Collage.transform_and_attach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Collage.transform_and_attach" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Displays the transformed (combined) version of the cross-sections from each image,</dt>
+<dd><p class="first">(same slice and dimension). So if you input n&gt;=1 images, n slices are obtained
+from each image, which are passed to the func (callable) provided, and the
+result will be displayed in the corresponding cell of the collage.
+Useful applications:
+- input two images, a function to overlay edges of one image on the other
+- input two images, a function to mix them in a checkerboard pattern
+- input one image, a function to saturate the upper half of intensities</p>
+<blockquote class="last">
+<div>(to increase contrast and reveal any subtle ghosting in slices)</div></blockquote>
+</dd>
+<dt>func must be able to receive as many arguments as many elements in image_list.</dt>
+<dd>if your func needs additional parameters, make them keyword arguments, and
+use functools.partial to obtain a new callable that takes in just the slices.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image_list</strong> : list or ndarray</p>
+<blockquote>
+<div><p>list of images or a single ndarray</p>
+</div></blockquote>
+<p><strong>func</strong> : callable</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>function to be applied on the input images (their slices)</dt>
+<dd><p class="first last">to produce a single slice to be displayed.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>show</strong> : bool</p>
+<blockquote class="last">
+<div><p>flag to indicate whether make the collage visible.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="midcollage-api">
+<h2>MidCollage API<a class="headerlink" href="#midcollage-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mrivis.MidCollage">
+<em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">MidCollage</code><span class="sig-paren">(</span><em>image</em>, <em>bounding_rect=(0.02</em>, <em>0.02</em>, <em>0.98</em>, <em>0.98)</em>, <em>fig=None</em>, <em>display_params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#MidCollage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.MidCollage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">mrivis.base.Collage</span></code></p>
+<p>Convenience class to display the mid-slices from all the views.</p>
+<p class="rubric">Methods</p>
+<p>Display mid-slices from all the views.</p>
+<dl class="docutils">
+<dt>image <span class="classifier-delimiter">:</span> <span class="classifier">ndarray</span></dt>
+<dd>The image to be attached to the collage, once it is created.
+Must be atleast 3d.</dd>
+<dt>fig <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib.Figure</span></dt>
+<dd>figure handle to create the collage in.
+If not specified, creates a new figure.</dd>
+<dt>bounding_rect <span class="classifier-delimiter">:</span> <span class="classifier">tuple of 4</span></dt>
+<dd>The rectangular area to bind the collage to (in normalized figure coordinates)</dd>
+<dt>display_params <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd>dict of keyword parameters that can be passed to matplotlib’s <cite>Axes.imshow()</cite></dd>
+</dl>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+</div>
+<div class="section" id="carpet-api">
+<h2>Carpet API<a class="headerlink" href="#carpet-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="mrivis.Carpet">
+<em class="property">class </em><code class="descclassname">mrivis.</code><code class="descname">Carpet</code><span class="sig-paren">(</span><em>image_nD</em>, <em>fixed_dim=-1</em>, <em>roi_mask='auto'</em>, <em>rescale_data=True</em>, <em>num_frames_to_skip=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Carpet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Carpet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class to unroll the 4D or higher dimensional data into 2D images.</p>
+<p>Typical examples include functional or diffusion MRI data.</p>
+<p class="rubric">Methods</p>
+<p>Constructor</p>
+<p>This class can optionally,</p>
+<blockquote>
+<div><ul class="simple">
+<li>can cluster data in the fixed dimension (typically time/gradient dimensions in functional/diffusion MR imaging data)</li>
+<li>label the resulting clusters.</li>
+</ul>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image_nD</strong> : ndarray or str</p>
+<blockquote>
+<div><p>input image, or a path to an image, from which the carpet needs to be made.</p>
+</div></blockquote>
+<p><strong>fixed_dim</strong> : int</p>
+<blockquote>
+<div><p>the dimension to be fixed while unrolling the rest. Default: last as indicated by -1</p>
+</div></blockquote>
+<p><strong>roi_mask</strong> : ndarray or str or None</p>
+<blockquote>
+<div><p>if an image of same size as the N-1 dim array, it is interpreted to be a mask to be applied to each 3D/(N-1)D volume
+If its ‘auto’, an auto background (zeros) mask is computed and removed
+If its None, all the voxels in original image are retained</p>
+</div></blockquote>
+<p><strong>rescale_data</strong> : bool</p>
+<blockquote>
+<div><p>Whether to rescale the input image over the chosen <cite>fixed_dim</cite>
+Default is to rescale to maximize the contrast.</p>
+</div></blockquote>
+<p><strong>num_frames_to_skip</strong> : int</p>
+<blockquote class="last">
+<div><p>number of frames to skip displaying to avoid pixel decimation on screen.
+Choose a number such that to get a total ~600-1000 vertical lines to display.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="mrivis.Carpet.cluster_rows_in_roi">
+<code class="descname">cluster_rows_in_roi</code><span class="sig-paren">(</span><em>roi_mask=None</em>, <em>num_clusters_per_roi=5</em>, <em>metric='minkowski'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Carpet.cluster_rows_in_roi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Carpet.cluster_rows_in_roi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clusters the data within all the ROIs specified in a mask.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>roi_mask</strong> : ndarray or None</p>
+<blockquote>
+<div><p>volumetric mask defining the list of ROIs, with a label for each voxel.
+This must be the same size in all dimensions except the fixed_dim
+i.e. if you were making a Carpet from an fMRI image of size 125x125x90x400
+fixing the 4th dimension (of size 400), then roi_mask must be of size 125x125x90.</p>
+</div></blockquote>
+<p><strong>num_clusters_per_roi</strong> : int</p>
+<blockquote>
+<div><p>number of clusters (n) to form each ROI specified in the roi_mask
+if n (say 20) is less than number of voxels per a given ROI (say 2000),
+then data from approx. 2000/20=100 voxels would summarized (averaged by default),
+into a single cluster. So if the ROI mask had m ROIs (say 10), then the final clustered carpet
+would have m*n rows (200), regardless of the number of voxels in the 3D image.</p>
+</div></blockquote>
+<p><strong>metric</strong> : str</p>
+<blockquote class="last">
+<div><p>distance metric for the hierarchical clustering algorithm;
+default : ‘minkowski’
+Options: anything accepted by <cite>scipy.spatial.distance.pdist</cite>, which can be:
+‘braycurtis’, ‘canberra’, ‘chebyshev’, ‘cityblock’, ‘correlation’,
+‘cosine’, ‘dice’, ‘euclidean’, ‘hamming’, ‘jaccard’, ‘kulsinski’,
+‘mahalanobis’, ‘matching’, ‘minkowski’, ‘rogerstanimoto’, ‘russellrao’,
+‘seuclidean’, ‘sokalmichener’, ‘sokalsneath’, ‘sqeuclidean’, ‘yule’.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Carpet.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>output_path=None</em>, <em>title=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Carpet.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Carpet.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the current figure with carpet visualization to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>output_path</strong> : str</p>
+<blockquote>
+<div><p>Path to where the figure needs to be saved to.</p>
+</div></blockquote>
+<p><strong>title</strong> : str</p>
+<blockquote class="last">
+<div><p>text to overlay and annotate the visualization (done via plt.suptitle())</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="mrivis.Carpet.show">
+<code class="descname">show</code><span class="sig-paren">(</span><em>clustered=False</em>, <em>ax_carpet=None</em>, <em>label_x_axis='time point'</em>, <em>label_y_axis='voxels/ROI'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/base.html#Carpet.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.Carpet.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Displays the carpet in the given axis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>clustered</strong> : bool, optional</p>
+<blockquote>
+<div><p>Flag to indicate whether to show the clustered/reduced carpet or the original.
+You must run .cluster_rows_in_roi() before trying to show clustered carpet.</p>
+</div></blockquote>
+<p><strong>ax_carpet</strong> : Axis, optional</p>
+<blockquote>
+<div><p>handle to a valid matplotlib Axis</p>
+</div></blockquote>
+<p><strong>label_x_axis</strong> : str</p>
+<blockquote>
+<div><p>String label for the x-axis of the carpet</p>
+</div></blockquote>
+<p><strong>label_y_axis</strong> : str</p>
+<blockquote>
+<div><p>String label for the y-axis of the carpet</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ax_carpet</strong> : Axis</p>
+<blockquote class="last">
+<div><p>handle to axis where carpet is shown</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="vis_classes_usage.html" class="btn btn-neutral" title="Visualization Classes - Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Pradeep Reddy Raamana.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.3.2+85.g0a5b0a2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

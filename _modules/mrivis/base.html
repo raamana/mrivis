@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>mrivis.base &mdash; mrivis 0.3.2+65.g843feb6 documentation</title>
+  <title>mrivis.base &mdash; mrivis 0.3.2+85.g0a5b0a2 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="mrivis 0.3.2+65.g843feb6 documentation" href="../../index.html"/>
+    <link rel="top" title="mrivis 0.3.2+85.g0a5b0a2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.3.2+65.g843feb6
+                0.3.2+85.g0a5b0a2
               </div>
             
           
@@ -97,7 +97,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../alignment_usage.html">Alignment check - usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../alignment_API.html">Alignment check - API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../classes.html">Visualization Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vis_classes_usage.html">Visualization Classes - Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vis_classes_api.html">Visualization Classes - API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
 </ul>
@@ -167,6 +168,7 @@
 <span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SlicePicker&#39;</span><span class="p">,</span> <span class="s1">&#39;Collage&#39;</span><span class="p">,</span> <span class="s1">&#39;Carpet&#39;</span><span class="p">]</span>
 
 <span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -178,7 +180,7 @@
     <span class="n">row_wise_rescale</span><span class="p">,</span> <span class="n">save_figure</span>
 
 
-<div class="viewcode-block" id="SlicePicker"><a class="viewcode-back" href="../../classes.html#mrivis.SlicePicker">[docs]</a><span class="k">class</span> <span class="nc">SlicePicker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="SlicePicker"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.SlicePicker">[docs]</a><span class="k">class</span> <span class="nc">SlicePicker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to pick non-empty slices along the various dimensions for a given image.</span>
 
@@ -186,7 +188,6 @@
 <span class="sd">        towards which this class is designed for.</span>
 <span class="sd">        However there are no explicit restrictions placed on dicing N=4+ array</span>
 <span class="sd">        and receiving a n-1 dim array.</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -196,7 +197,7 @@
                  <span class="n">sampler</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">sampler_default</span><span class="p">,</span>
                  <span class="n">min_density</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">min_density_default</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor: class to pick non-empty slices along the various dimensions for a given image.</span>
+<span class="sd">        Class to pick non-empty slices along the various dimensions for a given image.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -376,7 +377,7 @@
 
         <span class="n">slice_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)]</span> <span class="o">*</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span>
         <span class="n">slice_list</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">slice_num</span>
-        <span class="n">slice_data</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">slice_list</span><span class="p">]</span>
+        <span class="n">slice_data</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">slice_list</span><span class="p">)]</span>
         <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>  <span class="c1"># for proper orientation</span>
             <span class="n">slice_data</span> <span class="o">=</span> <span class="n">slice_data</span><span class="o">.</span><span class="n">T</span>
 
@@ -387,24 +388,54 @@
             <span class="c1"># additionally include which dim and which slice num</span>
             <span class="k">return</span> <span class="n">axis</span><span class="p">,</span> <span class="n">slice_num</span><span class="p">,</span> <span class="n">slice_data</span>
 
-<div class="viewcode-block" id="SlicePicker.get_slice_indices"><a class="viewcode-back" href="../../classes.html#mrivis.SlicePicker.get_slice_indices">[docs]</a>    <span class="k">def</span> <span class="nf">get_slice_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SlicePicker.get_slice_indices"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.SlicePicker.get_slice_indices">[docs]</a>    <span class="k">def</span> <span class="nf">get_slice_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns indices for the slices selected (each a tuple : (dim, slice_num))&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slices</span></div>
 
-<div class="viewcode-block" id="SlicePicker.get_slices"><a class="viewcode-back" href="../../classes.html#mrivis.SlicePicker.get_slices">[docs]</a>    <span class="k">def</span> <span class="nf">get_slices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extended</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generator over all the slices selected, each time returning a cross-section.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SlicePicker.get_slices"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.SlicePicker.get_slices">[docs]</a>    <span class="k">def</span> <span class="nf">get_slices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extended</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generator over all the slices selected, each time returning a cross-section.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        extended : bool</span>
+<span class="sd">            Flag to return just slice data (default, extended=False), or</span>
+<span class="sd">                return a tuple of axis, slice_num, slice_data (extended=True)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        slice_data : an image (just slice data, default, with extended=False), or</span>
+<span class="sd">                a tuple of axis, slice_num, slice_data (extended=True)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">dim</span><span class="p">,</span> <span class="n">slice_num</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slices</span><span class="p">:</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">slice_num</span><span class="p">,</span> <span class="n">extended</span><span class="o">=</span><span class="n">extended</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SlicePicker.get_slices_multi"><a class="viewcode-back" href="../../classes.html#mrivis.SlicePicker.get_slices_multi">[docs]</a>    <span class="k">def</span> <span class="nf">get_slices_multi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_list</span><span class="p">,</span> <span class="n">extended</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="SlicePicker.get_slices_multi"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.SlicePicker.get_slices_multi">[docs]</a>    <span class="k">def</span> <span class="nf">get_slices_multi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_list</span><span class="p">,</span> <span class="n">extended</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the same cross-section from the multiple images supplied.</span>
 
 <span class="sd">        All images must be of the same shape as the original image defining this object.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
 <span class="sd">        image_list : Iterable</span>
 <span class="sd">            containing atleast 2 images</span>
+
+<span class="sd">        extended : bool</span>
+<span class="sd">            Flag to return just slice data (default, extended=False), or</span>
+<span class="sd">                return a tuple of axis, slice_num, slice_data (extended=True)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        tuple_slice_data : tuple of one slice from each image in the input image list</span>
+<span class="sd">                            Let&#39;s denote it by as TSL.</span>
+<span class="sd">                        if extended=True, returns tuple(axis, slice_num, TSL)</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># ensure all the images have the same shape</span>
@@ -422,6 +453,33 @@
                 <span class="c1"># additionally include which dim and which slice num</span>
                 <span class="c1"># not using extended option in get_axis, to avoid complicating unpacking</span>
                 <span class="k">yield</span> <span class="n">dim</span><span class="p">,</span> <span class="n">slice_num</span><span class="p">,</span> <span class="n">multiple_slices</span></div>
+
+<div class="viewcode-block" id="SlicePicker.save_as_gif"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.SlicePicker.save_as_gif">[docs]</a>    <span class="k">def</span> <span class="nf">save_as_gif</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gif_path</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Package the selected slices into a single GIF for easy sharing and display (on web etc).</span>
+
+<span class="sd">        You must install imageio module separately to use this feature.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gif_path : str</span>
+<span class="sd">            Output path for the GIF image</span>
+
+<span class="sd">        duration : float</span>
+<span class="sd">            Duration of display of each frame in GIF, in sec.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">import</span> <span class="nn">imageio</span>
+        <span class="n">gif_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">img</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_slices</span><span class="p">()]</span>
+        <span class="c1"># using img.astype(np.uint32) is leaving noticable artefacts,</span>
+        <span class="c1">#   depending on imageio inner conversion, which is rescaling okay</span>
+
+        <span class="c1"># TODO deal with differing sizes of slices, padding with zeros or white??</span>
+
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="c1"># ignoring the warning for conversion to uint8</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+            <span class="n">imageio</span><span class="o">.</span><span class="n">mimsave</span><span class="p">(</span><span class="n">gif_path</span><span class="p">,</span> <span class="n">gif_data</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the next panel, and the associated dimension and slice number&quot;&quot;&quot;</span>
@@ -459,18 +517,18 @@
         <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dim_repr</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="MiddleSlicePicker"><a class="viewcode-back" href="../../classes.html#mrivis.MiddleSlicePicker">[docs]</a><span class="k">class</span> <span class="nc">MiddleSlicePicker</span><span class="p">(</span><span class="n">SlicePicker</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Convenience class (derived from ``SlicePicker``) to select the classic one middle slice from all views.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="MiddleSlicePicker"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.MiddleSlicePicker">[docs]</a><span class="k">class</span> <span class="nc">MiddleSlicePicker</span><span class="p">(</span><span class="n">SlicePicker</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convenience class to select the classic one middle slice from all views.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the middle slice from all views in the image.</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        image_in : ndarray</span>
-<span class="sd">            3D array to be sliced.</span>
-<span class="sd">            there are no explicit restrictions placed on number of dimensions for image_in,</span>
-<span class="sd">             to get a n-1 dim array, but appropriate reshaping may need to be performed.</span>
+<span class="sd">        -----------</span>
+
+<span class="sd">        attach_image : ndarray</span>
+<span class="sd">            The image to be attached to the collage, once it is created.</span>
+<span class="sd">            Must be atleast 3d.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -480,7 +538,7 @@
                          <span class="n">sampler</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,),</span> <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Collage"><a class="viewcode-back" href="../../classes.html#mrivis.Collage">[docs]</a><span class="k">class</span> <span class="nc">Collage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Collage"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.Collage">[docs]</a><span class="k">class</span> <span class="nc">Collage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class exhibiting multiple slices from a 3D image,</span>
 <span class="sd">        with convenience routines handling all the cross-sections as a single set.</span>
@@ -498,7 +556,7 @@
                  <span class="n">display_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor: Class exhibiting multiple slices from a 3D image,</span>
+<span class="sd">        Class exhibiting multiple slices from a 3D image,</span>
 <span class="sd">        with convenience routines handling all the cross-sections as a single set.</span>
 
 <span class="sd">        Once created with certain `display_params` (containing vmin and vmax),</span>
@@ -675,16 +733,56 @@
         <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flat_grid</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">random_image</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">display_params</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Collage.show"><a class="viewcode-back" href="../../classes.html#mrivis.Collage.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Makes the collage visible.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Collage.show"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.Collage.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Makes the collage visible.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        grid : int or None</span>
+<span class="sd">            index (into original ``view_set``) to which grid/view needs to be hidden</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid_index</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Collage.attach"><a class="viewcode-back" href="../../classes.html#mrivis.Collage.attach">[docs]</a>    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="Collage.attach"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.Collage.attach">[docs]</a>    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                <span class="n">image_in</span><span class="p">,</span>
                <span class="n">sampler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Attaches the relevant cross-sections to each axis&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Attaches the relevant cross-sections to each axis.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        attach_image : ndarray</span>
+<span class="sd">            The image to be attached to the collage, once it is created.</span>
+<span class="sd">            Must be atleast 3d.</span>
+
+<span class="sd">        sampler : str or list or callable</span>
+<span class="sd">            selection strategy: to identify the type of sampling done to select the slices to return.</span>
+<span class="sd">            All sampling is done between the first and last non-empty slice in that view/dimension.</span>
+
+<span class="sd">            - if &#39;linear&#39; : linearly spaced slices</span>
+<span class="sd">            - if list, it is treated as set of percentages at which slices to be sampled</span>
+<span class="sd">                (must be in the range of [1-100], not [0-1]).</span>
+<span class="sd">                This could be used to more/all slices in the middle e.g. range(40, 60, 5)</span>
+<span class="sd">                    or at the end e.g. [ 5, 10, 15, 85, 90, 95]</span>
+<span class="sd">            - if callable, it must take a 2D image of arbitray size, return True/False</span>
+<span class="sd">                to indicate whether to select that slice or not.</span>
+<span class="sd">                Only non-empty slices (atleas one non-zero voxel) are provided as input.</span>
+<span class="sd">                Simple examples for callable could be based on</span>
+<span class="sd">                1) percentage of non-zero voxels &gt; x etc</span>
+<span class="sd">                2) presence of desired texture ?</span>
+<span class="sd">                3) certain properties of distribution (skewe: dark/bright, energy etc) etc</span>
+
+<span class="sd">                If the sampler returns more than requested `num_slices`,</span>
+<span class="sd">                    only the first num_slices will be selected.</span>
+
+<span class="sd">        show : bool</span>
+<span class="sd">            Flag to request immediate display of collage</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_in</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Image must be atleast 3D&#39;</span><span class="p">)</span>
@@ -713,7 +811,7 @@
         <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Collage.transform_and_attach"><a class="viewcode-back" href="../../classes.html#mrivis.Collage.transform_and_attach">[docs]</a>    <span class="k">def</span> <span class="nf">transform_and_attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="Collage.transform_and_attach"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.Collage.transform_and_attach">[docs]</a>    <span class="k">def</span> <span class="nf">transform_and_attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                              <span class="n">image_list</span><span class="p">,</span>
                              <span class="n">func</span><span class="p">,</span>
                              <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -778,8 +876,16 @@
         <span class="k">if</span> <span class="n">show</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Collage.hide"><a class="viewcode-back" href="../../classes.html#mrivis.Collage.hide">[docs]</a>    <span class="k">def</span> <span class="nf">hide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes the collage from view.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Collage.hide"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.Collage.hide">[docs]</a>    <span class="k">def</span> <span class="nf">hide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Removes the collage from view.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        grid : int or None</span>
+<span class="sd">            index (into original ``view_set``) to which grid/view needs to be hidden</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">grid_index</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span></div>
 
@@ -795,8 +901,20 @@
             <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grids</span><span class="p">[</span><span class="n">grid_index</span><span class="p">]:</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="n">visibility</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Collage.save"><a class="viewcode-back" href="../../classes.html#mrivis.Collage.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Saves the collage to disk as an image.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Collage.save"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.Collage.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves the collage to disk as an image.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+
+<span class="sd">        annot : str</span>
+<span class="sd">            text to annotate the figure with a super title</span>
+
+<span class="sd">        output_path : str</span>
+<span class="sd">            path to save the figure to.</span>
+<span class="sd">            Note: any spaces in the filename will be replace with ``_``</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">annot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">annot</span><span class="p">,</span> <span class="n">backgroundcolor</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
@@ -808,7 +926,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">output_path</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
                              <span class="n">bbox_extra_artists</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flat_grid</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Collage.clear"><a class="viewcode-back" href="../../classes.html#mrivis.Collage.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Collage.clear"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.Collage.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Clears all the axes to start fresh.&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">flat_grid</span><span class="p">:</span>
@@ -816,8 +934,8 @@
                 <span class="n">im_h</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="MidCollage"><a class="viewcode-back" href="../../classes.html#mrivis.MidCollage">[docs]</a><span class="k">class</span> <span class="nc">MidCollage</span><span class="p">(</span><span class="n">Collage</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Convenience class (derived from ``Collage``) to display the mid-slices from all the views.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="MidCollage"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.MidCollage">[docs]</a><span class="k">class</span> <span class="nc">MidCollage</span><span class="p">(</span><span class="n">Collage</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convenience class to display the mid-slices from all the views.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">image</span><span class="p">,</span>
@@ -850,7 +968,7 @@
                          <span class="n">display_params</span><span class="o">=</span><span class="n">display_params</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Carpet"><a class="viewcode-back" href="../../classes.html#mrivis.Carpet">[docs]</a><span class="k">class</span> <span class="nc">Carpet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Carpet"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.Carpet">[docs]</a><span class="k">class</span> <span class="nc">Carpet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class to unroll the 4D or higher dimensional data into 2D images.</span>
 
 <span class="sd">    Typical examples include functional or diffusion MRI data.</span>
@@ -863,7 +981,7 @@
                  <span class="n">fixed_dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
                  <span class="n">roi_mask</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
                  <span class="n">rescale_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">num_frames_to_skip</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+                 <span class="n">num_frames_to_skip</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                  <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
@@ -891,6 +1009,11 @@
 <span class="sd">        rescale_data : bool</span>
 <span class="sd">            Whether to rescale the input image over the chosen `fixed_dim`</span>
 <span class="sd">            Default is to rescale to maximize the contrast.</span>
+
+<span class="sd">        num_frames_to_skip : int</span>
+<span class="sd">            number of frames to skip displaying to avoid pixel decimation on screen.</span>
+<span class="sd">            Choose a number such that to get a total ~600-1000 vertical lines to display.</span>
+
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -971,7 +1094,7 @@
         <span class="k">return</span> <span class="n">array</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">fixed_dim</span><span class="p">])</span>
 
 
-<div class="viewcode-block" id="Carpet.show"><a class="viewcode-back" href="../../classes.html#mrivis.Carpet.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="Carpet.show"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.Carpet.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
              <span class="n">clustered</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">ax_carpet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">label_x_axis</span><span class="o">=</span><span class="s1">&#39;time point&#39;</span><span class="p">,</span>
@@ -1038,7 +1161,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax_carpet</span></div>
 
 
-<div class="viewcode-block" id="Carpet.save"><a class="viewcode-back" href="../../classes.html#mrivis.Carpet.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Carpet.save"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.Carpet.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves the current figure with carpet visualization to disk.</span>
 
 <span class="sd">        Parameters</span>
@@ -1059,7 +1182,7 @@
             <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="Carpet.cluster_rows_in_roi"><a class="viewcode-back" href="../../classes.html#mrivis.Carpet.cluster_rows_in_roi">[docs]</a>    <span class="k">def</span> <span class="nf">cluster_rows_in_roi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="Carpet.cluster_rows_in_roi"><a class="viewcode-back" href="../../vis_classes_api.html#mrivis.Carpet.cluster_rows_in_roi">[docs]</a>    <span class="k">def</span> <span class="nf">cluster_rows_in_roi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                             <span class="n">roi_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                             <span class="n">num_clusters_per_roi</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
                             <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;minkowski&#39;</span><span class="p">):</span>
@@ -1119,8 +1242,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">roi_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">roi_mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
             <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">roi_list</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">background_value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">roi_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">carpet</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">roi_list</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">roi_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">carpet</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># last dim is self.fixed_dim already</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">roi_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">]</span> <span class="c1"># to allow for iteration</span>
 
 
     <span class="k">def</span> <span class="nf">_summarize_in_roi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_mask</span><span class="p">,</span> <span class="n">num_clusters_per_roi</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;minkowski&#39;</span><span class="p">):</span>
@@ -1228,7 +1351,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.2+65.g843feb6',
+            VERSION:'0.3.2+85.g0a5b0a2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
