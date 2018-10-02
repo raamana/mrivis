@@ -9,13 +9,12 @@ import versioneer
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.rst') as history_file:
-    history = history_file.read()
 
 requirements = [
     'nibabel',
     'matplotlib',
     'numpy',
+    'scipy',
 ]
 
 setup_requirements = [
@@ -33,7 +32,7 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description="Tools and scripts for visualization and comparison of 3d MRI scans (T1, T2 etc)",
-    long_description=readme + '\n\n' + history,
+    long_description=readme,
     author="Pradeep Reddy Raamana",
     author_email='raamana@gmail.com',
     url='https://github.com/raamana/mrivis',

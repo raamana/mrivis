@@ -166,6 +166,22 @@ def test_slice_picker():
     if 3*len(perc_list) != len(sp_perc.get_slice_indices()):
         raise ValueError('error in percentage sampling')
 
+    print('testing ability to save to gif')
+    import tempfile
+    gif_path = tempfile.NamedTemporaryFile(suffix='.gif').name
+    print(gif_path)
+    sp.save_as_gif(gif_path)
+    if not pexists(gif_path):
+        raise IOError('Saving to GIF failed')
+
+    try:
+        import imageio
+        gif = imageio.mimread(gif_path, format='gif')
+    except:
+        raise ValueError('Saved GIF file could not be read properly!')
+
+    print()
+
     print()
 
 

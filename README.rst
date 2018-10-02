@@ -10,6 +10,7 @@ mrivis
 
  - tools for comparison of spatial alignment of two 3D MRI scans (T1, T2, PET etc) using checkerboard plots and other comparison methods
  - classes to develop customizable visualizations of 3D and 4D images
+ - additional helper, convenience and utility scripts related to visualization
 
 Full documentation https://raamana.github.io/mrivis/readme.html
 
@@ -23,8 +24,11 @@ A sample gallery of different ways to check alignment is shown below:
 Full documentation https://raamana.github.io/mrivis/readme.html
 
 
-Installation
+**Installation**
 
 .. code-block:: console
 
     $ pip install mrivis
+
+
+If you would like to use the export to GIF from ``SlicePicker``, then install the ``imageio`` package as well via ``pip install imageio``

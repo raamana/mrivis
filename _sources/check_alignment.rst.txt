@@ -13,8 +13,10 @@ To use them is simply a matter of importing them e.g. ``checkerboard``, and pass
 
     from mrivis import checkerboard
 
-    path1 = '/Users/Reddy/Desktop/image.nii'
-    path2 = '/Users/Reddy/Desktop/another.nii'
+    # ADD PATH TO EXISTING and VALID IMAGE
+    path1 = '/<<DUMMYFOLDER>>/image.nii'
+    # ADD another path to valid existing image with same size/resolution
+    path2 = '/<<DUMMYFOLDER>>/another.nii'
 
     checkerboard(path1, path2) # square patches
 

@@ -1,6 +1,7 @@
 __all__ = ['SlicePicker', 'Collage', 'Carpet']
 
 import traceback
+import warnings
 from collections import Iterable
 
 import numpy as np
@@ -20,7 +21,6 @@ class SlicePicker(object):
         towards which this class is designed for.
         However there are no explicit restrictions placed on dicing N=4+ array
         and receiving a n-1 dim array.
-
     """
 
     def __init__(self,
@@ -30,7 +30,7 @@ class SlicePicker(object):
                  sampler=cfg.sampler_default,
                  min_density=cfg.min_density_default):
         """
-        Constructor: class to pick non-empty slices along the various dimensions for a given image.
+        Class to pick non-empty slices along the various dimensions for a given image.
 
         Parameters
         ----------
@@ -210,7 +210,7 @@ class SlicePicker(object):
 
         slice_list = [slice(None)] * array.ndim
         slice_list[axis] = slice_num
-        slice_data = array[slice_list]
+        slice_data = array[tuple(slice_list)]
         if transpose:  # for proper orientation
             slice_data = slice_data.T
 
@@ -227,7 +227,22 @@ class SlicePicker(object):
         return self._slices
 
     def get_slices(self, extended=False):
-        """Generator over all the slices selected, each time returning a cross-section."""
+        """Generator over all the slices selected, each time returning a cross-section.
+
+        Parameters
+        ----------
+
+        extended : bool
+            Flag to return just slice data (default, extended=False), or
+                return a tuple of axis, slice_num, slice_data (extended=True)
+
+        Returns
+        -------
+
+        slice_data : an image (just slice data, default, with extended=False), or
+                a tuple of axis, slice_num, slice_data (extended=True)
+
+        """
 
         for dim, slice_num in self._slices:
             yield self._get_axis(self._image, dim, slice_num, extended=extended)
@@ -237,8 +252,23 @@ class SlicePicker(object):
 
         All images must be of the same shape as the original image defining this object.
 
+        Parameters
+        ----------
+
         image_list : Iterable
             containing atleast 2 images
+
+        extended : bool
+            Flag to return just slice data (default, extended=False), or
+                return a tuple of axis, slice_num, slice_data (extended=True)
+
+        Returns
+        -------
+
+        tuple_slice_data : tuple of one slice from each image in the input image list
+                            Let's denote it by as TSL.
+                        if extended=True, returns tuple(axis, slice_num, TSL)
+
         """
 
         # ensure all the images have the same shape
@@ -256,6 +286,33 @@ class SlicePicker(object):
                 # additionally include which dim and which slice num
                 # not using extended option in get_axis, to avoid complicating unpacking
                 yield dim, slice_num, multiple_slices
+
+    def save_as_gif(self, gif_path, duration=0.25):
+        """Package the selected slices into a single GIF for easy sharing and display (on web etc).
+
+        You must install imageio module separately to use this feature.
+
+        Parameters
+        ----------
+        gif_path : str
+            Output path for the GIF image
+
+        duration : float
+            Duration of display of each frame in GIF, in sec.
+
+        """
+
+        import imageio
+        gif_data = [img for img in self.get_slices()]
+        # using img.astype(np.uint32) is leaving noticable artefacts,
+        #   depending on imageio inner conversion, which is rescaling okay
+
+        # TODO deal with differing sizes of slices, padding with zeros or white??
+
+        with warnings.catch_warnings():
+            # ignoring the warning for conversion to uint8
+            warnings.simplefilter('ignore')
+            imageio.mimsave(gif_path, gif_data, duration=duration)
 
     def __iter__(self):
         """Returns the next panel, and the associated dimension and slice number"""
@@ -294,17 +351,17 @@ class SlicePicker(object):
 
 
 class MiddleSlicePicker(SlicePicker):
-    """Convenience class (derived from ``SlicePicker``) to select the classic one middle slice from all views."""
+    """Convenience class to select the classic one middle slice from all views."""
 
     def __init__(self, image):
         """Returns the middle slice from all views in the image.
 
         Parameters
-        ----------
-        image_in : ndarray
-            3D array to be sliced.
-            there are no explicit restrictions placed on number of dimensions for image_in,
-             to get a n-1 dim array, but appropriate reshaping may need to be performed.
+        -----------
+
+        attach_image : ndarray
+            The image to be attached to the collage, once it is created.
+            Must be atleast 3d.
 
         """
 
@@ -332,7 +389,7 @@ class Collage(object):
                  display_params=None,
                  ):
         """
-        Constructor: Class exhibiting multiple slices from a 3D image,
+        Class exhibiting multiple slices from a 3D image,
         with convenience routines handling all the cross-sections as a single set.
 
         Once created with certain `display_params` (containing vmin and vmax),
@@ -510,7 +567,15 @@ class Collage(object):
             self.images[ix] = ax.imshow(random_image, **self.display_params)
 
     def show(self, grid=None):
-        """Makes the collage visible."""
+        """Makes the collage visible.
+
+        Parameters
+        ----------
+
+        grid : int or None
+            index (into original ``view_set``) to which grid/view needs to be hidden
+
+        """
 
         self._set_visible(True, grid_index=grid)
 
@@ -518,7 +583,39 @@ class Collage(object):
                image_in,
                sampler=None,
                show=True):
-        """Attaches the relevant cross-sections to each axis"""
+        """Attaches the relevant cross-sections to each axis.
+
+        Parameters
+        ----------
+
+        attach_image : ndarray
+            The image to be attached to the collage, once it is created.
+            Must be atleast 3d.
+
+        sampler : str or list or callable
+            selection strategy: to identify the type of sampling done to select the slices to return.
+            All sampling is done between the first and last non-empty slice in that view/dimension.
+
+            - if 'linear' : linearly spaced slices
+            - if list, it is treated as set of percentages at which slices to be sampled
+                (must be in the range of [1-100], not [0-1]).
+                This could be used to more/all slices in the middle e.g. range(40, 60, 5)
+                    or at the end e.g. [ 5, 10, 15, 85, 90, 95]
+            - if callable, it must take a 2D image of arbitray size, return True/False
+                to indicate whether to select that slice or not.
+                Only non-empty slices (atleas one non-zero voxel) are provided as input.
+                Simple examples for callable could be based on
+                1) percentage of non-zero voxels > x etc
+                2) presence of desired texture ?
+                3) certain properties of distribution (skewe: dark/bright, energy etc) etc
+
+                If the sampler returns more than requested `num_slices`,
+                    only the first num_slices will be selected.
+
+        show : bool
+            Flag to request immediate display of collage
+
+        """
 
         if len(image_in.shape) < 3:
             raise ValueError('Image must be atleast 3D')
@@ -613,7 +710,15 @@ class Collage(object):
             self.show()
 
     def hide(self, grid=None):
-        """Removes the collage from view."""
+        """Removes the collage from view.
+
+        Parameters
+        ----------
+
+        grid : int or None
+            index (into original ``view_set``) to which grid/view needs to be hidden
+
+        """
 
         self._set_visible(False, grid_index=grid)
 
@@ -630,7 +735,19 @@ class Collage(object):
                 ax.set_visible(visibility)
 
     def save(self, annot=None, output_path=None):
-        """Saves the collage to disk as an image."""
+        """Saves the collage to disk as an image.
+
+        Parameters
+        -----------
+
+        annot : str
+            text to annotate the figure with a super title
+
+        output_path : str
+            path to save the figure to.
+            Note: any spaces in the filename will be replace with ``_``
+
+        """
 
         if annot is not None:
             self.fig.suptitle(annot, backgroundcolor='black', color='g')
@@ -651,7 +768,7 @@ class Collage(object):
 
 
 class MidCollage(Collage):
-    """Convenience class (derived from ``Collage``) to display the mid-slices from all the views."""
+    """Convenience class to display the mid-slices from all the views."""
 
     def __init__(self,
                  image,
@@ -697,7 +814,7 @@ class Carpet(object):
                  fixed_dim=-1,
                  roi_mask='auto',
                  rescale_data=True,
-                 num_frames_to_skip='auto',
+                 num_frames_to_skip=2,
                  ):
         """
         Constructor
@@ -725,6 +842,11 @@ class Carpet(object):
         rescale_data : bool
             Whether to rescale the input image over the chosen `fixed_dim`
             Default is to rescale to maximize the contrast.
+
+        num_frames_to_skip : int
+            number of frames to skip displaying to avoid pixel decimation on screen.
+            Choose a number such that to get a total ~600-1000 vertical lines to display.
+
 
         """
 
@@ -953,8 +1075,8 @@ class Carpet(object):
             self.roi_list = np.unique(roi_mask.flatten())
             np.setdiff1d(self.roi_list, cfg.background_value)
         else:
-            self.roi_mask = np.ones(self.carpet.shape)
-            self.roi_list = None
+            self.roi_mask = np.ones(self.carpet.shape[:-1]) # last dim is self.fixed_dim already
+            self.roi_list = [1, ] # to allow for iteration
 
 
     def _summarize_in_roi(self, label_mask, num_clusters_per_roi=1, metric='minkowski'):

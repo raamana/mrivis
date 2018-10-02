@@ -56,18 +56,21 @@ def test_basic_functionality():
 
 def test_cluster_data():
 
-    try:
-        carpet.cluster_rows_in_roi(roi)
-    except:
-        raise RuntimeError('clustering carpet failed!')
-    else:
+    for roi_, roi_type in zip([None, roi], ['None', 'seg']):
+
         try:
-            cl_ax = carpet.show(clustered=True)
+            carpet.cluster_rows_in_roi(roi_)
         except:
-            raise RuntimeError('display of clustered carpet failed!')
+            raise RuntimeError('clustering carpet failed - with roi={}'.format(roi_type))
         else:
-            if not isinstance(cl_ax, Axes):
-                raise RuntimeError('Carpet.show(clustered=True) method failed')
+            try:
+                cl_ax = carpet.show(clustered=True)
+            except:
+                raise RuntimeError('display of clustered carpet failed '
+                                   '- with roi={}'.format(roi_type))
+            else:
+                if not isinstance(cl_ax, Axes):
+                    raise RuntimeError('Carpet.show(clustered=True) method failed')
 
 def test_save():
 
@@ -80,3 +83,4 @@ def test_save():
 
 
 
+test_cluster_data()

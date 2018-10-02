@@ -41,7 +41,7 @@ def get_axis(array, axis, slice_num):
 
     slice_list = [slice(None)] * array.ndim
     slice_list[axis] = slice_num
-    slice_data = array[slice_list].T  # transpose for proper orientation
+    slice_data = array[tuple(slice_list)].T  # transpose for proper orientation
 
     return slice_data
 
@@ -218,6 +218,25 @@ def threshold_image(img, bkground_thresh, bkground_value=0.0):
     Thresholds a given image at a value or percentile.
 
     Replacement value can be specified too.
+
+
+    Parameters
+    -----------
+    image_in : ndarray
+        Input image
+
+    bkground_thresh : float
+        a threshold value to identify the background
+
+    bkground_value : float
+        a value to fill the background elements with. Default 0.
+
+    Returns
+    -------
+
+    thresholded_image : ndarray
+        thresholded and/or filled image
+
     """
 
     if bkground_thresh is None:
@@ -228,7 +247,8 @@ def threshold_image(img, bkground_thresh, bkground_value=0.0):
             thresh_perc = float(bkground_thresh.replace('%', ''))
         except:
             raise ValueError(
-                'percentile specified could not be parsed correctly - must be a string of the form "5%", "10%" etc')
+                'percentile specified could not be parsed correctly '
+                ' - must be a string of the form "5%", "10%" etc')
         else:
             thresh_value = np.percentile(img, thresh_perc)
     elif isinstance(bkground_thresh, (float, int)):
@@ -246,7 +266,20 @@ def scale_0to1(image_in,
                exclude_outliers_above=False):
     """Scale the two images to [0, 1] based on min/max from both.
 
-    exclude_outliers_{below,above} can be a float between 0 and 100.
+    Parameters
+    -----------
+    image_in : ndarray
+        Input image
+
+    exclude_outliers_{below,above} : float
+        Lower/upper limit, a value between 0 and 100.
+
+    Returns
+    -------
+
+    scaled_image : ndarray
+        clipped and/or scaled image
+
     """
 
     min_value = image_in.min()
@@ -268,11 +301,20 @@ def scale_0to1(image_in,
 
 def row_wise_rescale(matrix):
     """
-    For fMRI data (num_voxels x num_time_points),
-        this would translate to voxel-wise normalization over time.
+    Row-wise rescale of a given matrix.
 
-    Input matrix: typically a carpet of size num_voxels x num_4th_dim
-        4th_dim could be time points or gradients or other appropriate
+    For fMRI data (num_voxels x num_time_points), this would translate to voxel-wise normalization over time.
+
+    Parameters
+    ----------
+
+    matrix : ndarray
+        Input rectangular matrix, typically a carpet of size num_voxels x num_4th_dim, 4th_dim could be time points or gradients or other appropriate
+
+    Returns
+    -------
+    normed : ndarray
+        normalized matrix
 
     """
 
