@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Alignment check - API &mdash; mrivis 0.3.2+87.gd7e3ca0 documentation</title>
+  <title>Alignment check - API &mdash; mrivis 0.3.2+89.g16a3401 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="mrivis 0.3.2+87.gd7e3ca0 documentation" href="index.html"/>
+    <link rel="top" title="mrivis 0.3.2+89.g16a3401 documentation" href="index.html"/>
         <link rel="next" title="Visualization Classes - Usage" href="vis_classes_usage.html"/>
         <link rel="prev" title="Alignment check - usage" href="alignment_usage.html"/> 
 
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.3.2+87.gd7e3ca0
+                0.3.2+89.g16a3401
               </div>
             
           
@@ -97,7 +97,10 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="alignment_usage.html">Alignment check - usage</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Alignment check - API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Alignment check - API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-mrivis.utils">Helpers and Utility scripts</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="vis_classes_usage.html">Visualization Classes - Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vis_classes_api.html">Visualization Classes - API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
@@ -423,6 +426,95 @@ Specify None if you don’t want any thresholding.</p>
 </table>
 </dd></dl>
 
+<div class="section" id="module-mrivis.utils">
+<span id="helpers-and-utility-scripts"></span><h2>Helpers and Utility scripts<a class="headerlink" href="#module-mrivis.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mrivis.utils.scale_0to1">
+<code class="descclassname">mrivis.utils.</code><code class="descname">scale_0to1</code><span class="sig-paren">(</span><em>image_in</em>, <em>exclude_outliers_below=False</em>, <em>exclude_outliers_above=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/utils.html#scale_0to1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.utils.scale_0to1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale the two images to [0, 1] based on min/max from both.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image_in</strong> : ndarray</p>
+<blockquote>
+<div><p>Input image</p>
+</div></blockquote>
+<p><strong>exclude_outliers_{below,above}</strong> : float</p>
+<blockquote>
+<div><p>Lower/upper limit, a value between 0 and 100.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>scaled_image</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>clipped and/or scaled image</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mrivis.utils.row_wise_rescale">
+<code class="descclassname">mrivis.utils.</code><code class="descname">row_wise_rescale</code><span class="sig-paren">(</span><em>matrix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/utils.html#row_wise_rescale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.utils.row_wise_rescale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Row-wise rescale of a given matrix.</p>
+<p>For fMRI data (num_voxels x num_time_points), this would translate to voxel-wise normalization over time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>matrix</strong> : ndarray</p>
+<blockquote>
+<div><p>Input rectangular matrix, typically a carpet of size num_voxels x num_4th_dim, 4th_dim could be time points or gradients or other appropriate</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>normed</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>normalized matrix</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="mrivis.utils.threshold_image">
+<code class="descclassname">mrivis.utils.</code><code class="descname">threshold_image</code><span class="sig-paren">(</span><em>img</em>, <em>bkground_thresh</em>, <em>bkground_value=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mrivis/utils.html#threshold_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mrivis.utils.threshold_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thresholds a given image at a value or percentile.</p>
+<p>Replacement value can be specified too.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image_in</strong> : ndarray</p>
+<blockquote>
+<div><p>Input image</p>
+</div></blockquote>
+<p><strong>bkground_thresh</strong> : float</p>
+<blockquote>
+<div><p>a threshold value to identify the background</p>
+</div></blockquote>
+<p><strong>bkground_value</strong> : float</p>
+<blockquote>
+<div><p>a value to fill the background elements with. Default 0.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>thresholded_image</strong> : ndarray</p>
+<blockquote class="last">
+<div><p>thresholded and/or filled image</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -469,7 +561,7 @@ Specify None if you don’t want any thresholding.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.3.2+87.gd7e3ca0',
+            VERSION:'0.3.2+89.g16a3401',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
