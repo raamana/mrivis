@@ -23,6 +23,10 @@ A sample gallery of different ways to check alignment is shown below:
 
 Full documentation https://raamana.github.io/mrivis/readme.html
 
+Executable and interactive demo for the visualization classes:
+
+.. image:: https://mybinder.org/badge.svg :target: https://hub.mybinder.org/user/raamana-mrivis-9y51wqyz/notebooks/docs/example_notebooks/mrivis_demo_vis_classes.ipynb
+
 
 **Installation**
 
