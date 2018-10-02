@@ -25,7 +25,8 @@ Full documentation https://raamana.github.io/mrivis/readme.html
 
 Executable and interactive demo for the visualization classes:
 
-.. image:: https://mybinder.org/badge.svg :target: https://hub.mybinder.org/user/raamana-mrivis-9y51wqyz/notebooks/docs/example_notebooks/mrivis_demo_vis_classes.ipynb
+.. image:: https://mybinder.org/badge.svg
+    :target: https://mybinder.org/v2/gh/raamana/mrivis/master?filepath=docs%2Fexample_notebooks%2Fmrivis_demo_vis_classes.ipynb
 
 
 **Installation**
