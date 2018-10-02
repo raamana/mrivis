@@ -11,8 +11,8 @@ Contents:
    usage
    alignment_usage
    alignment_API
-   vis_classes_api
    vis_classes_usage
+   vis_classes_api
    contributing
    authors
 
