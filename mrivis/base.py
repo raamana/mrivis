@@ -1047,8 +1047,8 @@ class Carpet(object):
             self.roi_list = np.unique(roi_mask.flatten())
             np.setdiff1d(self.roi_list, cfg.background_value)
         else:
-            self.roi_mask = np.ones(self.carpet.shape)
-            self.roi_list = None
+            self.roi_mask = np.ones(self.carpet.shape[:-1]) # last dim is self.fixed_dim already
+            self.roi_list = [1, ] # to allow for iteration
 
 
     def _summarize_in_roi(self, label_mask, num_clusters_per_roi=1, metric='minkowski'):
