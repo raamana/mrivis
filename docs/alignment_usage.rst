@@ -7,14 +7,16 @@ Usage of the different methods are shown below:
 
 The purpose of ``checkerboard``, ``voxelwise_diff`` and ``color_mix`` functions in ``mrivis`` is to offer different ways of checking alignment between two two given images (either from the same modality or different modalities possibly with different contrast properties).
 
-To use them is simply a matter of importing them e.g. ``checkerboard``, and passing the two images to compare:
+To use them is simply a matter of importing them e.g. ``checkerboard``, and passing the two images to compare (NOTE: you have to change the values for variables ``path1`` and ``path2`` to valid images on your system):
 
 .. code-block:: python
 
     from mrivis import checkerboard
 
-    path1 = '/Users/Reddy/Desktop/image.nii'
-    path2 = '/Users/Reddy/Desktop/another.nii'
+    # REPLACE the paths with actual existing paths on your system
+    # If you don't have any data, some example data are provided in example_datasets folder of the mrivis repo
+    path1 = '/folder/image.nii'
+    path2 = '/folder/another.nii'
 
     checkerboard(path1, path2) # square patches
 
