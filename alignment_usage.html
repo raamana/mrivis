@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Alignment check - usage &mdash; mrivis 0.3.2+89.g16a3401 documentation</title>
+  <title>Alignment check - usage &mdash; mrivis 0.3.2+92.g80984da documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="mrivis 0.3.2+89.g16a3401 documentation" href="index.html"/>
+    <link rel="top" title="mrivis 0.3.2+92.g80984da documentation" href="index.html"/>
         <link rel="next" title="Alignment check - API" href="alignment_API.html"/>
         <link rel="prev" title="Usage" href="usage.html"/> 
 
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                0.3.2+89.g16a3401
+                0.3.2+92.g80984da
               </div>
             
           
@@ -174,11 +174,13 @@
 <h1>Alignment check - usage<a class="headerlink" href="#alignment-check-usage" title="Permalink to this headline">¶</a></h1>
 <p>Usage of the different methods are shown below:</p>
 <p>The purpose of <code class="docutils literal"><span class="pre">checkerboard</span></code>, <code class="docutils literal"><span class="pre">voxelwise_diff</span></code> and <code class="docutils literal"><span class="pre">color_mix</span></code> functions in <code class="docutils literal"><span class="pre">mrivis</span></code> is to offer different ways of checking alignment between two two given images (either from the same modality or different modalities possibly with different contrast properties).</p>
-<p>To use them is simply a matter of importing them e.g. <code class="docutils literal"><span class="pre">checkerboard</span></code>, and passing the two images to compare:</p>
+<p>To use them is simply a matter of importing them e.g. <code class="docutils literal"><span class="pre">checkerboard</span></code>, and passing the two images to compare (NOTE: you have to change the values for variables <code class="docutils literal"><span class="pre">path1</span></code> and <code class="docutils literal"><span class="pre">path2</span></code> to valid images on your system):</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mrivis</span> <span class="kn">import</span> <span class="n">checkerboard</span>
 
-<span class="n">path1</span> <span class="o">=</span> <span class="s1">&#39;/Users/Reddy/Desktop/image.nii&#39;</span>
-<span class="n">path2</span> <span class="o">=</span> <span class="s1">&#39;/Users/Reddy/Desktop/another.nii&#39;</span>
+<span class="c1"># REPLACE the paths with actual existing paths on your system</span>
+<span class="c1"># If you don&#39;t have any data, some example data are provided in example_datasets folder of the mrivis repo</span>
+<span class="n">path1</span> <span class="o">=</span> <span class="s1">&#39;/folder/image.nii&#39;</span>
+<span class="n">path2</span> <span class="o">=</span> <span class="s1">&#39;/folder/another.nii&#39;</span>
 
 <span class="n">checkerboard</span><span class="p">(</span><span class="n">path1</span><span class="p">,</span> <span class="n">path2</span><span class="p">)</span> <span class="c1"># square patches</span>
 </pre></div>
@@ -311,7 +313,7 @@ folder</a>.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.3.2+89.g16a3401',
+            VERSION:'0.3.2+92.g80984da',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
