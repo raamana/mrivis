@@ -140,15 +140,6 @@ def color_mix(img_spec1=None,
         Currently supports 'rgb' only.
         Support for 'hsv' coming later.
 
-    cmap : str or matplotlib.cm.cmap
-        Colormap to show the difference values.
-
-    overlay_image : bool
-        Flag to specify whether to overlay the first image under the difference map.
-
-    overlay_alpha : float
-        Alpha value (to control transparency) for the difference values (to be overlaid on top of the first image).
-
     view_set : iterable
         Integers specifying the dimensions to be visualized.
         Choices: one or more of (0, 1, 2) for a 3D image
