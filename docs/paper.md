@@ -1,5 +1,5 @@
 ---
-title: 'Medical image visualization library for neuroscience in python'
+title: 'mrivis: Medical image visualization library for neuroscience in python'
 tags:
   - visualization
   - neuroscience
