@@ -1,7 +1,9 @@
 ------
-mrivis
+mrivisy
 ------
 
+.. image:: http://joss.theoj.org/papers/10.21105/joss.00897/status.svg
+   :target: https://doi.org/10.21105/joss.00897
 .. image:: https://img.shields.io/pypi/v/mrivis.svg
 .. image:: https://api.codacy.com/project/badge/Grade/370b1b78383b40b99eb15ae0490cfbdb
     :target: https://www.codacy.com/app/raamana/mrivis?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=raamana/mrivis&amp;utm_campaign=Badge_Grade
