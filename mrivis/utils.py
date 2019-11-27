@@ -174,6 +174,12 @@ def load_image_from_disk(img_spec):
     return img
 
 
+def check_matching_dims(img_one, img_two):
+    """Checks if the dimensions of the two images match, excluding singleton dims."""
+
+    return np.isclose(np.squeeze(img_one.shape), np.squeeze(img_two.shape)).all()
+
+
 def check_image_is_3d(img):
     """Ensures the image loaded is 3d and nothing else."""
 

@@ -10,7 +10,7 @@ from matplotlib.axes import Axes
 from matplotlib.image import AxesImage
 from mrivis import config as cfg
 from mrivis.utils import check_num_slices, check_views, load_image_from_disk, \
-    row_wise_rescale, save_figure
+    row_wise_rescale, save_figure, check_matching_dims
 
 
 class SlicePicker(object):
@@ -273,9 +273,11 @@ class SlicePicker(object):
 
         # ensure all the images have the same shape
         for img in image_list:
-            if img.shape != self._image.shape:
-                raise ValueError('Supplied images are not compatible with this class. '
-                                 'They must have the shape: {}'.format(self._image_shape))
+            if not check_matching_dims(img, self._image):
+                raise ValueError('Supplied images do match in size.'
+                                 ' This image has dimensions: {}'
+                                 ' They must all have: {}'
+                                 ''.format(img.shape, self._image_shape))
 
         for dim, slice_num in self._slices:
             multiple_slices = (self._get_axis(img, dim, slice_num) for img in image_list)
@@ -684,9 +686,8 @@ class Collage(object):
             image_list = [image_list, ]
 
         if len(image_list) > 1:
-            shape1 = image_list[0].shape
             for ii in range(1, len(image_list)):
-                if image_list[ii].shape != shape1:
+                if not check_matching_dims(image_list[ii], image_list[0]):
                     raise ValueError('All images must be of same shape!')
                 if len(image_list[ii].shape) < 3:
                     raise ValueError('All images must be atleast 3D')
