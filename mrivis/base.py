@@ -801,6 +801,75 @@ class MidCollage(Collage):
                          display_params=display_params)
 
 
+class MultiVolumeCollage(Collage):
+    """
+    Displays collages from multiple volumes.
+    """
+
+    def __init__(self,
+                 view_set=cfg.view_set_default,
+                 num_rows=cfg.num_rows_per_view_default,
+                 num_slices=cfg.num_slices_default,
+                 sampler=cfg.sampler_default,
+                 image_list=None,
+                 bounding_rect=cfg.bounding_rect_default,
+                 fig=None,
+                 display_params=None,
+                 ):
+        """Display mid-slices from all the views.
+
+        image_list : list of ndarray
+            The images to be attached to each collage, once it is created.
+            Each image must be atleast 3d.
+
+        fig : matplotlib.Figure
+            figure handle to create the collage in.
+            If not specified, creates a new figure.
+
+        bounding_rect : tuple of 4
+            The rectangular area to bind the collage to (in normalized figure coordinates)
+
+        display_params : dict
+            dict of keyword parameters that can be passed to matplotlib's `Axes.imshow()`
+
+        """
+
+        self.num_volumes = len(image_list)
+        super().__init__(view_set=cfg.view_set_default,
+                         num_rows=self.num_volumes, num_slices=1,
+                         sampler=sampler,
+                         fig=fig, bounding_rect=bounding_rect,
+                         display_params=display_params)
+
+
+    def _make_layout_multivolume(self,
+                                 fig,
+                                 figsize=cfg.figsize_default,
+                                 num_volumes=cfg.num_rows_per_view_default,
+                                 bounding_rect=cfg.bounding_rect_default,
+                                 grid_pad=cfg.grid_pad_default,
+                                 axis_pad=cfg.axis_pad_default,
+                                 **axis_kwargs):
+
+        plt.style.use('dark_background')
+        if fig is None:
+            self.fig = plt.figure(figsize=figsize)
+        else:
+            self.fig = fig
+
+        left, bottom, width, height = bounding_rect
+        avail_height = height - bottom
+        height_each_volume = (avail_height - self.num_volumes * grid_pad) / self.num_volumes
+        effective_height_each_volume = height_each_volume + grid_pad
+
+        self.rects = list() # list of bounding boxes for each volume
+        for ix in range(self.num_volumes):
+            rect = (left, bottom + ix * effective_height_each_volume,
+                    width, height_each_view)
+            self.rects.append(rect)
+
+
+
 class Carpet(object):
     """Class to unroll the 4D or higher dimensional data into 2D images.
 
