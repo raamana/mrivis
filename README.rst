@@ -16,11 +16,11 @@ mrivis
 
 `mrivis` offers:
 
+ - advanced classes to easily develop customizable visualizations of 3D and 4D images, such as `Carpet()`, `SlicePicker()`, `Collage()` and the like
  - tools for comparison of spatial alignment of two 3D MRI scans (T1, T2, PET etc) using checkerboard plots and other comparison methods
- - classes to develop customizable visualizations of 3D and 4D images
  - additional helper, convenience and utility scripts related to visualization
 
-Full documentation https://raamana.github.io/mrivis/readme.html
+Full documentation for both visualization classes and alignment check tools is available at https://raamana.github.io/mrivis/readme.html
 
 
 A sample gallery of different ways to check alignment is shown below:
