@@ -30,50 +30,51 @@ class SlicePicker(object):
                  sampler=cfg.sampler_default,
                  min_density=cfg.min_density_default):
         """
-        Class to pick non-empty slices along the various dimensions for a given image.
+        Class to pick non-empty slices along the various dimensions for a given image
 
         Parameters
         ----------
         image_in : ndarray
             3D array to be sliced.
-            there are no explicit restrictions placed on number of dimensions for image_in,
-             to get a n-1 dim array, but appropriate reshaping may need to be performed.
+            No explicit restrictions placed on number of dimensions for image_in
+             to get an n-1 dim array, appropriate reshaping may need to be performed.
 
         view_set : iterable
-            List of integers selecting the dimesnions to be sliced.
+            List of integers selecting the dimensions to be sliced.
 
         num_slices : int or iterable of size as view_set
             Number of slices to be selected in each view.
 
         sampler : str or list or callable
-            selection strategy: to identify the type of sampling done to select the slices to return.
-            All sampling is done between the first and last non-empty slice in that view/dimension.
+            slice selection strategy: to identify the type of sampling done
+            All sampling is done between the first and last NON-EMPTY slices in
+            that view/dimension.
 
             - if 'linear' : linearly spaced slices
-            - if list, it is treated as set of percentages at which slices to be sampled
-                (must be in the range of [1-100], not [0-1]).
-                This could be used to more/all slices in the middle e.g. range(40, 60, 5)
-                    or at the end e.g. [ 5, 10, 15, 85, 90, 95]
-            - if callable, it must take a 2D image of arbitray size, return True/False
-                to indicate whether to select that slice or not.
-                Only non-empty slices (atleas one non-zero voxel) are provided as input.
+            - if list, it is treated as set of percentages to slice the volume at
+                They must be in the range of [1-100], not [0-1].
+                This could be used to sample more/all slices in the middle e.g.
+                range(40, 60, 5) or at the end e.g. [ 5, 10, 15, 85, 90, 95]
+            - if callable, it must take a 2D image of arbitrary size,
+                return True/False to indicate whether to select that slice or not.
+                Only non-empty slices (atleast one non-zero voxel) are forwarded.
                 Simple examples for callable could be based on
                 1) percentage of non-zero voxels > x etc
                 2) presence of desired texture ?
-                3) certain properties of distribution (skewe: dark/bright, energy etc) etc
+                3) certain properties of distribution (skew: dark/bright, energy etc)
 
                 If the sampler returns more than requested `num_slices`,
                     only the first num_slices will be selected.
 
         min_density : float or None
-            mininum density of non-zero voxels within a given slice to consider it non-empty
+            minimum density of non-zero voxels to consider a slice non-empty
             Default: 0.01 (1%).
             if None, include all slices.
 
         """
 
         if len(image_in.shape) < 3:
-            raise ValueError('Image must be atleast 3D')
+            raise ValueError('Image must be at least 3D')
         else:
             self._image = image_in
 
@@ -94,7 +95,8 @@ class SlicePicker(object):
         if isinstance(sampler, str):
             sampler = sampler.lower()
             if sampler not in ['linear', ]:
-                raise ValueError('Sampling strategy: {} not implemented.'.format(sampler))
+                raise ValueError('Sampling strategy: {} not implemented.'
+                                 ''.format(sampler))
             self._sampler = sampler
             self._sampling_method = 'linear'
         elif isinstance(sampler, Iterable):
@@ -108,8 +110,10 @@ class SlicePicker(object):
             # checking if the callable returns a bool
             for view in self.view_set:
                 middle_slice = int(self._image_shape[view] / 2)
-                if not isinstance(sampler(self._get_axis(self._image, view, middle_slice)), bool):
-                    raise ValueError('sampler callable must return a boolean value (True/False)')
+                return_val = sampler(self._get_axis(self._image, view, middle_slice))
+                if not isinstance(return_val, bool):
+                    raise ValueError('sampler callable must return '
+                                     'a boolean value (True/False)')
 
             self._sampler = sampler
             self._sampling_method = 'callable'
@@ -138,11 +142,12 @@ class SlicePicker(object):
         for view, ns_in_view in zip(self.view_set, self.num_slices):
             # discarding completely empty or almost empty slices.
             dim_size = self._image_shape[view]
-            non_empty_slices = np.array([sl for sl in range(dim_size) if self._not_empty(view, sl)])
+            non_empty_slices = np.array([sl for sl in range(dim_size)
+                                         if self._not_empty(view, sl)])
 
             # sampling according to the chosen strategy
             slices_dim = self._sample_slices_in_dim(view, ns_in_view, non_empty_slices)
-            #  the following loop is needed to preserve order, while eliminating duplicates
+            # following loop is needed to preserve order while eliminating duplicates
             # list comprehension over a set(slices_dim) wouldn't preserve order
             uniq_slices = list()
             for sn in slices_dim:
@@ -160,15 +165,16 @@ class SlicePicker(object):
         return (np.count_nonzero(img2d) / img2d.size) > self._min_density
 
     def _sample_slices_in_dim(self, view, num_slices, non_empty_slices):
-        """Samples the slices in the given dimension according the chosen strategy."""
+        """Samples slices in the given dimension according the chosen strategy."""
 
         if self._sampling_method == 'linear':
-            return self._linear_selection(non_empty_slices=non_empty_slices, num_slices=num_slices)
+            return self._linear_selection(
+                non_empty_slices=non_empty_slices, num_slices=num_slices)
         elif self._sampling_method == 'percentage':
             return self._percent_selection(non_empty_slices=non_empty_slices)
         elif self._sampling_method == 'callable':
-            return self._selection_by_callable(view=view, non_empty_slices=non_empty_slices,
-                                               num_slices=num_slices)
+            return self._selection_by_callable(
+                view=view, non_empty_slices=non_empty_slices, num_slices=num_slices)
         else:
             raise NotImplementedError('Invalid state for the class!')
 
@@ -184,14 +190,15 @@ class SlicePicker(object):
         #     non_empty_slices = non_empty_slices[skip_count: -skip_count]
         #     num_non_empty = len(non_empty_slices)
 
-        sampled_indices = np.linspace(0, num_non_empty, num=min(num_non_empty, num_slices),
+        sampled_indices = np.linspace(0, num_non_empty,
+                                      num=min(num_non_empty, num_slices),
                                       endpoint=False)
         slices_in_dim = non_empty_slices[np.around(sampled_indices).astype('int64')]
 
         return slices_in_dim
 
     def _percent_selection(self, non_empty_slices):
-        """Chooses slices at a given percentage between the first and last non-empty slice."""
+        """Chooses slices at given percentages betw first and last non-empty slice"""
 
         return np.around(self._sampler * len(non_empty_slices) / 100).astype('int64')
 
@@ -222,12 +229,13 @@ class SlicePicker(object):
             return axis, slice_num, slice_data
 
     def get_slice_indices(self):
-        """Returns indices for the slices selected (each a tuple : (dim, slice_num))"""
+        """Returns indices for slices selected (each a tuple : (dim, slice_num))"""
 
         return self._slices
 
     def get_slices(self, extended=False):
-        """Generator over all the slices selected, each time returning a cross-section.
+        """
+        Generator over all the slices selected, each time returning a cross-section
 
         Parameters
         ----------
@@ -250,13 +258,13 @@ class SlicePicker(object):
     def get_slices_multi(self, image_list, extended=False):
         """Returns the same cross-section from the multiple images supplied.
 
-        All images must be of the same shape as the original image defining this object.
+        All images must be of same shape as the original image defining this object.
 
         Parameters
         ----------
 
         image_list : Iterable
-            containing atleast 2 images
+            containing at least 2 images
 
         extended : bool
             Flag to return just slice data (default, extended=False), or
@@ -280,17 +288,21 @@ class SlicePicker(object):
                                  ''.format(img.shape, self._image_shape))
 
         for dim, slice_num in self._slices:
-            multiple_slices = (self._get_axis(img, dim, slice_num) for img in image_list)
+            multiple_slices = (self._get_axis(img, dim, slice_num)
+                               for img in image_list)
             if not extended:
                 # return just the slice data
                 yield multiple_slices
             else:
                 # additionally include which dim and which slice num
-                # not using extended option in get_axis, to avoid complicating unpacking
+                # not using extended option in get_axis,
+                #   to avoid complicating the unpacking process
                 yield dim, slice_num, multiple_slices
 
     def save_as_gif(self, gif_path, duration=0.25):
-        """Package the selected slices into a single GIF for easy sharing and display (on web etc).
+        """
+        Package selected slices into a single GIF for easy sharing & display (on
+        web etc).
 
         You must install imageio module separately to use this feature.
 
@@ -340,7 +352,8 @@ class SlicePicker(object):
 
         return 'views : {}\n' \
                '#slices: {}\n' \
-               'sampler: {}'.format(self.view_set, self.num_slices, self._sampling_method)
+               'sampler: {}' \
+               ''.format(self.view_set, self.num_slices, self._sampling_method)
 
     def __repr__(self):
 
@@ -361,7 +374,7 @@ class MiddleSlicePicker(SlicePicker):
         Parameters
         -----------
 
-        attach_image : ndarray
+        image : ndarray
             The image to be attached to the collage, once it is created.
             Must be atleast 3d.
 
@@ -395,8 +408,8 @@ class Collage(object):
         with convenience routines handling all the cross-sections as a single set.
 
         Once created with certain `display_params` (containing vmin and vmax),
-            this class does NOT automatically rescale the data, as you attach different images.
-            Ensure the input images are rescaled to [0, 1] BEFORE attaching.
+        this class does NOT automatically rescale the data as you attach different
+        images hence ensure the input images are rescaled to [0, 1] BEFORE attaching!
 
         Parameters
         ----------
@@ -453,7 +466,7 @@ class Collage(object):
         self.view_set = check_views(view_set, max_views=3)
         self.num_slices = check_num_slices(num_slices, img_shape=None,
                                            num_dims=len(self.view_set))
-        # TODO find a way to validate the input-- using utits.verify_sampler commonly?
+        # TODO find a way to validate the input, using utits.verify_sampler commonly?
         self.sampler = sampler
 
         if display_params is None:
@@ -590,7 +603,7 @@ class Collage(object):
         Parameters
         ----------
 
-        attach_image : ndarray
+        image_in : ndarray
             The image to be attached to the collage, once it is created.
             Must be atleast 3d.
 
@@ -1076,7 +1089,7 @@ class Carpet(object):
             self.roi_list = np.unique(roi_mask.flatten())
             np.setdiff1d(self.roi_list, cfg.background_value)
         else:
-            self.roi_mask = np.ones(self.carpet.shape[:-1]) # last dim is self.fixed_dim already
+            self.roi_mask = np.ones(self.carpet.shape[:-1])  # last dim is self.fixed_dim already
             self.roi_list = [1, ] # to allow for iteration
 
 
@@ -1097,7 +1110,8 @@ class Carpet(object):
 
         from scipy.cluster.hierarchy import fclusterdata
 
-        # maxclust needed to ensure t is interpreted as # clusters in heirarchical clustering
+        # maxclust method needed to ensure it is interpreted as number of clusters
+        # in hierarchical clustering
         group_ids = fclusterdata(matrix, metric=metric, t=num_clusters_per_roi,
                                  criterion='maxclust')
         group_set = np.unique(group_ids)

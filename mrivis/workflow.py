@@ -8,9 +8,11 @@ from functools import partial
 
 from mrivis.base import Collage
 from mrivis.color_maps import get_freesurfer_cmap
-from mrivis.utils import _diff_image, check_params, check_patch_size, crop_image, \
-    crop_to_extents, crop_to_seg_extents, get_axis, pick_slices, read_image, scale_0to1, \
-    scale_images_0to1
+from mrivis.utils import (_diff_image, check_params, check_patch_size, crop_image,
+                          crop_to_extents, crop_to_seg_extents, get_axis,
+                          pick_slices, read_image,
+                          scale_0to1,
+                          scale_images_0to1)
 
 __all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage']
 
@@ -238,9 +240,15 @@ def voxelwise_diff(img_spec1=None,
 
         Colormap to show the difference values.
 
+    cmap : str
+        Name of colormap to use
+
     overlay_image : bool
         Flag to specify whether to overlay the difference values on the original image.
         .. note: This feature is not reliable and supported well yet.
+
+    overlay_alpha : float
+        alpha value for the overlay between 0.0 and 1.0
 
     num_rows : int
         number of rows (top to bottom) per each of 3 dimensions
@@ -463,7 +471,8 @@ def collage(img_spec,
             output_path=None,
             figsize=None,
             **kwargs):
-    "Produces a collage of various slices from different orientations in the given 3D image"
+    """Produces a collage of various slices from different orientations in the
+    given 3D image"""
 
     num_rows, num_cols, padding = check_params(num_rows, num_cols, padding)
 
@@ -527,7 +536,8 @@ def aseg_on_mri(mri_spec,
                 output_path=None,
                 figsize=None,
                 **kwargs):
-    "Produces a collage of various slices from different orientations in the given 3D image"
+    """Produces a collage of various slices from different orientations in the
+    given 3D image"""
 
     num_rows, num_cols, padding = check_params(num_rows, num_cols, padding)
 
@@ -634,7 +644,7 @@ def _generic_mixer(slice1, slice2, mixer_name, **kwargs):
 
 def check_rescaling_collage(img, rescale_method=None,
                             return_extrema=True):
-    ""
+    """"""
 
     if not (isinstance(rescale_method, str) or rescale_method is None):
         raise ValueError('rescale_method method be "global", "slice" or None')
@@ -704,9 +714,8 @@ def check_images(img_spec1, img_spec2, bkground_thresh=0.05):
 
     if img1.shape != img2.shape:
         raise ValueError('size mismatch! First image: {} Second image: {}\n'
-                         'Two images to be compared must be of the same size in all dimensions.'.format(
-            img1.shape,
-            img2.shape))
+                         'Two images to be compared must be of the same size '
+                         'in all dimensions.'.format(img1.shape, img2.shape))
 
     return img1, img2
 
@@ -771,7 +780,7 @@ def _mix_color(slice1, slice2, alpha_channels, color_space):
     elif color_space.lower() in ['hsv']:
 
         raise NotImplementedError(
-            'This method (color_space="hsv") is yet to fully conceptualized and implemented.')
+            'Method color_space="hsv" is yet to be implemented.')
 
         # TODO other ideas: hue/saturation/intensity value driven by difference in intensity?
         hue = alpha_channels[0] * slice1

@@ -22,7 +22,7 @@ def _diff_image(slice1, slice2,
 
 
 def diff_colormap():
-    "Custom colormap to map low values to black or another color."
+    """Custom colormap to map low values to black or another color."""
 
     # bottom = plt.cm.copper(np.linspace(0., 1, 6))
     black = np.atleast_2d([0., 0., 0., 1.])
@@ -228,7 +228,7 @@ def threshold_image(img, bkground_thresh, bkground_value=0.0):
 
     Parameters
     -----------
-    image_in : ndarray
+    img : ndarray
         Input image
 
     bkground_thresh : float
@@ -326,7 +326,7 @@ def row_wise_rescale(matrix):
 
     if matrix.shape[0] <= matrix.shape[1]:
         raise ValueError('Number of voxels is less than the number of time points!! '
-                      'Are you sure data is reshaped correctly?')
+                         'Are you sure data is reshaped correctly?')
 
     min_ = matrix.min(axis=1)
     range_ = matrix.ptp(axis=1)  # ptp : peak to peak, max-min
@@ -369,7 +369,7 @@ def crop_to_extents(img1, img2, padding):
 
 
 def crop_image(img, padding=5):
-    "Crops an image or slice to its extents"
+    """Crops an image or slice to its extents"""
 
     if padding < 1:
         return img
