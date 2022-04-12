@@ -346,9 +346,10 @@ def _compare(img_spec1,
         Method to rescale the intensity values to.
         Choices : 'global', 'each', False or None.
 
-        Default: 'global', min and max values computed based on ranges from both images.
-        If 'each', rescales each image separately to [0, 1].
-            This option is useful when overlaying images with very different intensity ranges e.g. from different modalities altogether.
+        Default: 'global': min, max values computed based on ranges from both images.
+        If 'each', rescales each image separately to [0, 1]. This option is useful
+            when overlaying images with very different intensity ranges
+            e.g. from different modalities altogether.
         If False or None, no rescaling is done (does not work yet).
 
     annot : str
@@ -361,7 +362,8 @@ def _compare(img_spec1,
         path to save the generate collage to.
 
     figsize : list
-        Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
+        Size of figure in inches to be passed on to plt.figure()
+        e.g. [12, 12] or [20, 20]
 
     kwargs : dict
         Additional arguments specific to the particular mixer
@@ -390,7 +392,8 @@ def _compare(img_spec1,
     fig, ax = plt.subplots(num_axes * num_rows, num_cols, figsize=figsize)
 
     # displaying some annotation text if provided
-    # good choice would be the location of the input images (for future refwhen image is shared or misplaced!)
+    # good choice would be the location of the input images
+    #   (for future ref when image is shared or misplaced!)
     if annot is not None:
         fig.suptitle(annot, backgroundcolor='black', color='g')
 
