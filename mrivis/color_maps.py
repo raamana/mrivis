@@ -1,8 +1,8 @@
 __all__ = ['get_freesurfer_cmap', 'get_freesurfer_cortical_LUT', ]
 
 import numpy as np
+from matplotlib import colormaps
 from matplotlib.colors import ListedColormap
-import matplotlib.pyplot as plt
 
 
 def get_freesurfer_cortical_LUT():
@@ -70,7 +70,7 @@ def get_freesurfer_subcortical_LUT():
     /FreeSurferColorLUT
     """
 
-    return plt.cm.Set1  # tab20_r
+    return colormaps['Set1']  # plt.cm.Set1  # tab20_r
 
 
 def get_freesurfer_cmap(vis_type):
@@ -81,7 +81,7 @@ def get_freesurfer_cmap(vis_type):
         cmap = ListedColormap(LUT)
     elif vis_type in ('labels_volumetric', 'labels_contour'):
         black = np.array([0, 0, 0, 1])
-        cmap = plt.get_cmap('hsv')
+        cmap = colormaps['hsv']
         # TODO using more than 20 labels might be a problem?
         cmap = cmap(np.linspace(0, 1, 20))
         # prepending black to paint background as black

@@ -2,7 +2,7 @@ __all__ = ['SlicePicker', 'Collage', 'Carpet']
 
 import traceback
 import warnings
-from collections import Iterable
+from collections.abc import Iterable
 
 import numpy as np
 from matplotlib import pyplot as plt

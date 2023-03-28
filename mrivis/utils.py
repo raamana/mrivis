@@ -1,6 +1,6 @@
 from genericpath import exists as pexists
 from os.path import realpath
-from collections import Iterable
+from collections.abc import Iterable
 import nibabel as nib
 import numpy as np
 from matplotlib import pyplot as plt
@@ -162,7 +162,7 @@ def load_image_from_disk(img_spec):
             hdr = nib.load(img_spec)
             # trying to stick to an orientation
             hdr = nib.as_closest_canonical(hdr)
-            img = hdr.get_data()
+            img = hdr.get_fdata()
         else:
             raise IOError('Given path to image does not exist!')
     elif isinstance(img_spec, np.ndarray):
