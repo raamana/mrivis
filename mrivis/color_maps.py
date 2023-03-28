@@ -1,4 +1,5 @@
-__all__ = ['get_freesurfer_cmap', 'get_freesurfer_cortical_LUT', ]
+__all__ = ['get_freesurfer_cmap', 'get_freesurfer_cortical_LUT',
+           'get_freesurfer_subcortical_LUT']
 
 import numpy as np
 from matplotlib import colormaps

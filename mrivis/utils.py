@@ -31,9 +31,9 @@ def diff_colormap():
     # remain = plt.cm.Reds(np.linspace(0, 1, 240))
 
     colors = np.vstack((bottom, middle))
-    diff_colormap = mpl.colors.LinearSegmentedColormap.from_list('diff_colormap', colors)
+    diff_cmap = mpl.colors.LinearSegmentedColormap.from_list('diff_colormap', colors)
 
-    return diff_colormap
+    return diff_cmap
 
 
 def get_axis(array, axis, slice_num):
@@ -290,7 +290,7 @@ def scale_0to1(image_in,
 
     min_value = image_in.min()
     max_value = image_in.max()
-    # making a copy to ensure no side-effects
+    # making a copy to ensure no side effects
     image = image_in.copy()
     if exclude_outliers_below:
         perctl = float(exclude_outliers_below)

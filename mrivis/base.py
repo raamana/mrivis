@@ -19,7 +19,7 @@ class SlicePicker(object):
 
     The term `slice` here refers to one cross-section in a 3D image,
         towards which this class is designed for.
-        However there are no explicit restrictions placed on dicing N=4+ array
+        However, there are no explicit restrictions placed on dicing N=4+ array
         and receiving a n-1 dim array.
     """
 
@@ -301,8 +301,7 @@ class SlicePicker(object):
 
     def save_as_gif(self, gif_path, duration=0.25):
         """
-        Package selected slices into a single GIF for easy sharing & display (on
-        web etc).
+        Package selected slices into a single GIF for easy sharing (e.g., on the web)
 
         You must install imageio module separately to use this feature.
 
@@ -323,7 +322,7 @@ class SlicePicker(object):
                               'Install it separately and rerun mrivis.')
 
         gif_data = [img for img in self.get_slices()]
-        # using img.astype(np.uint32) is leaving noticable artefacts,
+        # using img.astype(np.uint32) is leaving noticeable artefacts,
         #   depending on imageio inner conversion, which is rescaling okay
 
         # TODO deal with differing sizes of slices, padding with zeros or white??

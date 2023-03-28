@@ -1,15 +1,14 @@
-
 import os
+
 import matplotlib
+
 matplotlib.use('Agg')
 
-from matplotlib import pyplot as plt
-from os.path import join as pjoin, abspath, realpath, basename, dirname, exists as pexists
+from os.path import join as pjoin, realpath, dirname, exists as pexists
 from mrivis import checkerboard, color_mix, voxelwise_diff
 from mrivis.utils import scale_0to1, read_image
 import numpy as np
 from mrivis.base import Collage, SlicePicker
-
 
 test_dir = dirname(realpath(__file__))
 base_dir = realpath(pjoin(test_dir, '..', '..', 'example_datasets'))
@@ -25,7 +24,7 @@ slightly_mismatched2 = pjoin(base_dir, '3569_bl_PPMI_smoothed.nii')
 identical1 = pjoin(base_dir, '3569_bl_PPMI.nii')
 identical2 = pjoin(base_dir, '3569_bl_PPMI.nii')
 
-im_sets = ((highly_mismatched2, highly_mismatched1, 'different subjects _mismatched_'),
+im_sets = ((highly_mismatched2, highly_mismatched1, 'different subjects mismatched'),
            (slightly_mismatched1, slightly_mismatched2, 'smoothed vs original'),
            (identical1, identical2, 'identical'),
            )
@@ -34,12 +33,11 @@ num_rows = 2
 num_cols = 5
 num_slices = 10
 
-img_lim = None # [0, 4000]
-rescaling='each'
+img_lim = None  # [0, 4000]
+rescaling = 'each'
 
 
 def test_voxelwise_diff():
-
     for im_set in im_sets:
         comb_id = 'voxelwise_diff {}'.format(im_set[2])
         out_path = pjoin(out_dir, comb_id.replace(' ', '_'))
@@ -52,15 +50,14 @@ def test_voxelwise_diff():
                        num_cols=num_cols,
                        annot=comb_id,
                        output_path=out_path)
-        if not pexists(out_path+'.png'):
+        if not pexists(out_path + '.png'):
             raise IOError('expected output file not created:\n'
                           '{}'.format(out_path))
 
 
 def test_color_mix():
-
     for im_set in im_sets:
-        for alpha in (1.0, ): # np.arange(0.35, 0.95, 0.05):
+        for alpha in (1.0,):  # np.arange(0.35, 0.95, 0.05):
             comb_id = 'color_mix {} alpha {:0.2f}'.format(im_set[2], alpha)
             out_path = pjoin(out_dir, comb_id.replace(' ', '_'))
             color_mix(im_set[0], im_set[1],
@@ -70,13 +67,13 @@ def test_color_mix():
                       num_slices=num_slices,
                       annot=comb_id,
                       output_path=out_path)
-        if not pexists(out_path+'.png'):
+        if not pexists(out_path + '.png'):
             raise IOError('expected output file not created:\n'
                           '{}'.format(out_path))
 
-def test_checkerboard():
 
-    patch_set = (5, 10, 40) # (1, 2, 3, 5, 10, 25, 40)
+def test_checkerboard():
+    patch_set = (5, 10, 40)  # (1, 2, 3, 5, 10, 25, 40)
     for im_set in im_sets:
         for ps in patch_set:
             comb_id = 'checkerboard {} patch size {}'.format(im_set[2], ps)
@@ -88,13 +85,12 @@ def test_checkerboard():
                          num_slices=num_slices,
                          annot=comb_id,
                          output_path=out_path)
-            if not pexists(out_path+'.png'):
+            if not pexists(out_path + '.png'):
                 raise IOError('expected output file not created:\n'
                               '{}'.format(out_path))
 
 
 def test_collage_class():
-
     img_path = pjoin(base_dir, '3569_bl_PPMI.nii')
     img = read_image(img_path, None)
     scaled = scale_0to1(img)
@@ -117,7 +113,6 @@ def test_collage_class():
 
 
 def test_slice_picker():
-
     img_path = pjoin(base_dir, '3569_bl_PPMI.nii')
     img = read_image(img_path, None)
     sp = SlicePicker(img, num_slices=15, view_set=(0, 1))
@@ -140,9 +135,10 @@ def test_slice_picker():
         raise ValueError('repr implementation failed')
 
 
-    def density_over(img2d, min_density = 0.65):
+    def density_over(img2d, min_density=0.65):
 
-        return (np.count_nonzero(img2d.flatten())/img2d.size)<=min_density
+        return (np.count_nonzero(img2d.flatten()) / img2d.size) <= min_density
+
 
     print('testing different sampling strategies .. ')
     for sname, sampler in zip(('linear', 'percent', 'callable'),
@@ -156,14 +152,14 @@ def test_slice_picker():
 
         sp_linear = SlicePicker(img, sampler='linear', num_slices=ns)
         print(repr(sp_linear))
-        if 3*ns != len(sp_linear.get_slice_indices()):
+        if 3 * ns != len(sp_linear.get_slice_indices()):
             raise ValueError('error in linear sampling')
 
     print('testing percentage sampling')
     perc_list = [5, 10, 45, 60, 87]
     sp_perc = SlicePicker(img, sampler=perc_list)
     print(repr(sp_perc))
-    if 3*len(perc_list) != len(sp_perc.get_slice_indices()):
+    if 3 * len(perc_list) != len(sp_perc.get_slice_indices()):
         raise ValueError('error in percentage sampling')
 
     print('testing ability to save to gif')

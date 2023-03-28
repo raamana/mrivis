@@ -1,7 +1,8 @@
 """
-mrivis: Tools to comapre the similarity of two 3d images (structural, functional or parametric maps)
+mrivis: Tools to compare the similarity of two 3d images (structural, functional
+or parametric maps)
 
-Options include checker board, red green mixer and voxel-wise difference maps.
+Options include checkerboard, red green mixer and voxel-wise difference maps.
 
 """
 from functools import partial
@@ -79,7 +80,7 @@ def checkerboard(img_spec1=None,
         number of voxels to pad around each panel.
 
     output_path : str
-        path to save the generate collage to.
+        path to save the generated collage to.
 
     figsize : list
         Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
@@ -273,7 +274,7 @@ def voxelwise_diff(img_spec1=None,
         number of voxels to pad around each panel.
 
     output_path : str
-        path to save the generate collage to.
+        path to save the generated collage to.
 
     figsize : list
         Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
@@ -359,7 +360,7 @@ def _compare(img_spec1,
         number of voxels to pad around each panel.
 
     output_path : str
-        path to save the generate collage to.
+        path to save the generated collage to.
 
     figsize : list
         Size of figure in inches to be passed on to plt.figure()
