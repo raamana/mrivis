@@ -316,7 +316,12 @@ class SlicePicker(object):
 
         """
 
-        import imageio
+        try:
+            import imageio
+        except ImportError:
+            raise ImportError('imageio library is required to save to GIFs. '
+                              'Install it separately and rerun mrivis.')
+
         gif_data = [img for img in self.get_slices()]
         # using img.astype(np.uint32) is leaving noticable artefacts,
         #   depending on imageio inner conversion, which is rescaling okay

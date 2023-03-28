@@ -2,4 +2,3 @@ nibabel
 matplotlib
 numpy
 scipy
-imageio
