@@ -1,7 +1,9 @@
 # Byte-compiled / optimized / DLL files
 cmd2pkg
 docs/flyers.key
+mrivis/_version.py
 mrivis/tests
+example_datasets/test_out/
 docs/example_notebooks/.ipynb_checkpoints/
 .pytest_cache/
 
