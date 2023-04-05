@@ -58,19 +58,22 @@ def checkerboard(img_spec1=None,
         number of slices to be selected for each view
         Must be of the same length as view_set,
             each element specifying the number of slices for each dimension.
-            If only one number is given, same number will be chosen for all dimensions.
+            If only one number is given, same number will be chosen for all
+            dimensions.
 
     num_rows : int
         number of rows (top to bottom) per each of 3 dimensions
 
     rescale_method : bool or str or list or None
         Range to rescale the intensity values to
-        Default: 'global', min and max values computed based on ranges from both images.
+        Default: 'global', min and max values computed based on ranges from both
+        images.
         If false or None, no rescaling is done (does not work yet).
 
     background_threshold : float or str
         A threshold value below which all the background voxels will be set to zero.
-        Default : 0.05. Other option is a string specifying a percentile: '5%', '10%'.
+        Default : 0.05. Other option is a string specifying a percentile: '5%',
+        '10%'.
         Specify None if you don't want any thresholding.
 
     annot : str
@@ -83,7 +86,8 @@ def checkerboard(img_spec1=None,
         path to save the generated collage to.
 
     figsize : list
-        Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
+        Size of figure in inches to be passed on to plt.figure() e.g. [12,
+        12] or [20, 20]
 
     Returns
     -------
@@ -124,7 +128,7 @@ def color_mix(img_spec1=None,
               output_path=None,
               figsize=None, ):
     """
-    Color mixer, where each image is represented with a different color (default: red and green) in color channels.
+    Color mixer, where each image is represented with a different color.
 
     Parameters
     ----------
@@ -176,7 +180,7 @@ def color_mix(img_spec1=None,
         path to save the generate collage to.
 
     figsize : list
-        Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
+        Size of figure in inches to be passed on to plt.figure() e.g., [12, 12]
 
     Returns
     -------
@@ -189,7 +193,8 @@ def color_mix(img_spec1=None,
         alpha_channels = [1, 1]
 
     if not len(alpha_channels) == 2:
-        # not sure if we should make them sum to 1:  or not np.isclose(sum(alpha_channels), 1.0)
+        # not sure if we should make them sum to 1  or not
+        #   np.isclose(sum(alpha_channels), 1.0)
         raise ValueError('Alpha must be two elements')
 
     mixer_params = dict(alpha_channels=alpha_channels,
@@ -237,7 +242,8 @@ def voxelwise_diff(img_spec1=None,
 
     abs_value : bool
         Flag indicating whether to take the absolute value of the diffenence or not.
-        Default: True, display absolute differences only (so order of images does not matter)
+        Default: True, display absolute differences only (so order of images does
+        not matter)
 
         Colormap to show the difference values.
 
@@ -245,7 +251,8 @@ def voxelwise_diff(img_spec1=None,
         Name of colormap to use
 
     overlay_image : bool
-        Flag to specify whether to overlay the difference values on the original image.
+        Flag to specify whether to overlay the difference values on the original
+        image.
         .. note: This feature is not reliable and supported well yet.
 
     overlay_alpha : float
@@ -259,12 +266,14 @@ def voxelwise_diff(img_spec1=None,
 
     rescale_method : bool or str or list or None
         Range to rescale the intensity values to
-        Default: 'global', min and max values computed based on ranges from both images.
+        Default: 'global', min and max values computed based on ranges from both
+        images.
         If false or None, no rescaling is done (does not work yet).
 
     background_threshold : float or str
         A threshold value below which all the background voxels will be set to zero.
-        Default : 0.05. Other option is a string specifying a percentile: '5%', '10%'.
+        Default : 0.05. Other option is a string specifying a percentile: '5%',
+        '10%'.
         Specify None if you don't want any thresholding.
 
     annot : str
@@ -277,7 +286,8 @@ def voxelwise_diff(img_spec1=None,
         path to save the generated collage to.
 
     figsize : list
-        Size of figure in inches to be passed on to plt.figure() e.g. [12, 12] or [20, 20]
+        Size of figure in inches to be passed on to plt.figure() e.g. [12,
+        12] or [20, 20]
 
     Returns
     -------
@@ -383,7 +393,8 @@ def _compare(img_spec1,
     num_slices_per_view = num_rows * num_cols
     slices = pick_slices(img2, num_slices_per_view)
 
-    rescale_images, img1, img2, min_value, max_value = check_rescaling(img1, img2, rescale_method)
+    rescale_images, img1, img2, min_value, max_value = check_rescaling(
+        img1, img2, rescale_method)
 
     plt.style.use('dark_background')
 
@@ -410,7 +421,8 @@ def _compare(img_spec1,
             slice1 = get_axis(img1, dim_index, slice_num)
             slice2 = get_axis(img2, dim_index, slice_num)
 
-            mixed, mixer_spec_params = _generic_mixer(slice1, slice2, mixer, **kwargs)
+            mixed, mixer_spec_params = _generic_mixer(slice1, slice2, mixer,
+                                                      **kwargs)
             display_params.update(mixer_spec_params)
 
             plt.imshow(mixed, vmin=min_value, vmax=max_value, **display_params)
@@ -435,18 +447,17 @@ def _preprocess_images(img_spec1,
                        bkground_thresh=None,
                        padding=5,
                        ):
-
-    img_one, img_two = check_images(img_spec1, img_spec2, bkground_thresh=bkground_thresh)
+    img_one, img_two = check_images(img_spec1, img_spec2,
+                                    bkground_thresh=bkground_thresh)
     img_one, img_two = crop_to_extents(img_one, img_two, padding)
 
     rescale_images, img_one, img_two, \
-    min_value, max_value = check_rescaling(img_one, img_two, rescale_method)
+        min_value, max_value = check_rescaling(img_one, img_two, rescale_method)
 
     return img_one, img_two
 
 
 def _open_figure(slicer, num_rows_per_view, figsize=(15, 11)):
-
     total_num_rows = len(slicer.view_set) * num_rows_per_view
     total_num_panels = sum(slicer.num_slices)
     num_cols = int(np.ceil(total_num_panels / total_num_rows))
@@ -674,14 +685,17 @@ def check_rescaling(img1, img2, rescale_method):
     # estimating intensity ranges
     if rescale_method is None:
         # this section is to help user to avoid all intensity rescaling altogther!
-        # TODO bug does not work yet, as pyplot does not offer any easy way to control it
+        # TODO bug does not work yet, as pyplot does not offer any easy way to
+        #  control it
         rescale_images = False
         min_value = None
         max_value = None
-        norm_image = None  # mpl.colors.NoNorm doesn't work yet. data is getting linearly normalized to [0, 1]
+        norm_image = None  # mpl.colors.NoNorm doesn't work yet. data is getting
+        # linearly normalized to [0, 1]
     elif isinstance(rescale_method, str):
         if rescale_method.lower() in ['global']:
-            # TODO need a way to alert the user if one of the distributions is too narrow
+            # TODO need a way to alert the user if one of the distributions is too
+            #  narrow
             #  in which case that image will be collapsed to an uniform value
             combined_distr = np.concatenate((img1.flatten(), img2.flatten()))
             min_value = combined_distr.min()
@@ -704,7 +718,8 @@ def check_rescaling(img1, img2, rescale_method):
     else:
         raise ValueError('Invalid intensity range!. It must be either : '
                          '1) a list/tuple of two distinct values or'
-                         '2) "global" indicating rescaling based on min/max values derived from both images or'
+                         '2) "global" indicating rescaling based on min/max values '
+                         'derived from both images or'
                          '3) None, no rescaling or norming altogether. ')
 
     return rescale_images, img1, img2, min_value, max_value
@@ -786,7 +801,8 @@ def _mix_color(slice1, slice2, alpha_channels, color_space):
         raise NotImplementedError(
             'Method color_space="hsv" is yet to be implemented.')
 
-        # TODO other ideas: hue/saturation/intensity value driven by difference in intensity?
+        # TODO other ideas: hue/saturation/intensity value driven by difference in
+        #  intensity?
         hue = alpha_channels[0] * slice1
         sat = alpha_channels[1] * slice2
         val = np.ones_like(slice1)

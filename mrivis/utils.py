@@ -1,10 +1,11 @@
+from collections.abc import Iterable
 from genericpath import exists as pexists
 from os.path import realpath
-from collections.abc import Iterable
+
+import matplotlib as mpl
 import nibabel as nib
 import numpy as np
 from matplotlib import pyplot as plt
-import matplotlib as mpl
 
 
 def _diff_image(slice1, slice2,

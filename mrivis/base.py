@@ -8,6 +8,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.image import AxesImage
+
 from mrivis import config as cfg
 from mrivis.utils import check_num_slices, check_views, load_image_from_disk, \
     row_wise_rescale, save_figure, check_matching_dims
@@ -761,7 +762,7 @@ class Collage(object):
         annot : str
             text to annotate the figure with a super title
 
-        output_path : str
+        output_path : Path or str
             path to save the figure to.
             Note: any spaces in the filename will be replace with ``_``
 
