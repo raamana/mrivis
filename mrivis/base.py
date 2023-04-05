@@ -1,4 +1,4 @@
-__all__ = ['SlicePicker', 'Collage', 'Carpet']
+__all__ = ['SlicePicker', 'Collage', 'Carpet', 'MidCollage', 'MiddleSlicePicker']
 
 import traceback
 import warnings
@@ -10,8 +10,8 @@ from matplotlib.axes import Axes
 from matplotlib.image import AxesImage
 
 from mrivis import config as cfg
-from mrivis.utils import check_num_slices, check_views, load_image_from_disk, \
-    row_wise_rescale, save_figure, check_matching_dims
+from mrivis.utils import (check_matching_dims, check_num_slices, check_views,
+                          load_image_from_disk, row_wise_rescale, save_figure)
 
 
 class SlicePicker(object):

@@ -15,7 +15,7 @@ from mrivis.utils import (_diff_image, check_params, check_patch_size, crop_imag
                           scale_0to1,
                           scale_images_0to1)
 
-__all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'collage']
+__all__ = ['checkerboard', 'color_mix', 'voxelwise_diff', 'aseg_on_mri']
 
 import numpy as np
 from matplotlib import pyplot as plt, colors, cm
