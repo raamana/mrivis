@@ -475,66 +475,6 @@ def _open_figure(slicer, num_rows_per_view, figsize=(15, 11)):
     return fig, axes
 
 
-def collage(img_spec,
-            num_rows=2,
-            num_cols=6,
-            rescale_method='global',
-            cmap='gray',
-            annot=None,
-            padding=5,
-            bkground_thresh=None,
-            output_path=None,
-            figsize=None,
-            **kwargs):
-    """Produces a collage of various slices from different orientations in the
-    given 3D image"""
-
-    num_rows, num_cols, padding = check_params(num_rows, num_cols, padding)
-
-    img = read_image(img_spec, bkground_thresh=bkground_thresh)
-    img = crop_image(img, padding)
-
-    img, (min_value, max_value) = check_rescaling_collage(img, rescale_method,
-                                                          return_extrema=True)
-    num_slices_per_view = num_rows * num_cols
-    slices = pick_slices(img, num_slices_per_view)
-
-    plt.style.use('dark_background')
-
-    num_axes = 3
-    if figsize is None:
-        figsize = [3 * num_axes * num_rows, 3 * num_cols]
-    fig, ax = plt.subplots(num_axes * num_rows, num_cols, figsize=figsize)
-
-    # displaying some annotation text if provided
-    if annot is not None:
-        fig.suptitle(annot, backgroundcolor='black', color='g')
-
-    display_params = dict(interpolation='none', cmap=cmap,
-                          aspect='equal', origin='lower',
-                          vmin=min_value, vmax=max_value)
-
-    ax = ax.flatten()
-    ax_counter = 0
-    for dim_index in range(3):
-        for slice_num in slices[dim_index]:
-            plt.sca(ax[ax_counter])
-            ax_counter = ax_counter + 1
-            slice1 = get_axis(img, dim_index, slice_num)
-            # slice1 = crop_image(slice1, padding)
-            plt.imshow(slice1, **display_params)
-            plt.axis('off')
-
-    fig.tight_layout()
-
-    if output_path is not None:
-        output_path = output_path.replace(' ', '_')
-        fig.savefig(output_path + '.png', bbox_inches='tight')
-
-    # plt.close()
-
-    return fig
-
 
 def aseg_on_mri(mri_spec,
                 aseg_spec,
