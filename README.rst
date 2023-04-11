@@ -22,14 +22,18 @@ mrivis
 - tools for comparison of spatial alignment of two 3D MRI scans (T1, T2, PET etc) using checkerboard plots and other comparison methods
 - additional helper, convenience and utility scripts related to visualization
 
-Full documentation for both visualization classes and alignment check tools is available at https://raamana.github.io/mrivis/readme.html
+Full documentation for both visualization classes and alignment check tools is available at
+
+https://raamana.github.io/mrivis/readme.html
+
+----------
 
 
-A sample gallery of different ways to check alignment is shown below:
+A sample gallery of different ways to check alignment (just one of the many other features in `mrivis`) is shown below:
 
 .. image:: docs/flyer_option_matrix.png
 
-
+----------
 
 Full documentation https://raamana.github.io/mrivis/readme.html
 
