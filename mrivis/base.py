@@ -194,14 +194,14 @@ class SlicePicker(object):
         sampled_indices = np.linspace(0, num_non_empty,
                                       num=min(num_non_empty, num_slices),
                                       endpoint=False)
-        slices_in_dim = non_empty_slices[np.around(sampled_indices).astype('int64')]
+        slices_in_dim = non_empty_slices[np.around(sampled_indices).astype(np.int64)]
 
         return slices_in_dim
 
     def _percent_selection(self, non_empty_slices):
         """Chooses slices at given percentages betw first and last non-empty slice"""
 
-        return np.around(self._sampler * len(non_empty_slices) / 100).astype('int64')
+        return np.around(self._sampler * len(non_empty_slices) / 100).astype(np.int64)
 
     def _selection_by_callable(self, view, num_slices, non_empty_slices):
         """Returns all the slices selected by the given callable."""
