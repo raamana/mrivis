@@ -106,7 +106,7 @@ def check_num_slices(num_slices, img_shape=None, num_dims=3):
 def check_int(num,
               num_descr='number',
               min_value=0,
-              max_value=np.Inf):
+              max_value=np.inf):
     """Validation and typecasting."""
 
     if not np.isfinite(num) or num < min_value or num > max_value:

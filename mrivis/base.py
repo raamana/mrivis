@@ -126,7 +126,7 @@ class SlicePicker(object):
         """Validator to ensure proper usage."""
 
         if min_density is None:
-            self._min_density = -np.Inf
+            self._min_density = -np.inf
         elif (isinstance(min_density, float) and (0.0 <= min_density < 1.0)):
             self._min_density = min_density
         else:
