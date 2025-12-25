@@ -284,7 +284,7 @@ class SlicePicker:
         # ensure all the images have the same shape
         for img in image_list:
             if not check_matching_dims(img, self._image):
-                raise ValueError('Supplied images do match in size.'
+                raise ValueError('Supplied images do not match in size.'
                                  f' This image has dimensions: {img.shape}'
                                  f' They must all have: {self._image_shape}')
 
