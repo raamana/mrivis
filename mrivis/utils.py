@@ -5,7 +5,7 @@ from os.path import realpath
 import matplotlib as mpl
 import nibabel as nib
 import numpy as np
-from matplotlib import pyplot as plt
+from matplotlib import colormaps, pyplot as plt
 
 
 def _diff_image(slice1, slice2,
@@ -25,10 +25,10 @@ def _diff_image(slice1, slice2,
 def diff_colormap():
     """Custom colormap to map low values to black or another color."""
 
-    # bottom = plt.cm.copper(np.linspace(0., 1, 6))
+    # bottom = colormaps['copper'](np.linspace(0., 1, 6))
     black = np.atleast_2d([0., 0., 0., 1.])
     bottom = np.repeat(black, 6, axis=0)
-    middle = plt.cm.copper(np.linspace(0, 1, 250))
+    middle = colormaps['copper'](np.linspace(0, 1, 250))
     # remain = plt.cm.Reds(np.linspace(0, 1, 240))
 
     colors = np.vstack((bottom, middle))
