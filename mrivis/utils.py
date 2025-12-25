@@ -330,7 +330,7 @@ def row_wise_rescale(matrix):
                          'Are you sure data is reshaped correctly?')
 
     min_ = matrix.min(axis=1)
-    range_ = matrix.ptp(axis=1)  # ptp : peak to peak, max-min
+    range_ = np.ptp(matrix, axis=1)  # ptp : peak to peak, max-min
     min_tile = np.tile(min_, (matrix.shape[1], 1)).T
     range_tile = np.tile(range_, (matrix.shape[1], 1)).T
     # avoiding any numerical difficulties
