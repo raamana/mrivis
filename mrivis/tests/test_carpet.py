@@ -43,8 +43,7 @@ img = make_rand_image(img_shape)
 roi = make_clustered_image(img_shape[:-1], num_rois)
 carpet = Carpet(img)
 
-print(' num_dims {} \n img shape {}\n num rois {}'.format(num_dims, img_shape,
-                                                          num_rois))
+print(f' num_dims {num_dims} \n img shape {img_shape}\n num rois {num_rois}')
 
 
 def test_cropped_size():
@@ -65,13 +64,13 @@ def test_cluster_data():
             carpet.cluster_rows_in_roi(roi_)
         except:
             raise RuntimeError(
-                'clustering carpet failed - with roi={}'.format(roi_type))
+                f'clustering carpet failed - with roi={roi_type}')
         else:
             try:
                 cl_ax = carpet.show(clustered=True)
             except:
-                raise RuntimeError('display of clustered carpet failed '
-                                   '- with roi={}'.format(roi_type))
+                raise RuntimeError(f'display of clustered carpet failed '
+                                   f'- with roi={roi_type}')
             else:
                 if not isinstance(cl_ax, Axes):
                     raise RuntimeError('Carpet.show(clustered=True) method failed')

@@ -672,8 +672,8 @@ def check_images(img_spec1, img_spec2, bkground_thresh=0.05):
     img2 = read_image(img_spec2, bkground_thresh)
 
     if img1.shape != img2.shape:
-        raise ValueError('size mismatch! First image: {} Second image: {}\n'
-                         'Two images to be compared must be of the same size '
+        raise ValueError(f'size mismatch! First image: {img1.shape} Second image: {img2.shape}\n'
+                         f'Two images to be compared must be of the same size '
                          f'in all dimensions.')
 
     return img1, img2

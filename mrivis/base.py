@@ -96,8 +96,7 @@ class SlicePicker:
         if isinstance(sampler, str):
             sampler = sampler.lower()
             if sampler not in ['linear', ]:
-                raise ValueError('Sampling strategy: {} not implemented.'
-                                 ''.format(sampler))
+                raise ValueError(f'Sampling strategy: {sampler} not implemented.')
             self._sampler = sampler
             self._sampling_method = 'linear'
         elif isinstance(sampler, Iterable):
@@ -363,8 +362,7 @@ class SlicePicker:
 
         dim_repr = list()
         for ix, vw in enumerate(self.view_set):
-            dim_repr.append('{} slices in dim {} : '
-                            f'{len(self._slices_by_dim[ix])} slices in dim {vw} : '
+            dim_repr.append(f'{len(self._slices_by_dim[ix])} slices in dim {vw} : '
                             f'{self._slices_by_dim[ix]}')
         return '\n'.join(dim_repr)
 
@@ -885,8 +883,7 @@ class Carpet:
         # dropping alternating voxels if it gets too big
         # to save on memory and avoid losing signal
         if self.carpet.shape[1] > 600 and isinstance(num_frames_to_skip, int):
-            print('Too many frames (n={}) to display: '
-                  'keeping every {}th frame'
+            print(f'Too many frames (n={self.carpet.shape[1]}) to display: '
                   f'keeping every {num_frames_to_skip}th frame')
             self.carpet = self.carpet[:, ::num_frames_to_skip]
 
@@ -913,14 +910,11 @@ class Carpet:
         if int(fixed_dim)!=fixed_dim or \
             fixed_dim > len(self.input_image.shape) or \
             fixed_dim < -1:
-            raise ValueError('invalid value for the dimension to be fixed!'
-                             'Must be an integer in range [0, {}] inclusive'
+            raise ValueError(f'invalid value for the dimension to be fixed!'
                              f'Must be an integer in range [0, {len(self.input_image.shape)}] inclusive')
 
         if self.input_image.shape[fixed_dim] < 2:
-            raise ValueError('Input image must have atleast two samples '
-                             'in the fixed dimension. It has {}. '
-                             'Full image shape: {} '
+            raise ValueError(f'Input image must have atleast two samples '
                              f'in the fixed dimension. It has {self.input_image.shape[fixed_dim]}. '
                              f'Full image shape: {self.input_image.shape} ')
 
@@ -1149,9 +1143,7 @@ class Carpet:
         """Checks mask shape against input image shape."""
 
         if self.input_image.shape[:-1] != img.shape:
-            raise ValueError('Shape of the {} ({}) is not compatible '
-                             'with input image shape: {} '
-                             f'Shape of the {img_type} ({img.shape}) is not compatible '
+            raise ValueError(f'Shape of the {img_type} ({img.shape}) is not compatible '
                              f'with input image shape: {self.input_image.shape[:-1]} ')
 
     def __str__(self):
@@ -1162,8 +1154,7 @@ class Carpet:
 
     def __repr__(self):
 
-        return "Orig image: {}\n" \
-               f"Orig image: {self.input_image.shape}\n" \
+        return f"Orig image: {self.input_image.shape}\n" \
                f"Carpet {self.carpet.shape}"
 
 
