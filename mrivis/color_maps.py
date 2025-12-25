@@ -89,7 +89,7 @@ def get_freesurfer_cmap(vis_type):
         colors = np.vstack((black, cmap))
         cmap = ListedColormap(colors, 'my_colormap')
     else:
-        raise NotImplementedError('color map for visualization type {} '
-                                  'has not been implemented!'.format(vis_type))
+        raise NotImplementedError(f'color map for visualization type {vis_type} '
+                                  f'has not been implemented!')
 
     return cmap

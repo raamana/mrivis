@@ -57,15 +57,14 @@ def check_bounding_rect(rect_pos):
     for val, name in zip((left, bottom, width, height),
                          ('left', 'bottom', 'width', 'height')):
         if val < 0.0 or val > 1.0:
-            raise ValueError("{}'s value must be >=0 and <= 1.0. "
-                             "It is now {}".format(name, val))
+            raise ValueError(f"{name}'s value must be >=0 and <= 1.0. "
+                             f"It is now {val}")
 
     if left + width > 1.0:
-        print('rect would extend beyond the width of figure/axis by {}'.format(left + width - 1.0))
+        print(f'rect would extend beyond the width of figure/axis by {left + width - 1.0}')
 
     if bottom + height > 1.0:
-        print('rect would extend beyond the height of figure/axis by {}'.format(
-            bottom + height - 1.0))
+        print(f'rect would extend beyond the height of figure/axis by {bottom + height - 1.0}')
 
     return rect_pos
 
@@ -77,7 +76,7 @@ def check_views(view_set, max_views=3):
         view_set = tuple([view_set, ])
 
     if len(view_set) > max_views:
-        raise ValueError('Can only have {} views'.format(max_views))
+        raise ValueError(f'Can only have {max_views} views')
 
     return [check_int(view, 'view', min_value=0, max_value=max_views - 1) for view in view_set]
 
@@ -94,7 +93,7 @@ def check_num_slices(num_slices, img_shape=None, num_dims=3):
     if img_shape is not None:
         if len(num_slices) != len(img_shape):
             raise ValueError('The number of dimensions requested is different from image.'
-                             ' Must be either 1 or equal to {}'.format(len(img_shape) + 1))
+                             f' Must be either 1 or equal to {len(img_shape) + 1}')
         # upper bounding them to image shape
         num_slices = np.minimum(img_shape, num_slices)
 
@@ -109,9 +108,9 @@ def check_int(num,
     """Validation and typecasting."""
 
     if not np.isfinite(num) or num < min_value or num > max_value:
-        raise ValueError('{}={} is not finite or '
-                         'is not >= {} or '
-                         'is not < {}'.format(num_descr, num, min_value, max_value))
+        raise ValueError(f'{num_descr}={num} is not finite or '
+                         f'is not >= {min_value} or '
+                         f'is not < {max_value}')
 
     return int(num)
 
@@ -195,7 +194,7 @@ def check_image_is_3d(img):
         else:
             img = np.squeeze(img, axis=3)
     elif len(img.shape) > 4:
-        raise ValueError('Invalid shape of image : {}'.format(img.shape))
+        raise ValueError(f'Invalid shape of image : {img.shape}')
 
     return img
 
@@ -211,10 +210,10 @@ def check_image_is_4d(img, min_num_volumes=2):
                 raise ValueError('Atleast one slice must exist in each dimension')
         if img.shape[3] < min_num_volumes:
             raise ValueError('Input volume is 4D '
-                             'with less than {} volumes!'.format(min_num_volumes))
+                             f'with less than {min_num_volumes} volumes!')
     elif len(img.shape) > 4:
         raise ValueError('Too many dimensions : more than 4.\n'
-                         'Invalid shape of image : {}'.format(img.shape))
+                         f'Invalid shape of image : {img.shape}')
 
     return img
 
@@ -478,7 +477,7 @@ def verify_sampler(sampler, image, image_shape, view_set, num_slices):
     if isinstance(sampler, str):
         sampler = sampler.lower()
         if sampler not in ['linear', ]:
-            raise ValueError('Sampling strategy: {} not implemented.'.format(sampler))
+            raise ValueError(f'Sampling strategy: {sampler} not implemented.')
         out_sampler = sampler
         out_sampling_method = 'linear'
     elif isinstance(sampler, Iterable):

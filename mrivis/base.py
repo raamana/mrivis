@@ -285,9 +285,8 @@ class SlicePicker:
         for img in image_list:
             if not check_matching_dims(img, self._image):
                 raise ValueError('Supplied images do match in size.'
-                                 ' This image has dimensions: {}'
-                                 ' They must all have: {}'
-                                 ''.format(img.shape, self._image_shape))
+                                 f' This image has dimensions: {img.shape}'
+                                 f' They must all have: {self._image_shape}')
 
         for dim, slice_num in self._slices:
             multiple_slices = (self._get_axis(img, dim, slice_num)
@@ -356,18 +355,17 @@ class SlicePicker:
 
     def __str__(self):
 
-        return 'views : {}\n' \
-               '#slices: {}\n' \
-               'sampler: {}' \
-               ''.format(self.view_set, self.num_slices, self._sampling_method)
+        return f'views : {self.view_set}\n' \
+               f'#slices: {self.num_slices}\n' \
+               f'sampler: {self._sampling_method}'
 
     def __repr__(self):
 
         dim_repr = list()
         for ix, vw in enumerate(self.view_set):
             dim_repr.append('{} slices in dim {} : '
-                            '{}'.format(len(self._slices_by_dim[ix]),
-                                        vw, self._slices_by_dim[ix]))
+                            f'{len(self._slices_by_dim[ix])} slices in dim {vw} : '
+                            f'{self._slices_by_dim[ix]}')
         return '\n'.join(dim_repr)
 
 
@@ -750,7 +748,7 @@ class Collage:
                 ax.set_visible(visibility)
         else:
             if grid_index < 0 or grid_index >= len(self.grids):
-                raise IndexError('Valid indices : 0 to {}'.format(len(self.grids) - 1))
+                raise IndexError(f'Valid indices : 0 to {len(self.grids) - 1}')
             for ax in self.grids[grid_index]:
                 ax.set_visible(visibility)
 
@@ -889,7 +887,7 @@ class Carpet:
         if self.carpet.shape[1] > 600 and isinstance(num_frames_to_skip, int):
             print('Too many frames (n={}) to display: '
                   'keeping every {}th frame'
-                  ''.format(self.carpet.shape[1], num_frames_to_skip))
+                  f'keeping every {num_frames_to_skip}th frame')
             self.carpet = self.carpet[:, ::num_frames_to_skip]
 
 
@@ -917,14 +915,14 @@ class Carpet:
             fixed_dim < -1:
             raise ValueError('invalid value for the dimension to be fixed!'
                              'Must be an integer in range [0, {}] inclusive'
-                             ''.format(len(self.input_image.shape)))
+                             f'Must be an integer in range [0, {len(self.input_image.shape)}] inclusive')
 
         if self.input_image.shape[fixed_dim] < 2:
             raise ValueError('Input image must have atleast two samples '
                              'in the fixed dimension. It has {}. '
                              'Full image shape: {} '
-                             ''.format(self.input_image.shape[fixed_dim],
-                                       self.input_image.shape))
+                             f'in the fixed dimension. It has {self.input_image.shape[fixed_dim]}. '
+                             f'Full image shape: {self.input_image.shape} ')
 
         self.fixed_dim = int(fixed_dim)
 
@@ -1153,18 +1151,20 @@ class Carpet:
         if self.input_image.shape[:-1] != img.shape:
             raise ValueError('Shape of the {} ({}) is not compatible '
                              'with input image shape: {} '
-                             ''.format(img_type, img.shape, self.input_image.shape[:-1]))
+                             f'Shape of the {img_type} ({img.shape}) is not compatible '
+                             f'with input image shape: {self.input_image.shape[:-1]} ')
 
     def __str__(self):
         """Helpful repr"""
 
-        return "Carpet {}".format(self.carpet.shape)
+        return f"Carpet {self.carpet.shape}"
 
 
     def __repr__(self):
 
         return "Orig image: {}\n" \
-               "Carpet {}".format(self.input_image.shape, self.carpet.shape)
+               f"Orig image: {self.input_image.shape}\n" \
+               f"Carpet {self.carpet.shape}"
 
 
 if __name__ == '__main__':
