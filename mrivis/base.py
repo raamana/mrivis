@@ -14,7 +14,7 @@ from mrivis.utils import (check_matching_dims, check_num_slices, check_views,
                           load_image_from_disk, row_wise_rescale, save_figure)
 
 
-class SlicePicker(object):
+class SlicePicker:
     """
     Class to pick non-empty slices along the various dimensions for a given image.
 
@@ -392,7 +392,7 @@ class MiddleSlicePicker(SlicePicker):
                          sampler=(50,), )
 
 
-class Collage(object):
+class Collage:
     """
     Class exhibiting multiple slices from a 3D image,
         with convenience routines handling all the cross-sections as a single set.
@@ -821,7 +821,7 @@ class MidCollage(Collage):
                          display_params=display_params)
 
 
-class Carpet(object):
+class Carpet:
     """Class to unroll the 4D or higher dimensional data into 2D images.
 
     Typical examples include functional or diffusion MRI data.
