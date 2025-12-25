@@ -1,6 +1,5 @@
 from collections.abc import Iterable
-from genericpath import exists as pexists
-from os.path import realpath
+from os.path import exists as pexists, realpath
 
 import matplotlib as mpl
 import nibabel as nib
