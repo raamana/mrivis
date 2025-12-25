@@ -112,7 +112,8 @@ class SlicePicker(object):
             for view in self.view_set:
                 middle_slice = int(self._image_shape[view] / 2)
                 return_val = sampler(self._get_axis(self._image, view, middle_slice))
-                if not isinstance(return_val, bool):
+                # Check for bool or numpy bool types (compatible with numpy 2.0)
+                if not isinstance(return_val, (bool, np.bool_)):
                     raise ValueError('sampler callable must return '
                                      'a boolean value (True/False)')
 
