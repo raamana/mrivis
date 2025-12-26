@@ -687,7 +687,7 @@ def _get_checkers(slice_shape, patch_size):
     else:
         # 7 patches in each axis, min voxels/patch = 3
         # TODO make 7 a user settable parameter
-        patch_size = np.round(np.array(slice_shape) / 7).astype(np.int16)
+        patch_size = np.round(np.array(slice_shape) / 7).astype('int16')
         patch_size = np.maximum(patch_size, np.array([3, 3]))
 
     black = np.zeros(patch_size)

@@ -120,7 +120,7 @@ def check_patch_size(patch_size):
 
     patch_size = np.array(patch_size)
     if patch_size.size == 1:
-        patch_size = np.repeat(patch_size, 2).astype(np.int16)
+        patch_size = np.repeat(patch_size, 2).astype('int16')
 
     return patch_size
 
@@ -143,7 +143,7 @@ def read_image(img_spec, bkground_thresh, ensure_num_dim=3):
     img = load_image_from_disk(img_spec)
 
     if not np.issubdtype(img.dtype, np.floating):
-        img = img.astype(np.float32)
+        img = img.astype('float32')
 
     if ensure_num_dim == 3:
         img = check_image_is_3d(img)
@@ -440,7 +440,7 @@ def pick_slices(img, num_slices_per_view):
         num_non_empty = len(non_empty_slices)
 
         # trying to 5% slices at the tails (bottom clipping at 0)
-        skip_count = max(0, np.around(num_non_empty * 0.05).astype(np.int16))
+        skip_count = max(0, np.around(num_non_empty * 0.05).astype('int16'))
         # only when possible
         if skip_count > 0 and (num_non_empty - 2 * skip_count >= num_slices_per_view):
             non_empty_slices = non_empty_slices[skip_count: -skip_count]
@@ -449,7 +449,7 @@ def pick_slices(img, num_slices_per_view):
         # sampling non-empty slices only
         sampled_indices = np.linspace(0, num_non_empty, num=min(num_non_empty, num_slices_per_view),
                                       endpoint=False)
-        slices_in_dim = non_empty_slices[np.around(sampled_indices).astype(np.int64)]
+        slices_in_dim = non_empty_slices[np.around(sampled_indices).astype('int64')]
 
         # ensure you do not overshoot
         slices_in_dim = [sn for sn in slices_in_dim if sn >= 0 or sn <= num_non_empty]
