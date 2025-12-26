@@ -241,7 +241,7 @@ def voxelwise_diff(img_spec1=None,
         MR image (or path to one) to be visualized
 
     abs_value : bool
-        Flag indicating whether to take the absolute value of the diffenence or not.
+        Flag indicating whether to take the absolute value of the difference or not.
         Default: True, display absolute differences only (so order of images does
         not matter)
 

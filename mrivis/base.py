@@ -58,7 +58,7 @@ class SlicePicker:
                 range(40, 60, 5) or at the end e.g. [ 5, 10, 15, 85, 90, 95]
             - if callable, it must take a 2D image of arbitrary size,
                 return True/False to indicate whether to select that slice or not.
-                Only non-empty slices (atleast one non-zero voxel) are forwarded.
+                Only non-empty slices (at least one non-zero voxel) are forwarded.
                 Simple examples for callable could be based on
                 1) percentage of non-zero voxels > x etc
                 2) presence of desired texture ?
@@ -199,7 +199,7 @@ class SlicePicker:
         return slices_in_dim
 
     def _percent_selection(self, non_empty_slices):
-        """Chooses slices at given percentages betw first and last non-empty slice"""
+        """Chooses slices at given percentages between first and last non-empty slice"""
 
         return np.around(self._sampler * len(non_empty_slices) / 100).astype(np.int64)
 
@@ -350,7 +350,7 @@ class SlicePicker:
         elif format_spec in ['f', 'full']:
             return self.__repr__()
         else:
-            return 'invalid format requsted!!'
+            return 'invalid format requested!!'
 
     def __str__(self):
 
@@ -378,7 +378,7 @@ class MiddleSlicePicker(SlicePicker):
 
         image : ndarray
             The image to be attached to the collage, once it is created.
-            Must be atleast 3d.
+            Must be at least 3d.
 
         """
 
@@ -417,7 +417,7 @@ class Collage:
         ----------
 
         view_set : iterable
-            List of integers selecting the dimesnions to be sliced.
+            List of integers selecting the dimensions to be sliced.
 
         num_slices : int or iterable of size as view_set
             Number of slices to be selected in each view.
@@ -435,20 +435,20 @@ class Collage:
                 (must be in the range of [1-100], not [0-1]).
                 This could be used to more/all slices in the middle e.g. range(40, 60, 5)
                     or at the end e.g. [ 5, 10, 15, 85, 90, 95]
-            - if callable, it must take a 2D image of arbitray size, return True/False
+            - if callable, it must take a 2D image of arbitrary size, return True/False
                 to indicate whether to select that slice or not.
-                Only non-empty slices (atleas one non-zero voxel) are provided as input.
+                Only non-empty slices (at least one non-zero voxel) are provided as input.
                 Simple examples for callable could be based on
                 1) percentage of non-zero voxels > x etc
                 2) presence of desired texture ?
-                3) certain properties of distribution (skewe: dark/bright, energy etc) etc
+                3) certain properties of distribution (skew: dark/bright, energy etc) etc
 
                 If the sampler returns more than requested `num_slices`,
                     only the first num_slices will be selected.
 
         attach_image : ndarray
             The image to be attached to the collage, once it is created.
-            Must be atleast 3d.
+            Must be at least 3d.
 
         display_params : dict
             dict of keyword parameters that can be passed to matplotlib's `Axes.imshow()`
@@ -607,7 +607,7 @@ class Collage:
 
         image_in : ndarray
             The image to be attached to the collage, once it is created.
-            Must be atleast 3d.
+            Must be at least 3d.
 
         sampler : str or list or callable
             selection strategy: to identify the type of sampling done to select the slices to return.
@@ -618,13 +618,13 @@ class Collage:
                 (must be in the range of [1-100], not [0-1]).
                 This could be used to more/all slices in the middle e.g. range(40, 60, 5)
                     or at the end e.g. [ 5, 10, 15, 85, 90, 95]
-            - if callable, it must take a 2D image of arbitray size, return True/False
+            - if callable, it must take a 2D image of arbitrary size, return True/False
                 to indicate whether to select that slice or not.
-                Only non-empty slices (atleas one non-zero voxel) are provided as input.
+                Only non-empty slices (at least one non-zero voxel) are provided as input.
                 Simple examples for callable could be based on
                 1) percentage of non-zero voxels > x etc
                 2) presence of desired texture ?
-                3) certain properties of distribution (skewe: dark/bright, energy etc) etc
+                3) certain properties of distribution (skew: dark/bright, energy etc) etc
 
                 If the sampler returns more than requested `num_slices`,
                     only the first num_slices will be selected.
@@ -635,7 +635,7 @@ class Collage:
         """
 
         if len(image_in.shape) < 3:
-            raise ValueError('Image must be atleast 3D')
+            raise ValueError('Image must be at least 3D')
 
         # allowing the choice of new sampling for different invocations.
         if sampler is None:
@@ -705,7 +705,7 @@ class Collage:
                 if not check_matching_dims(image_list[ii], image_list[0]):
                     raise ValueError('All images must be of same shape!')
                 if len(image_list[ii].shape) < 3:
-                    raise ValueError('All images must be atleast 3D')
+                    raise ValueError('All images must be at least 3D')
 
         slicer = SlicePicker(image_in=image_list[0],
                              view_set=self.view_set,
@@ -796,7 +796,7 @@ class MidCollage(Collage):
 
         image : ndarray
             The image to be attached to the collage, once it is created.
-            Must be atleast 3d.
+            Must be at least 3d.
 
         fig : matplotlib.Figure
             figure handle to create the collage in.
@@ -894,7 +894,7 @@ class Carpet:
         self.input_image = load_image_from_disk(image_nD)
 
         if len(self.input_image.shape) < 3:
-            raise ValueError('Input image must be atleast 3D')
+            raise ValueError('Input image must be at least 3D')
 
         if np.count_nonzero(self.input_image) == 0:
             raise ValueError('Input image is completely filled with zeros! '
@@ -914,7 +914,7 @@ class Carpet:
                              f'Must be an integer in range [0, {len(self.input_image.shape)}] inclusive')
 
         if self.input_image.shape[fixed_dim] < 2:
-            raise ValueError(f'Input image must have atleast two samples '
+            raise ValueError(f'Input image must have at least two samples '
                              f'in the fixed dimension. It has {self.input_image.shape[fixed_dim]}. '
                              f'Full image shape: {self.input_image.shape} ')
 

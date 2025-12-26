@@ -50,7 +50,7 @@ def check_bounding_rect(rect_pos):
     """Ensure the rect spec is valid."""
 
     if not isinstance(rect_pos, Iterable):
-        raise ValueError('rectangle spect must be a tuple of floats '
+        raise ValueError('rectangle spec must be a tuple of floats '
                          'specifying (left, right, width, height)')
 
     left, bottom, width, height = rect_pos
@@ -84,7 +84,7 @@ def check_views(view_set, max_views=3):
 def check_num_slices(num_slices, img_shape=None, num_dims=3):
     """Ensures requested number of slices is valid.
 
-    Atleast 1 and atmost the image size, if available
+    At least 1 and at most the image size, if available
     """
 
     if not isinstance(num_slices, Iterable) or len(num_slices) == 1:
@@ -116,7 +116,7 @@ def check_int(num,
 
 
 def check_patch_size(patch_size):
-    """Validation and typcasting"""
+    """Validation and typecasting"""
 
     patch_size = np.array(patch_size)
     if patch_size.size == 1:
@@ -126,7 +126,7 @@ def check_patch_size(patch_size):
 
 
 def check_params(num_rows, num_cols, padding):
-    """Validation and typcasting"""
+    """Validation and typecasting"""
 
     num_rows = check_int(num_rows, 'num_rows', min_value=1)
     num_cols = check_int(num_cols, 'num_cols', min_value=1)
@@ -183,11 +183,11 @@ def check_image_is_3d(img):
     """Ensures the image loaded is 3d and nothing else."""
 
     if len(img.shape) < 3:
-        raise ValueError('Input volume must be atleast 3D!')
+        raise ValueError('Input volume must be at least 3D!')
     elif len(img.shape) == 3:
         for dim_size in img.shape:
             if dim_size < 1:
-                raise ValueError('Atleast one slice must exist in each dimension')
+                raise ValueError('At least one slice must exist in each dimension')
     elif len(img.shape) == 4:
         if img.shape[3] != 1:
             raise ValueError('Input volume is 4D with more than one volume!')
@@ -207,7 +207,7 @@ def check_image_is_4d(img, min_num_volumes=2):
     elif len(img.shape) == 4:
         for dim_size in img.shape[:3]:
             if dim_size < 1:
-                raise ValueError('Atleast one slice must exist in each dimension')
+                raise ValueError('At least one slice must exist in each dimension')
         if img.shape[3] < min_num_volumes:
             raise ValueError('Input volume is 4D '
                              f'with less than {min_num_volumes} volumes!')
