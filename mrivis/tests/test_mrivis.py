@@ -163,9 +163,13 @@ def test_slice_picker():
     import tempfile
     gif_path = tempfile.NamedTemporaryFile(suffix='.gif').name
     print(gif_path)
-    sp.save_as_gif(gif_path)
-    if not pexists(gif_path):
-        raise IOError('Saving to GIF failed')
+    try:
+        sp_linear.save_as_gif(gif_path)
+    except Exception as e:
+        raise ValueError(f'Saving to GIF failed: \n{e}')
+    else:
+        if not pexists(gif_path):
+            raise IOError('Saving to GIF failed')
 
     try:
         import imageio
