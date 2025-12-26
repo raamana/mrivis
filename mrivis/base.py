@@ -155,9 +155,9 @@ class SlicePicker:
                 if (0 <= sn < dim_size) and sn not in uniq_slices:
                     uniq_slices.append(sn)
 
-            self._slices_by_dim.append(slices_dim)
+            self._slices_by_dim.append(uniq_slices)
             # adding view and slice # at the same time..
-            self._slices.extend([(view, sn) for sn in slices_dim])
+            self._slices.extend([(view, sn) for sn in uniq_slices])
 
     def _not_empty(self, view, slice_):
         """Checks if the density is too low. """
